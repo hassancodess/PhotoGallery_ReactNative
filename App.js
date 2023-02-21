@@ -1,11 +1,11 @@
 import React from 'react';
 // Navigation
-import MainNavigator from './navigation/MainNavigator';
+import MainStackNavigator from './src/navigation/MainStackNavigator';
 
 const App = () => {
   return (
     <>
-      <MainNavigator />;
+      <MainStackNavigator />
     </>
   );
 };
