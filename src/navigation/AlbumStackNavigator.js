@@ -22,8 +22,10 @@ const MainStackNavigator = () => {
         },
         headerTitleStyle: {
           color: colors.screen,
+          fontSize: 18,
         },
         headerTintColor: 'white',
+        navigationBarHidden: true,
       }}>
       <Screen name="Albums" component={Albums} />
       <Screen name="Album" component={Album} />

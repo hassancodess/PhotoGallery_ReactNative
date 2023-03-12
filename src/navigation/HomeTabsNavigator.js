@@ -1,101 +1,159 @@
 import React from 'react';
-// Navigation
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-const {Navigator, Screen} = createBottomTabNavigator();
-// Screens
-import Search from '../screens/HomeTabs/Search';
-// import Albums from '../screens/HomeTabs/Albums';
-import Camera from '../screens/HomeTabs/Camera';
+import {
+  Alert,
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Pressable,
+  LogBox,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import GlobalStyles from '../utils/GlobalStyles';
+import AlbumsStackNavigator from '../navigation/AlbumStackNavigator';
 import Map from '../screens/HomeTabs/Map';
+import Search from '../screens/HomeTabs/Search';
 import Sync from '../screens/HomeTabs/Sync';
-import AlbumStackNavigator from './AlbumStackNavigator';
-// Icons
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// Colors
-import colors from '../utils/colors';
-// Theme
-import {useTheme} from 'react-native-paper';
+import {CurvedBottomBar} from 'react-native-curved-bottom-bar';
 
-const HomeTabsNavigator = () => {
-  const theme = useTheme();
-  theme.colors.secondaryContainer = 'transperent';
-  return (
-    <Navigator
-      initialRouteName="Albums"
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.primary,
-        },
-        headerTitleStyle: {
-          color: colors.screen,
-        },
-        tabBarStyle: {
-          backgroundColor: colors.primary,
-          height: 60,
-        },
-        tabBarActiveTintColor: colors.screen,
-        tabBarInactiveTintColor: colors.secondary,
-      }}>
-      <Screen
-        name="AlbumsStack"
-        component={AlbumStackNavigator}
-        options={{
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons
-              name="folder-image"
-              color={color}
-              size={26}
-            />
-          ),
-          headerShown: false,
-        }}
+LogBox.ignoreAllLogs();
+
+const HomeTabsNavigator = ({navigation}) => {
+  const _renderIcon = (routeName, selectedTab) => {
+    let icon = '';
+
+    switch (routeName) {
+      case 'AlbumsStack':
+        icon = 'images-outline';
+        break;
+      case 'Search':
+        icon = 'search-outline';
+        break;
+      case 'Map':
+        icon = 'location-outline';
+        break;
+      case 'Sync':
+        icon = 'settings-outline';
+        break;
+    }
+
+    return (
+      <Ionicons
+        name={icon}
+        size={25}
+        color={
+          routeName === selectedTab
+            ? GlobalStyles.colors.white
+            : GlobalStyles.colors.secondary
+        }
       />
-      <Screen
+    );
+  };
+  const renderTabBar = ({routeName, selectedTab, navigate}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigate(routeName)}
+        style={styles.tabbarItem}>
+        {_renderIcon(routeName, selectedTab)}
+      </TouchableOpacity>
+    );
+  };
+  const renderCircle = ({selectedTab, navigate}) => (
+    <Animated.View>
+      <Pressable
+        style={styles.btnCircleUp}
+        onPress={() => Alert.alert('Click Action')}>
+        <Ionicons
+          name={'camera'}
+          color={GlobalStyles.colors.primary}
+          size={25}
+        />
+      </Pressable>
+    </Animated.View>
+  );
+
+  return (
+    <CurvedBottomBar.Navigator
+      type="UP"
+      style={styles.bottomBar}
+      // style={{display: 'none'}}
+      shadowStyle={styles.shawdow}
+      height={55}
+      circleWidth={50}
+      bgColor={GlobalStyles.colors.primary}
+      initialRouteName="Albums"
+      borderTopLeftRight
+      renderCircle={renderCircle}
+      tabBar={renderTabBar}
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <CurvedBottomBar.Screen
+        name="AlbumsStack"
+        position="LEFT"
+        component={AlbumsStackNavigator}
+      />
+      <CurvedBottomBar.Screen
         name="Search"
         component={Search}
-        options={{
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons
-              name="image-search-outline"
-              color={color}
-              size={26}
-            />
-          ),
-        }}
+        position="LEFT"
+        // options={}
       />
-      <Screen
-        name="Camera"
-        component={Camera}
-        options={{
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="camera" color={color} size={26} />
-          ),
-        }}
-      />
-      <Screen
-        name="Map"
-        component={Map}
-        options={{
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              color={color}
-              size={26}
-            />
-          ),
-        }}
-      />
-      <Screen
-        name="Sync"
-        component={Sync}
-        options={{
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="sync" color={color} size={26} />
-          ),
-        }}
-      />
-    </Navigator>
+      <CurvedBottomBar.Screen name="Map" component={Map} position="RIGHT" />
+      <CurvedBottomBar.Screen name="Sync" component={Sync} position="RIGHT" />
+    </CurvedBottomBar.Navigator>
   );
 };
-
 export default HomeTabsNavigator;
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  shawdow: {
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+  },
+  button: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  bottomBar: {},
+  btnCircleUp: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E8E8E8',
+    bottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 1,
+  },
+  imgCircle: {
+    width: 30,
+    height: 30,
+    tintColor: 'gray',
+  },
+  tabbarItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  img: {
+    width: 30,
+    height: 30,
+  },
+});

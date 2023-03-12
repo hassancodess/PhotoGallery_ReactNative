@@ -1,31 +1,28 @@
 import {StyleSheet, View, FlatList, Image, Pressable} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import FastImage from 'react-native-fast-image';
+import Container from '../../components/UI/Container';
+
 const Album = ({route, navigation}) => {
   const {item} = route.params;
   const showItem = ({item}) => {
-    console.log(item);
     return (
-      <Pressable onPress={() => navigation.navigate('Photo', {item})}>
-        <View className="flex-col items-center w-24 h-28 ">
-          <View className="w-full h-28 overflow-hidden rounded-2xl">
-            {/* <Image
-              source={item.path}
-              resizeMode="contain"
-              style={{width: '100%', height: '100%', borderRadius: 2}}
-            /> */}
-            <FastImage
-              style={{width: '100%', height: '100%', borderRadius: 2}}
-              source={item.path}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          </View>
+      <Pressable
+        onPress={() => {
+          navigation.navigate('Photo', {item});
+        }}>
+        <View style={styles.imageContainer}>
+          <FastImage
+            style={styles.image}
+            source={item.path}
+            resizeMode={FastImage.resizeMode.cover}
+          />
         </View>
       </Pressable>
     );
   };
   return (
-    <View className="p-3 flex-1 bg-slate-100">
+    <Container>
       <FlatList
         columnWrapperStyle={{justifyContent: 'space-between'}}
         data={item.photos}
@@ -33,10 +30,21 @@ const Album = ({route, navigation}) => {
         renderItem={showItem}
         numColumns={4}
       />
-    </View>
+    </Container>
   );
 };
 
 export default Album;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  imageContainer: {
+    marginBottom: 20,
+    // backgroundColor: 'green',
+  },
+  image: {
+    flex: 1,
+    width: 100,
+    height: 120,
+    borderRadius: 10,
+  },
+});
