@@ -10,5 +10,3 @@ const Category = () => {
 };
 
 export default Category;
-
-const styles = StyleSheet.create({});

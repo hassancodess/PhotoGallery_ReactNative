@@ -7,6 +7,7 @@ import Splash from '../screens/Splash';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
 import HomeTabsNavigator from './HomeTabsNavigator';
+
 // Navigtor
 const {Navigator, Screen} = createNativeStackNavigator();
 

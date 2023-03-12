@@ -3,11 +3,12 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 const {Navigator, Screen} = createBottomTabNavigator();
 // Screens
-import Albums from '../screens/HomeTabs/Albums';
 import Search from '../screens/HomeTabs/Search';
+// import Albums from '../screens/HomeTabs/Albums';
 import Camera from '../screens/HomeTabs/Camera';
 import Map from '../screens/HomeTabs/Map';
 import Sync from '../screens/HomeTabs/Sync';
+import AlbumStackNavigator from './AlbumStackNavigator';
 // Icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // Colors
@@ -36,8 +37,8 @@ const HomeTabsNavigator = () => {
         tabBarInactiveTintColor: colors.secondary,
       }}>
       <Screen
-        name="Albums"
-        component={Albums}
+        name="AlbumsStack"
+        component={AlbumStackNavigator}
         options={{
           tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
@@ -46,6 +47,7 @@ const HomeTabsNavigator = () => {
               size={26}
             />
           ),
+          headerShown: false,
         }}
       />
       <Screen
