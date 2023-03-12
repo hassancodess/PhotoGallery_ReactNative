@@ -1,9 +1,10 @@
 import {Text, View, FlatList, Image, Pressable, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {albums} from '../../data/data';
 import FastImage from 'react-native-fast-image';
 import Container from '../../components/UI/Container';
 const Albums = ({navigation}) => {
+  useLayoutEffect(() => {}, []);
   const showItem = ({item}) => {
     return (
       <Pressable

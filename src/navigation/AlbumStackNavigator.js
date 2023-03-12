@@ -25,10 +25,9 @@ const MainStackNavigator = () => {
           fontSize: 18,
         },
         headerTintColor: 'white',
-        navigationBarHidden: true,
       }}>
       <Screen name="Albums" component={Albums} />
-      <Screen name="Album" component={Album} />
+      <Screen name="Album" component={Album} options={{}} />
       <Screen
         name="Photo"
         component={Photo}

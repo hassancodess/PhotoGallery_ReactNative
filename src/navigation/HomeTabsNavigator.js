@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   Alert,
   Animated,
@@ -8,6 +8,8 @@ import {
   Pressable,
   LogBox,
 } from 'react-native';
+import BottomBarContext from '../context/BottomBarContext';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../utils/GlobalStyles';
 import AlbumsStackNavigator from '../navigation/AlbumStackNavigator';
@@ -19,6 +21,8 @@ import {CurvedBottomBar} from 'react-native-curved-bottom-bar';
 LogBox.ignoreAllLogs();
 
 const HomeTabsNavigator = ({navigation}) => {
+  const {isHidden, setIsHidden} = useContext(BottomBarContext);
+
   const _renderIcon = (routeName, selectedTab) => {
     let icon = '';
 
@@ -75,8 +79,7 @@ const HomeTabsNavigator = ({navigation}) => {
   return (
     <CurvedBottomBar.Navigator
       type="UP"
-      style={styles.bottomBar}
-      // style={{display: 'none'}}
+      style={[styles.bottomBar, {display: isHidden ? 'none' : 'flex'}]}
       shadowStyle={styles.shawdow}
       height={55}
       circleWidth={50}
