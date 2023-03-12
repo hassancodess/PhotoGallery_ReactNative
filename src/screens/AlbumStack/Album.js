@@ -1,6 +1,6 @@
 import {StyleSheet, View, FlatList, Image, Pressable} from 'react-native';
 import React from 'react';
-
+import FastImage from 'react-native-fast-image';
 const Album = ({route, navigation}) => {
   const {item} = route.params;
   const showItem = ({item}) => {
@@ -9,10 +9,15 @@ const Album = ({route, navigation}) => {
       <Pressable onPress={() => navigation.navigate('Photo', {item})}>
         <View className="flex-col items-center w-24 h-28 ">
           <View className="w-full h-28 overflow-hidden rounded-2xl">
-            <Image
+            {/* <Image
               source={item.path}
               resizeMode="contain"
               style={{width: '100%', height: '100%', borderRadius: 2}}
+            /> */}
+            <FastImage
+              style={{width: '100%', height: '100%', borderRadius: 2}}
+              source={item.path}
+              resizeMode={FastImage.resizeMode.contain}
             />
           </View>
         </View>

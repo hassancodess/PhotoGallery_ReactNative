@@ -1,17 +1,28 @@
 import React from 'react';
 import {Text, View, FlatList, Image} from 'react-native';
 import {albums} from '../../data/data';
+import FastImage from 'react-native-fast-image';
 
 const Albums = () => {
   const showItem = ({item}) => {
     return (
       <View className="flex-col items-center w-24 h-40 ">
         <View className="w-full h-28 overflow-hidden rounded-2xl">
-          <Image
+          <FastImage
+            style={{width: 200, height: 200}}
+            source={{
+              uri: item.photos[0].path,
+              // uri: 'https://unsplash.it/400/400?image=1',
+              headers: {Authorization: 'someAuthToken'},
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+          {/* <Image
             source={item.photos[0].path}
             resizeMode="contain"
             style={{width: '100%', height: '100%', borderRadius: 2}}
-          />
+          /> */}
         </View>
         <Text className="text-center">{item.title}</Text>
       </View>

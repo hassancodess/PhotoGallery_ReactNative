@@ -1,6 +1,7 @@
 import {Text, View, FlatList, Image, Pressable} from 'react-native';
 import React from 'react';
 import {albums} from '../../data/data';
+import FastImage from 'react-native-fast-image';
 const Albums = ({navigation}) => {
   const showItem = ({item}) => {
     return (
@@ -10,10 +11,15 @@ const Albums = ({navigation}) => {
         }}>
         <View className="flex-col items-center w-24 h-40 ">
           <View className="w-full h-28 overflow-hidden rounded-2xl">
-            <Image
+            {/* <Image
               source={item.photos[0].path}
               resizeMode="contain"
               style={{width: '100%', height: '100%', borderRadius: 2}}
+            /> */}
+            <FastImage
+              style={{width: '100%', height: '100%', borderRadius: 2}}
+              source={item.photos[0].path}
+              resizeMode={FastImage.resizeMode.contain}
             />
           </View>
           <Text className="text-center">{item.title}</Text>
