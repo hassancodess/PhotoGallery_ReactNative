@@ -1,5 +1,6 @@
 import React from 'react';
 // Navigation
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 // Screens
 import AlbumsStackNavigator from '../AlbumsStack/AlbumsStackNavigator';
@@ -18,7 +19,17 @@ const HomeTabsNavigator = () => {
       <Screen
         name="AlbumsStack"
         component={AlbumsStackNavigator}
-        options={{title: 'Albums'}}
+        options={({route}) => ({
+          title: 'Albums',
+          tabBarStyle: (route => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+            console.log('RouteName', routeName);
+            if (routeName === 'Album' || routeName === 'PhotoStack') {
+              return {display: 'none'};
+            }
+            return;
+          })(route),
+        })}
       />
       <Screen name="Search" component={Search} />
       <Screen name="Camera" component={Camera} />

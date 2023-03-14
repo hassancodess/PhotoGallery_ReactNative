@@ -14,7 +14,6 @@ const AlbumsStackNavigator = () => {
     <Navigator
       initialRouteName="AlbumsTabs"
       screenOptions={{
-        // headerShown: false
         headerStyle: {
           backgroundColor: GlobalStyles.colors.primary,
         },
@@ -23,10 +22,23 @@ const AlbumsStackNavigator = () => {
       <Screen
         name="AlbumsTabs"
         component={AlbumsTabsNavigator}
-        options={{title: 'Albums'}}
+        options={{
+          title: 'Albums',
+        }}
       />
-      <Screen name="Album" component={Album} />
-      <Screen name="PhotoStack" component={PhotoStackNavigator} />
+      <Screen
+        name="Album"
+        component={Album}
+        options={{
+          navigationBarHidden: true,
+          tabBarVisible: false,
+        }}
+      />
+      <Screen
+        name="PhotoStack"
+        component={PhotoStackNavigator}
+        options={{headerShown: false}}
+      />
     </Navigator>
   );
 };
