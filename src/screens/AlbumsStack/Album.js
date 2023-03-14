@@ -24,8 +24,9 @@ const Album = ({navigation, route}) => {
       <Pressable
         onPress={() =>
           navigation.navigate('PhotoStack', {
-            screen: 'Photo',
-            params: {photo: item},
+            photo: item,
+            // screen: 'Photo',
+            // params: {photo: item},
           })
         }>
         <View style={styles.photoContainer}>

@@ -81,7 +81,6 @@ export const getAlbums = async () => {
   }
 
   const albums = await CameraRoll.getAlbums({assetType: 'Photos'});
-  console.log('Albums', albums);
   return albums;
 };
 

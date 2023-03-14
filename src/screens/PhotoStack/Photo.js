@@ -7,12 +7,12 @@ const Photo = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     const headerTitle = photo.image.uri.split('/').pop();
-    console.log('header Title', headerTitle);
+    // console.log('header Title', headerTitle);
     navigation.setOptions({
       title: headerTitle,
     });
   }, []);
-  console.log('Photo', photo);
+  // console.log('Photo', photo);
   return (
     <View style={styles.container}>
       <FastImage
