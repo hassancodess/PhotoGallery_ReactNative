@@ -2,23 +2,25 @@ import {Platform, PermissionsAndroid} from 'react-native';
 import {PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 
-export const getImages = async () => {
+async function hasAndroidPermission() {
   const permission =
-    Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
+    Platform.Version >= 33
+      ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+      : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
 
-  let permissionResult = await request(permission);
-
-  if (permissionResult !== RESULTS.GRANTED) return;
-
-  if (Platform.OS === 'android' && Platform.Version >= 29) {
-    permissionResult = await request(PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION);
-    if (permissionResult !== RESULTS.GRANTED) return;
+  const hasPermission = await PermissionsAndroid.check(permission);
+  if (hasPermission) {
+    return true;
   }
 
-  if (Platform.OS === 'android') {
-    const r = await PermissionsAndroid.request(PERMISSIONS.ANDROID.CAMERA);
+  const status = await PermissionsAndroid.request(permission);
+  return status === 'granted';
+}
+
+export const getImages = async () => {
+  if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+    console.log('returned');
+    return;
   }
 
   const p = await CameraRoll.getPhotos({
@@ -26,7 +28,9 @@ export const getImages = async () => {
     groupTypes: 'All',
     assetType: 'Photos',
   });
+  console.log('await photos');
   const photos = p.edges.map(x => x.node);
+  console.log('photos', photos);
   return photos;
 };
 
@@ -54,45 +58,37 @@ export const getImagesInGroups = async () => {
 };
 
 export const getAlbums = async () => {
-  const permission =
-    Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
+  // const permission =
+  //   Platform.OS === 'ios'
+  //     ? PERMISSIONS.IOS.PHOTO_LIBRARY
+  //     : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
 
-  let permissionResult = await request(permission);
+  // let permissionResult = await request(permission);
 
-  if (permissionResult !== RESULTS.GRANTED) return;
+  // if (permissionResult !== RESULTS.GRANTED) return;
 
-  if (Platform.OS === 'android' && Platform.Version >= 29) {
-    permissionResult = await request(PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION);
-    if (permissionResult !== RESULTS.GRANTED) return;
-  }
+  // if (Platform.OS === 'android' && Platform.Version >= 29) {
+  //   permissionResult = await request(PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION);
+  //   if (permissionResult !== RESULTS.GRANTED) return;
+  // }
 
-  if (Platform.OS === 'android') {
-    const r = await PermissionsAndroid.request(PERMISSIONS.ANDROID.CAMERA);
+  // if (Platform.OS === 'android') {
+  //   const r = await PermissionsAndroid.request(PERMISSIONS.ANDROID.CAMERA);
+  // }
+  if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+    console.log('returned');
+    return;
   }
 
   const albums = await CameraRoll.getAlbums({assetType: 'Photos'});
+  console.log('Albums', albums);
   return albums;
 };
 
 export const getAlbumCover = async albumName => {
-  const permission =
-    Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-
-  let permissionResult = await request(permission);
-
-  if (permissionResult !== RESULTS.GRANTED) return;
-
-  if (Platform.OS === 'android' && Platform.Version >= 29) {
-    permissionResult = await request(PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION);
-    if (permissionResult !== RESULTS.GRANTED) return;
-  }
-
-  if (Platform.OS === 'android') {
-    const r = await PermissionsAndroid.request(PERMISSIONS.ANDROID.CAMERA);
+  if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+    console.log('returned');
+    return;
   }
 
   const response = await CameraRoll.getPhotos({
@@ -104,24 +100,10 @@ export const getAlbumCover = async albumName => {
   return albumCover;
 };
 export const getAlbumImages = async albumName => {
-  const permission =
-    Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-
-  let permissionResult = await request(permission);
-
-  if (permissionResult !== RESULTS.GRANTED) return;
-
-  if (Platform.OS === 'android' && Platform.Version >= 29) {
-    permissionResult = await request(PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION);
-    if (permissionResult !== RESULTS.GRANTED) return;
+  if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+    console.log('returned');
+    return;
   }
-
-  if (Platform.OS === 'android') {
-    const r = await PermissionsAndroid.request(PERMISSIONS.ANDROID.CAMERA);
-  }
-
   const p = await CameraRoll.getPhotos({
     groupName: albumName,
     first: 20,

@@ -64,15 +64,14 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   photoContainer: {
-    width: 135,
-    // height: 160,
+    width: 100,
     marginBottom: 20,
-    // backgroundColor: 'green',
     alignItems: 'center',
   },
   photoCover: {
-    width: 135,
-    height: 135,
+    width: 100,
+    height: 100,
     borderRadius: 10,
+    marginBottom: 8,
   },
 });

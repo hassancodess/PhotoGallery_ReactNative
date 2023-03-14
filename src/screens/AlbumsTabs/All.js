@@ -15,20 +15,14 @@ const All = ({navigation, route}) => {
   const [albumCovers, setAlbumCovers] = useState([]);
 
   useLayoutEffect(() => {
-    const handleImages = async () => {
-      const res = await handleGetAlbums();
-      console.log('res', res);
-    };
-    handleImages();
+    handleGetAlbums();
   }, []);
-  // useLayoutEffect(() => {
-  // console.log('aBCS', albums);
-  // if (albums != null) {
-  // handleAlbumCovers();
-  // }
-  // console.log('Albums', albums);
-  // console.log(albums.length);
-  // }, [albums]);
+
+  useLayoutEffect(() => {
+    if (albums.length > 0) {
+      handleAlbumCovers();
+    }
+  }, [albums]);
 
   const handleAlbumCovers = async () => {
     const getCover = async item => {
@@ -40,10 +34,6 @@ const All = ({navigation, route}) => {
     const results = await Promise.all(getCovers);
     // console.log(results.length);
     setAlbumCovers(results);
-  };
-  const handleGetImages = async () => {
-    const response = await getImagesInGroups();
-    setPhotos(response);
   };
   const handleGetAlbums = async () => {
     const response = await getAlbums();
@@ -73,15 +63,15 @@ const All = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      {/* {albumCovers.length > 0 && albums.length > 0 && ( */}
-      <FlatList
-        data={albums}
-        keyExtractor={(item, index) => index}
-        renderItem={renderItem}
-        numColumns={3}
-        columnWrapperStyle={{justifyContent: 'space-between'}}
-      />
-      {/* )} */}
+      {albumCovers.length > 0 && albums.length > 0 && (
+        <FlatList
+          data={albums}
+          keyExtractor={(item, index) => index}
+          renderItem={renderItem}
+          numColumns={3}
+          columnWrapperStyle={{justifyContent: 'space-between'}}
+        />
+      )}
     </View>
   );
 };
@@ -96,25 +86,19 @@ const styles = StyleSheet.create({
     // backgroundColor: GlobalStyles.colors.primary,
   },
   albumContainer: {
-    width: 135,
-    // height: 160,
+    width: 100,
     marginBottom: 20,
-    // backgroundColor: 'green',
     alignItems: 'center',
   },
   albumCover: {
-    width: 135,
-    height: 135,
+    width: 100,
+    height: 100,
     borderRadius: 10,
     marginBottom: 8,
   },
   albumContainerText: {
     fontSize: 14,
-    // fontWeight: 'semibold',
+    color: 'black',
     textAlign: 'center',
-    // paddingBottom: 30,
-
-    // maxWidth: '50%',
-    // alignSelf: 'center',
   },
 });
