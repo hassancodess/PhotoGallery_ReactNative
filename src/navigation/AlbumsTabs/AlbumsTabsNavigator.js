@@ -25,7 +25,7 @@ const AlbumsTabsNavigator = () => {
           elevation: 0,
           marginTop: 5,
           alignSelf: 'center',
-          backgroundColor: GlobalStyles.colors.screen,
+          backgroundColor: 'transparent',
           borderRadius: 3,
         },
         tabBarIndicatorStyle: {
