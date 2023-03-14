@@ -1,6 +1,6 @@
 import React from 'react';
 // Navigation
-import MainStackNavigator from './src/navigation/MainStackNavigator';
+import MainStackNavigator from './src/navigation/MainStack/MainStackNavigator';
 
 const App = () => {
   return (
