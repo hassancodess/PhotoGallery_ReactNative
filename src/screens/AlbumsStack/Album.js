@@ -16,10 +16,15 @@ const Album = ({navigation, route}) => {
     setPhotos(results);
   };
   const renderItem = ({item, index}) => {
-    console.log('ITEM', item.image.uri);
+    // console.log('ITEM', item.image.uri);
     return (
       <Pressable
-        onPress={() => navigation.navigate('PhotoStack', {photo: item})}>
+        onPress={() =>
+          navigation.navigate('PhotoStack', {
+            screen: 'Photo',
+            params: {photo: item},
+          })
+        }>
         <View style={styles.photoContainer}>
           <FastImage
             style={styles.photoCover}
