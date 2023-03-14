@@ -4,23 +4,23 @@ import FastImage from 'react-native-fast-image';
 import Container from '../../components/UI/Container';
 import {getImages} from '../../utils/CameraRoll';
 import BottomBarContext from '../../context/BottomBarContext';
-
+import {useIsFocused} from '@react-navigation/native';
 const Album = ({route, navigation}) => {
+  const isFocused = useIsFocused();
   const {item} = route.params;
   const {setIsHidden} = useContext(BottomBarContext);
   const [photos, setPhotos] = useState([]);
   useEffect(() => {
+    setIsHidden(true);
     const getAlbums = async () => {
       const response = await getImages();
       console.log('RESPONSE', response[0].group_name);
       setPhotos(response);
     };
     getAlbums();
-  }, []);
+  }, [isFocused]);
 
-  useLayoutEffect(() => {
-    setIsHidden(true);
-  }, []);
+  // useLayoutEffect(() => {}, [isFocused]);
 
   const showItem = ({item}) => {
     return (

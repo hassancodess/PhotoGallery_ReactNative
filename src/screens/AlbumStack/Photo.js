@@ -4,25 +4,10 @@ import FastImage from 'react-native-fast-image';
 import Exif from 'react-native-exif';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../utils/colors';
-import {Button, Menu, Divider, Provider} from 'react-native-paper';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Photo = ({route, navigation}) => {
   const {item} = route.params;
-  const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-  const toggleMenu = () => setVisible(!visible);
-
-  const renderHeaderRight = () => {
-    return (
-      <Ionicons name="ellipsis-vertical" size={24} color={colors.screen} />
-    );
-  };
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: renderHeaderRight,
-    });
-  }, []);
 
   // Read Exif Data
   const showExifData = () => {

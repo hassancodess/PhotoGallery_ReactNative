@@ -1,10 +1,16 @@
 import {Text, View, FlatList, Image, Pressable, StyleSheet} from 'react-native';
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useContext} from 'react';
 import {albums} from '../../data/data';
 import FastImage from 'react-native-fast-image';
 import Container from '../../components/UI/Container';
+import BottomBarContext from '../../context/BottomBarContext';
+import {useIsFocused} from '@react-navigation/native';
 const Albums = ({navigation}) => {
-  useLayoutEffect(() => {}, []);
+  const isFocused = useIsFocused();
+  const {setIsHidden} = useContext(BottomBarContext);
+  useLayoutEffect(() => {
+    setIsHidden(false);
+  }, [isFocused]);
   const showItem = ({item}) => {
     return (
       <Pressable

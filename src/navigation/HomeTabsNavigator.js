@@ -4,12 +4,11 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
-  View,
   Pressable,
   LogBox,
 } from 'react-native';
 import BottomBarContext from '../context/BottomBarContext';
-
+import {Provider} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../utils/GlobalStyles';
 import AlbumsStackNavigator from '../navigation/AlbumStackNavigator';
@@ -77,34 +76,36 @@ const HomeTabsNavigator = ({navigation}) => {
   );
 
   return (
-    <CurvedBottomBar.Navigator
-      type="UP"
-      style={[styles.bottomBar, {display: isHidden ? 'none' : 'flex'}]}
-      shadowStyle={styles.shawdow}
-      height={55}
-      circleWidth={50}
-      bgColor={GlobalStyles.colors.primary}
-      initialRouteName="Albums"
-      borderTopLeftRight
-      renderCircle={renderCircle}
-      tabBar={renderTabBar}
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <CurvedBottomBar.Screen
-        name="AlbumsStack"
-        position="LEFT"
-        component={AlbumsStackNavigator}
-      />
-      <CurvedBottomBar.Screen
-        name="Search"
-        component={Search}
-        position="LEFT"
-        // options={}
-      />
-      <CurvedBottomBar.Screen name="Map" component={Map} position="RIGHT" />
-      <CurvedBottomBar.Screen name="Sync" component={Sync} position="RIGHT" />
-    </CurvedBottomBar.Navigator>
+    <Provider>
+      <CurvedBottomBar.Navigator
+        type="UP"
+        style={[styles.bottomBar, {display: isHidden ? 'none' : 'flex'}]}
+        shadowStyle={styles.shawdow}
+        height={55}
+        circleWidth={50}
+        bgColor={GlobalStyles.colors.primary}
+        initialRouteName="Albums"
+        borderTopLeftRight
+        renderCircle={renderCircle}
+        tabBar={renderTabBar}
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <CurvedBottomBar.Screen
+          name="AlbumsStack"
+          position="LEFT"
+          component={AlbumsStackNavigator}
+        />
+        <CurvedBottomBar.Screen
+          name="Search"
+          component={Search}
+          position="LEFT"
+          // options={}
+        />
+        <CurvedBottomBar.Screen name="Map" component={Map} position="RIGHT" />
+        <CurvedBottomBar.Screen name="Sync" component={Sync} position="RIGHT" />
+      </CurvedBottomBar.Navigator>
+    </Provider>
   );
 };
 export default HomeTabsNavigator;
