@@ -23,7 +23,7 @@ const HomeTabsNavigator = () => {
           title: 'Albums',
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            console.log('RouteName', routeName);
+            // console.log('RouteName', routeName);
             if (routeName === 'Album' || routeName === 'PhotoStack') {
               return {display: 'none'};
             }

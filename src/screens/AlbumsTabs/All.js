@@ -4,6 +4,7 @@ import {
   getImagesInGroups,
   getAlbums,
   getAlbumCover,
+  getImages,
 } from '../../utils/CameraRoll';
 import FastImage from 'react-native-fast-image';
 
@@ -14,15 +15,20 @@ const All = ({navigation, route}) => {
   const [albumCovers, setAlbumCovers] = useState([]);
 
   useLayoutEffect(() => {
-    handleGetAlbums();
+    const handleImages = async () => {
+      const res = await handleGetAlbums();
+      console.log('res', res);
+    };
+    handleImages();
   }, []);
-  useLayoutEffect(() => {
-    if (albums.length > 0) {
-      handleAlbumCovers();
-    }
-    // console.log('Albums', albums);
-    // console.log(albums.length);
-  }, [albums]);
+  // useLayoutEffect(() => {
+  // console.log('aBCS', albums);
+  // if (albums != null) {
+  // handleAlbumCovers();
+  // }
+  // console.log('Albums', albums);
+  // console.log(albums.length);
+  // }, [albums]);
 
   const handleAlbumCovers = async () => {
     const getCover = async item => {
@@ -67,15 +73,15 @@ const All = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      {albumCovers.length > 0 && albums.length > 0 && (
-        <FlatList
-          data={albums}
-          keyExtractor={(item, index) => index}
-          renderItem={renderItem}
-          numColumns={3}
-          columnWrapperStyle={{justifyContent: 'space-between'}}
-        />
-      )}
+      {/* {albumCovers.length > 0 && albums.length > 0 && ( */}
+      <FlatList
+        data={albums}
+        keyExtractor={(item, index) => index}
+        renderItem={renderItem}
+        numColumns={3}
+        columnWrapperStyle={{justifyContent: 'space-between'}}
+      />
+      {/* )} */}
     </View>
   );
 };

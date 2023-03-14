@@ -10,6 +10,9 @@ const Album = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     handleGetAlbumPhotos();
+    navigation.setOptions({
+      title: album.title,
+    });
   }, []);
   const handleGetAlbumPhotos = async () => {
     const results = await getAlbumImages(album.title);
