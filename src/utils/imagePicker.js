@@ -121,7 +121,7 @@ export const chooseFile = type => {
       return;
     }
     //   console.log('Response again.. = ', response);
-    //   console.log('uri -> ', response.assets[0].uri);
+    console.log('uri -> ', response.assets[0].uri);
     //   console.log('width -> ', response.assets[0].width);
     //   console.log('height -> ', response.assets[0].height);
     //   console.log('fileSize -> ', response.assets[0].fileSize);
