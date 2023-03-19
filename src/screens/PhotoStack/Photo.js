@@ -16,19 +16,6 @@ const Photo = ({navigation, route}) => {
       title: headerTitle,
     });
   }, []);
-  // console.log('Photo', photo);
-  const handleViewMetaData = () => {
-    // Exif.getExif(photo.image.uri)
-    // .then(msg => console.warn('OK: ' + JSON.stringify(msg)))
-    // .catch(msg => console.warn('ERROR: ' + msg));
-    const path = photo.image.uri;
-    console.log('LOG', path);
-    ///data/user/0/
-    MediaMeta.get(path)
-      .then(metadata => console.log('meta', metadata))
-      .catch(err => console.error('err', err));
-  };
-  handleViewMetaData();
   return (
     <View style={styles.container}>
       <FastImage
