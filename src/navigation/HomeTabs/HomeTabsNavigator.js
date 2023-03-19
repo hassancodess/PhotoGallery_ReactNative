@@ -10,12 +10,36 @@ import Search from '../../screens/HomeTabs/Search';
 import Camera from '../../screens/HomeTabs/Camera';
 // Navigator
 const {Navigator, Screen} = createBottomTabNavigator();
+// Icons
+import Icon from 'react-native-vector-icons/FontAwesome';
+import GlobalStyles from '../../utils/GlobalStyles';
+
+const icons = {
+  AlbumsStack: 'home',
+  Search: 'search',
+  Camera: 'camera',
+  Map: 'map-marker',
+  Settings: 'cog',
+};
 
 const HomeTabsNavigator = () => {
   return (
     <Navigator
       initialRouteName="AlbumsStack"
-      screenOptions={{headerShown: false}}>
+      screenOptions={({route}) => ({
+        headerShown: false,
+        tabBarIcon: ({color, size}) => {
+          return <Icon name={icons[route.name]} size={size} color={color} />;
+        },
+        // tabBarStyle: {backgroundColor: GlobalStyles.colors.primary},
+        tabBarActiveTintColor: GlobalStyles.colors.white,
+        tabBarActiveBackgroundColor: GlobalStyles.colors.primaryActive,
+        tabBarStyle: {
+          backgroundColor: 'red',
+        },
+        tabBarInactiveBackgroundColor: GlobalStyles.colors.primary,
+        tabBarInactiveTintColor: GlobalStyles.colors.screen,
+      })}>
       <Screen
         name="AlbumsStack"
         component={AlbumsStackNavigator}

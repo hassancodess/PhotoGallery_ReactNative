@@ -1,14 +1,16 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {View} from 'react-native';
+import React, {useEffect} from 'react';
+import {captureImage} from '../../utils/imagePicker';
+import {useIsFocused} from '@react-navigation/native';
 
-const Camera = () => {
-  return (
-    <View>
-      <Text>Camera</Text>
-    </View>
-  );
+const Camera = ({navigation}) => {
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    captureImage('photo');
+    navigation.navigate('AlbumsStack');
+  }, [isFocused]);
+  return <View></View>;
 };
 
 export default Camera;
-
-const styles = StyleSheet.create({});

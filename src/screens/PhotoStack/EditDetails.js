@@ -1,10 +1,37 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, FlatList} from 'react-native';
-import {TextInput, Chip} from 'react-native-paper';
+import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
+import {
+  Modal,
+  Portal,
+  TextInput,
+  Chip,
+  Button,
+  Menu,
+  Divider,
+} from 'react-native-paper';
+import GlobalStyles from '../../utils/GlobalStyles';
 
 const EditDetails = () => {
-  const [person, setPerson] = useState('Amna');
-  const [people, setPeople] = useState(['Alesha', 'Hassan', 'Amna']);
+  const [person, setPerson] = useState();
+  const [people, setPeople] = useState([
+    {id: 1, name: 'Alesha'},
+    {id: 2, name: 'Hassan'},
+    {id: 3, name: 'Amna'},
+  ]);
+  const [visible, setVisible] = useState(null);
+  const openMenu = () => setVisible(null);
+  const closeMenu = () => setVisible(null);
+  // const showModal = () => setVisible(true);
+  // const hideModal = () => setVisible(false);
+  // const containerStyle = {backgroundColor: 'white', padding: 20, margin: 60};
+
+  const handleAddPerson = () => {
+    setPeople([
+      ...people,
+      {id: Math.floor(Math.random() * 100) + 1, name: person},
+    ]);
+    setPerson('');
+  };
   return (
     <View style={styles.container}>
       <View style={styles.flexContainer}>
@@ -15,44 +42,26 @@ const EditDetails = () => {
             value={person}
             onChangeText={text => setPerson(text)}
             style={styles.input}
+            onSubmitEditing={handleAddPerson}
+            placeholder="type something..."
           />
-          {/* <View style={styles.chipContainer}> */}
-          <FlatList
-            data={people}
-            // style={styles.chipContainer}
-            columnWrapperStyle={{justifyContent: 'space-between'}}
-            keyExtractor={(item, index) => index}
-            numColumns={3}
-            renderItem={({item}) => (
-              <Chip
-                // style={{flexGrow: 0}}
-                onPress={() => console.log('Pressed')}
-                mode="flat">
-                {item}
-              </Chip>
-            )}
-          />
-          {/* <Chip
-              icon="information"
-              style={{flexGrow: 0}}
-              onPress={() => console.log('Pressed')}
-              mode="flat">
-              Example Chip
-            </Chip>
-            <Chip
-              icon="information"
-              style={{flexGrow: 0}}
-              onPress={() => console.log('Pressed')}
-              mode="flat">
-              Example Chip
-            </Chip>
-            <Chip
-              icon="information"
-              style={{flexGrow: 0}}
-              onPress={() => console.log('Pressed')}
-              mode="flat">
-              Example Chip
-            </Chip> */}
+          <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 10}}>
+            {people.map((item, index) => (
+              <Menu
+                key={index}
+                visible={visible == item.id}
+                onDismiss={closeMenu}
+                anchor={
+                  <Chip mode="flat" onPress={() => setVisible(item.id)}>
+                    {item.name}
+                  </Chip>
+                }>
+                <Menu.Item onPress={() => {}} title="Edit" />
+                <Divider />
+                <Menu.Item onPress={() => {}} title="Delete" />
+              </Menu>
+            ))}
+          </View>
           {/* </View> */}
         </View>
         {/* Row Item */}
