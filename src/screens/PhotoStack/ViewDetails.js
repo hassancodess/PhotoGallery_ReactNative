@@ -9,7 +9,6 @@ const ViewDetails = ({navigation, route}) => {
   const dateTaken = new Date(dateTakenSeconds * 1000).toLocaleString();
   console.log('Modified Date', dateModified);
   // console.log('TimeStamp', dateTaken);
-
   // console.log('Photo', photo);
   return (
     <View style={styles.container}>
@@ -55,6 +54,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'black',
   },
   detailsText: {
     fontSize: 16,
