@@ -2,6 +2,7 @@ import React, {useLayoutEffect, useState} from 'react';
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import MediaMeta from 'react-native-media-meta';
+import Exif from 'react-native-exif';
 
 const Photo = ({navigation, route}) => {
   const {photo} = route.params;
@@ -17,7 +18,13 @@ const Photo = ({navigation, route}) => {
   }, []);
   // console.log('Photo', photo);
   const handleViewMetaData = () => {
-    MediaMeta.get(photo.image.uri)
+    // Exif.getExif(photo.image.uri)
+    // .then(msg => console.warn('OK: ' + JSON.stringify(msg)))
+    // .catch(msg => console.warn('ERROR: ' + msg));
+    const path = photo.image.uri;
+    console.log('LOG', path);
+    ///data/user/0/
+    MediaMeta.get(path)
       .then(metadata => console.log('meta', metadata))
       .catch(err => console.error('err', err));
   };

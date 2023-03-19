@@ -97,6 +97,6 @@ export default HomeTabsNavigator;
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 75,
+    height: 70,
   },
 });
