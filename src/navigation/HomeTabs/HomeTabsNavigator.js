@@ -1,4 +1,5 @@
 import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 // Navigation
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -15,7 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyles from '../../utils/GlobalStyles';
 
 const icons = {
-  AlbumsStack: 'home',
+  AlbumsStack: 'photo',
   Search: 'search',
   Camera: 'camera',
   Map: 'map-marker',
@@ -28,15 +29,21 @@ const HomeTabsNavigator = () => {
       initialRouteName="AlbumsStack"
       screenOptions={({route}) => ({
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarIcon: ({color, size}) => {
-          return <Icon name={icons[route.name]} size={size} color={color} />;
+          return (
+            <View
+              style={{justifyContent: 'center', alignItems: 'center', gap: 6}}>
+              <Icon name={icons[route.name]} size={size} color={color} />
+              <Text style={{color: GlobalStyles.colors.white, fontSize: 12}}>
+                {route.name === 'AlbumsStack' ? 'Albums' : route.name}
+              </Text>
+            </View>
+          );
         },
-        // tabBarStyle: {backgroundColor: GlobalStyles.colors.primary},
         tabBarActiveTintColor: GlobalStyles.colors.white,
         tabBarActiveBackgroundColor: GlobalStyles.colors.primaryActive,
-        tabBarStyle: {
-          backgroundColor: 'red',
-        },
+
         tabBarInactiveBackgroundColor: GlobalStyles.colors.primary,
         tabBarInactiveTintColor: GlobalStyles.colors.screen,
       })}>
@@ -47,20 +54,49 @@ const HomeTabsNavigator = () => {
           title: 'Albums',
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-            // console.log('RouteName', routeName);
             if (routeName === 'Album' || routeName === 'PhotoStack') {
               return {display: 'none'};
             }
-            return;
+            return styles.tabBar;
           })(route),
         })}
       />
-      <Screen name="Search" component={Search} />
-      <Screen name="Camera" component={Camera} />
-      <Screen name="Map" component={Map} />
-      <Screen name="Settings" component={Settings} />
+      <Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarStyle: styles.tabBar,
+        }}
+      />
+      <Screen
+        name="Camera"
+        component={Camera}
+        options={{
+          tabBarStyle: styles.tabBar,
+        }}
+      />
+      <Screen
+        name="Map"
+        component={Map}
+        options={{
+          tabBarStyle: styles.tabBar,
+        }}
+      />
+      <Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarStyle: styles.tabBar,
+        }}
+      />
     </Navigator>
   );
 };
 
 export default HomeTabsNavigator;
+
+const styles = StyleSheet.create({
+  tabBar: {
+    height: 75,
+  },
+});
