@@ -23,7 +23,7 @@ export const getImages = async () => {
   }
 
   const p = await CameraRoll.getPhotos({
-    first: 10,
+    first: 30,
     groupTypes: 'All',
     assetType: 'Photos',
   });
