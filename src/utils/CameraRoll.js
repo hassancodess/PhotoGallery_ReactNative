@@ -16,20 +16,21 @@ async function hasAndroidPermission() {
   return status === 'granted';
 }
 
-export const getImages = async () => {
+export const getImages = async (value = 30) => {
   if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
     console.log('returned');
     return;
   }
 
   const p = await CameraRoll.getPhotos({
-    first: 30,
-    groupTypes: 'All',
+    first: value,
+    // groupTypes: 'All',
+    groupName: 'Pictures',
     assetType: 'Photos',
   });
-  console.log('await photos');
+  // console.log('await photos');
   const photos = p.edges.map(x => x.node);
-  console.log('photos', photos);
+  // console.log('photos', photos);
   return photos;
 };
 

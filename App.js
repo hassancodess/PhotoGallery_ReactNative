@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useLayoutEffect} from 'react';
 // Navigation
 import MainStackNavigator from './src/navigation/MainStack/MainStackNavigator';
 // Database
@@ -13,7 +13,10 @@ import {
   openDBConnection,
   deleteTables,
   fetchPhotos,
+  fetchAlbums,
+  addAlbum,
 } from './src/database/PhotoDB';
+import {getImages} from './src/utils/CameraRoll';
 
 const InitialSetup = async () => {
   await openDBConnection();
@@ -35,9 +38,26 @@ const getPhotos = async () => {
   const res = await fetchPhotos();
   console.log('Res', res);
 };
+const getAlbums = async () => {
+  await openDBConnection();
+  const res = await fetchAlbums();
+  // console.log('Res', res);
+};
+const createAlbum = async () => {
+  await openDBConnection();
+  const albums = await fetchAlbums();
+  const image = await getImages(1);
+  if (albums.length < 1) {
+    addAlbum('Others', image[0].image.uri);
+  } else {
+    console.log('Others Album Already Created');
+  }
+};
 const App = () => {
-  useEffect(() => {
-    InitialSetup();
+  useLayoutEffect(() => {
+    // InitialSetup();
+    // createAlbum();
+    // getAlbums();
     // getPhotos();
     // clearDatabase();
   }, []);

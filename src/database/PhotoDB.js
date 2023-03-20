@@ -14,7 +14,8 @@ export const createAlbumTable = async () => {
         title TEXT NOT NULL, 
         cover_photo TEXT);`;
     await db.executeSql(query);
-    ToastAndroid.show('Album Table Created Successfully', ToastAndroid.SHORT);
+    console.log('Album Table Created Successfully');
+    // ToastAndroid.show('Album Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Album Table Creation Unsuccessful');
   }
@@ -31,7 +32,8 @@ export const createPhotoTable = async () => {
           date_taken TEXT NOT NULL, 
           last_modified_date TEXT NOT NULL);`;
     await db.executeSql(query);
-    ToastAndroid.show('Photo Table Created Successfully', ToastAndroid.SHORT);
+    console.log('Photo Table Created Successfully');
+    // ToastAndroid.show('Photo Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Photo Table Creation Unsuccessful');
   }
@@ -43,7 +45,8 @@ export const createPersonTable = async () => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL);`;
     await db.executeSql(query);
-    ToastAndroid.show('Person Table Created Successfully', ToastAndroid.SHORT);
+    console.log('Person Table Created Successfully');
+    // ToastAndroid.show('Person Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Person Table Creation Unsuccessful');
   }
@@ -55,7 +58,8 @@ export const createEventTable = async () => {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL);`;
     await db.executeSql(query);
-    ToastAndroid.show('Event Table Created Successfully', ToastAndroid.SHORT);
+    console.log('Event Table Created Successfully');
+    // ToastAndroid.show('Event Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Event Table Creation Unsuccessful');
   }
@@ -71,10 +75,11 @@ export const createAlbumPhotoTable = async () => {
       )`;
 
     await db.executeSql(query);
-    ToastAndroid.show(
-      'AlbumPhoto Table Created Successfully',
-      ToastAndroid.SHORT,
-    );
+    console.log('AlbumPhoto Table Created Successfully');
+    // ToastAndroid.show(
+    //   'AlbumPhoto Table Created Successfully',
+    //   ToastAndroid.SHORT,
+    // );
   } catch (error) {
     console.log('AlbumPhoto Table Creation Unsuccessful');
   }
@@ -89,10 +94,11 @@ export const createPhotoPersonTable = async () => {
       FOREIGN KEY (person_id) REFERENCES Person(id)
       )`;
     await db.executeSql(query);
-    ToastAndroid.show(
-      'PhotoPerson Table Created Successfully',
-      ToastAndroid.SHORT,
-    );
+    console.log('PhotoPerson Table Created Successfully');
+    // ToastAndroid.show(
+    //   'PhotoPerson Table Created Successfully',
+    //   ToastAndroid.SHORT,
+    // );
   } catch (error) {
     console.log('PhotoPerson Table Creation Unsuccessful');
   }
@@ -106,10 +112,11 @@ export const createPhotoEventTable = async () => {
       FOREIGN KEY (event_id) REFERENCES Event(id)
       )`;
     await db.executeSql(query);
-    ToastAndroid.show(
-      'PhotoEvent Table Created Successfully',
-      ToastAndroid.SHORT,
-    );
+    console.log('PhotoEvent Table Created Successfully');
+    // ToastAndroid.show(
+    //   'PhotoEvent Table Created Successfully',
+    //   ToastAndroid.SHORT,
+    // );
   } catch (error) {
     console.log('PhotoEvent Table Creation Unsuccessful');
   }
@@ -130,12 +137,28 @@ export const fetchPhotos = async () => {
   }
 };
 
+export const fetchAlbums = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM Album`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch Albums');
+  }
+};
+
 export const addPhoto = async photo => {
   try {
     const {title, lat, lng, path, date_taken, last_modified_date} = photo;
     let query = `INSERT INTO Photo(title, lat, lng, path, date_taken, last_modified_date) VALUES('${title}','${lat}','${lng}','${path}','${date_taken}','${last_modified_date}')`;
     await db.executeSql(query);
-    ToastAndroid.show('Photo Added Successfully', ToastAndroid.SHORT);
+    console.log('Photo Added Successfully');
+    // ToastAndroid.show('Photo Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Photo DB');
   }
@@ -145,17 +168,24 @@ export const addPerson = async personName => {
   try {
     let query = `INSERT INTO Person(name) VALUES('${personName}')`;
     await db.executeSql(query);
-    ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
+    console.log('Person Added Successfully');
+    // ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Person DB');
   }
 };
 
-export const addAlbum = async albumName => {
+export const addAlbum = async (albumName, coverPhoto = null) => {
+  let query;
   try {
-    let query = `INSERT INTO Album(title) VALUES('${albumName}')`;
+    if (coverPhoto) {
+      query = `INSERT INTO Album(title, cover_photo) VALUES('${albumName}', '${coverPhoto}')`;
+    } else {
+      query = `INSERT INTO Album(title) VALUES('${albumName}')`;
+    }
     await db.executeSql(query);
-    ToastAndroid.show('Album Added Successfully', ToastAndroid.SHORT);
+    console.log('Album Added Successfully');
+    // ToastAndroid.show('Album Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Album DB');
   }
@@ -164,7 +194,8 @@ export const addPhotoPerson = async (photo_id, person_id) => {
   try {
     let query = `INSERT INTO PhotoPerson(photo_id, person_id) VALUES('${photo_id}', '${person_id}')`;
     await db.executeSql(query);
-    ToastAndroid.show('PhotoPerson Added Successfully', ToastAndroid.SHORT);
+    console.log('PhotoPerson  Added Successfully');
+    // ToastAndroid.show('PhotoPerson Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save PhotoPerson DB', error);
   }
@@ -174,7 +205,8 @@ export const addAlbumPhoto = async (album_id, photo_id) => {
   try {
     let query = `INSERT INTO AlbumPhoto(album_id, photo_id) VALUES('${album_id}', '${photo_id}')`;
     await db.executeSql(query);
-    ToastAndroid.show('AlbumPhoto Added Successfully', ToastAndroid.SHORT);
+    console.log('AlbumPhoto Added Successfully');
+    // ToastAndroid.show('AlbumPhoto Added Successfully', ToastAndroid.SHORT);
   } catch (error) {}
 };
 
@@ -183,8 +215,18 @@ export const getPersonID = async personName => {
     let query = `SELECT * FROM Person WHERE name = '${personName}' LIMIT 1`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
+    console.log('RECORD', record);
     return record;
-    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getPersonID DB', error);
+  }
+};
+export const getPhotoIDByName = async photoName => {
+  try {
+    let query = `SELECT * FROM Photo WHERE title = '${photoName}' LIMIT 1`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
   }
@@ -207,7 +249,8 @@ export const deleteTables = async () => {
     await db.executeSql(query);
     query = `DROP TABLE IF EXISTS PhotoPerson`;
     await db.executeSql(query);
-    ToastAndroid.show('Tables Deleted Successfully', ToastAndroid.SHORT);
+    console.log('Tables Deleted Successfully');
+    // ToastAndroid.show('Tables Deleted Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Deleting Tables');
   }
