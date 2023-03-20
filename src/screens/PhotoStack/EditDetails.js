@@ -3,16 +3,19 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TextInput, Chip, Button} from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
+import {addPerson, addAlbum, addPhotoPerson} from '../../database/PhotoDB';
 
-const EditDetails = () => {
+const EditDetails = ({route}) => {
+  const {photo} = route.params;
+
   const [location, setLocation] = useState();
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
   const [person, setPerson] = useState();
   const [people, setPeople] = useState([
-    {id: 1, name: 'Alesha'},
-    {id: 2, name: 'Hassan'},
-    {id: 3, name: 'Amna'},
+    // {id: 1, name: 'Alesha'},
+    // {id: 2, name: 'Hassan'},
+    // {id: 3, name: 'Amna'},
   ]);
   const [isEventEditing, setIsEventEditing] = useState();
   const [eventID, setEventID] = useState();
@@ -22,12 +25,19 @@ const EditDetails = () => {
     {id: 2, name: `Hassan's Birthday`},
     {id: 3, name: 'NasCon 23'},
   ]);
-  const handleAddPerson = () => {
+
+  const handleAddPerson = async () => {
     if (!isPersonEditing) {
       setPeople([
         ...people,
         {id: Math.floor(Math.random() * 100) + 1, name: person},
       ]);
+      // add to Persons Table
+      // await addPerson(person);
+      // add to Albums
+      // await addAlbum(person);
+      // add to PhotoPerson
+      await addPhotoPerson(1, 1);
     } else {
       const updatedPeople = people.map(item => {
         if (item.id === personID) {
