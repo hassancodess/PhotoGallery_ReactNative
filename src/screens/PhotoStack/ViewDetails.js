@@ -3,21 +3,15 @@ import React from 'react';
 
 const ViewDetails = ({navigation, route}) => {
   const {photo} = route.params;
-  const modifiedSeconds = photo.modified;
-  const dateModified = new Date(modifiedSeconds * 1000).toLocaleString();
-  const dateTakenSeconds = photo.timestamp;
-  const dateTaken = new Date(dateTakenSeconds * 1000).toLocaleString();
-  console.log('Modified Date', dateModified);
-  // console.log('TimeStamp', dateTaken);
+  const dateModified = photo.last_modified_date;
+  const dateTaken = photo.date_taken;
   // console.log('Photo', photo);
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.text}>
           Title:{' '}
-          <Text style={styles.detailsText}>
-            {photo.image.uri.split('/').pop()}
-          </Text>
+          <Text style={styles.detailsText}>{photo.path.split('/').pop()}</Text>
         </Text>
         <Text style={styles.text}>
           Persons: <Text style={styles.detailsText}>Amna, Hassan</Text>
