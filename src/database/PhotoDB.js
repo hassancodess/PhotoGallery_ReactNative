@@ -151,10 +151,83 @@ export const fetchAlbums = async () => {
     console.log('ERROR: Fetch Albums');
   }
 };
+export const fetchPersons = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM Person`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch Persons');
+  }
+};
+
+export const fetchEvents = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM Event`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch Events');
+  }
+};
+
+export const fetchAlbumPhoto = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM AlbumPhoto`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch Events');
+  }
+};
+export const fetchPhotoEvent = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM PhotoEvent`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch PhotoEvent');
+  }
+};
+export const fetchPhotoPerson = async () => {
+  try {
+    let resultsSet = [];
+    let query = `SELECT * FROM PhotoPerson`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: Fetch PhotoPerson');
+  }
+};
 
 export const addPhoto = async photo => {
   try {
     const {title, lat, lng, path, date_taken, last_modified_date} = photo;
+    console.log('last_date_modified DB', last_modified_date);
     let query = `INSERT INTO Photo(title, lat, lng, path, date_taken, last_modified_date) VALUES('${title}','${lat}','${lng}','${path}','${date_taken}','${last_modified_date}')`;
     await db.executeSql(query);
     console.log('Photo Added Successfully');
@@ -223,12 +296,29 @@ export const getPersonID = async personName => {
 };
 export const getPhotoIDByName = async photoName => {
   try {
-    let query = `SELECT * FROM Photo WHERE title = '${photoName}' LIMIT 1`;
+    let query = `SELECT id FROM Photo WHERE title = '${photoName}' LIMIT 1`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
     return record;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
+  }
+};
+
+export const getPhotosByAlbumID = async albumID => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Photo 
+    INNER JOIN AlbumPhoto ON AlbumPhoto.photo_id = Photo.id
+    INNER JOIN Album ON Album.id = AlbumPhoto.album_id;`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getPhotosByAlbumID DB', error);
   }
 };
 
