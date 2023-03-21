@@ -3,19 +3,22 @@ import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import {getAlbumImages} from '../../utils/CameraRoll';
 import FastImage from 'react-native-fast-image';
 import GlobalStyles from '../../utils/GlobalStyles';
+import {getPhotosByAlbumID} from '../../database/PhotoDB';
 
 const Album = ({navigation, route}) => {
   const {album} = route.params;
+  // console.log('ALBUM ROUTE Params', album);
   const [photos, setPhotos] = useState([]);
 
   useLayoutEffect(() => {
-    handleGetAlbumPhotos();
+    // handleGetAlbumPhotos();
     navigation.setOptions({
       title: album.title,
     });
+    handleGetAlbumPhotos();
   }, []);
   const handleGetAlbumPhotos = async () => {
-    const results = await getAlbumImages(album.title);
+    const results = await getPhotosByAlbumID(album.id);
     setPhotos(results);
   };
   const renderItem = ({item, index}) => {
@@ -33,7 +36,7 @@ const Album = ({navigation, route}) => {
           <FastImage
             style={styles.photoCover}
             source={{
-              uri: item.image.uri,
+              uri: item.path,
               priority: FastImage.priority.normal,
             }}
             resizeMode={FastImage.resizeMode.cover}
