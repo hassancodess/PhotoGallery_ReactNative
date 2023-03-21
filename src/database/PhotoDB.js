@@ -248,6 +248,19 @@ export const addPerson = async personName => {
   }
 };
 
+export const updatePerson = async person => {
+  try {
+    let query = `UPDATE Person
+    SET name = ${person.name}
+    WHERE id = ${person.id}`;
+    await db.executeSql(query);
+    console.log('Person Updated Successfully');
+    // ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
+  } catch (error) {
+    console.log('ERROR: Save Person DB');
+  }
+};
+
 export const addAlbum = async (albumName, coverPhoto = null) => {
   let query;
   try {
@@ -288,8 +301,8 @@ export const getPersonID = async personName => {
     let query = `SELECT * FROM Person WHERE name = '${personName}' LIMIT 1`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
-    console.log('RECORD', record);
-    return record;
+    // console.log('RECORD', record.id);
+    return record.id;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
   }
