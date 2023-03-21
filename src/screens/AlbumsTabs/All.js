@@ -24,9 +24,15 @@ import {
   createPhotoPersonTable,
   createPhotoEventTable,
   deleteTables,
+  fetchEvents,
+  fetchAlbumPhoto,
+  fetchPersons,
+  fetchPhotoEvent,
+  fetchPhotoPerson,
 } from '../../database/PhotoDB';
 
 import GlobalStyles from '../../utils/GlobalStyles';
+import {check} from 'react-native-permissions';
 
 const createTables = async () => {
   await openDBConnection();
@@ -66,30 +72,45 @@ const createAlbum = async () => {
 
 const All = ({navigation, route}) => {
   const [albums, setAlbums] = useState([]);
-  const [albumCovers, setAlbumCovers] = useState([]);
-  const [photos, setPhotos] = useState([]);
+
+  const checkData = async () => {
+    await openDBConnection();
+    const Falbums = await fetchAlbums();
+    console.log('Albums', Falbums);
+    const photos = await fetchPhotos();
+    console.log('Photos', photos);
+    const persons = await fetchPersons();
+    console.log('Persons', persons);
+    const events = await fetchPersons();
+    console.log('Events', events);
+    const AlbumPhoto = await fetchAlbumPhoto();
+    console.log('AlbumPhoto', AlbumPhoto);
+    const PhotoPerson = await fetchPhotoPerson();
+    console.log('PhotoPerson', PhotoPerson);
+    const PhotoEvent = await fetchPhotoEvent();
+    console.log('PhotoEvent', PhotoEvent);
+  };
   const InitialSetup = async () => {
-    await createTables();
-    await createAlbum();
+    // checkData();
+    // await createTables();
+    // await createAlbum();
     await handleImages();
     // await clearDatabase();
   };
 
   useEffect(() => {
     InitialSetup();
+    // handleImages();
   }, []);
-  const getAllAlbums = async () => {
-    const results_albums = await fetchAlbums();
-  };
+
   const handleImages = async () => {
     try {
       await openDBConnection();
       const alb = await fetchPhotos();
-      console.log('alb', alb.length);
       if (alb.length < 1) {
         const res = await getImages();
-        setPhotos(res);
         res.forEach(async item => {
+          console.log('ALL', item);
           const photoName = item.image.uri.split('/').pop();
           const details = {
             title: photoName,
@@ -101,44 +122,26 @@ const All = ({navigation, route}) => {
           };
           await addPhoto(details);
           const photoID = await getPhotoIDByName(photoName);
+          // console.log('Photo ID', photoID.id);
           const albumID = 1;
-          await addAlbumPhoto(albumID, photoID);
+          await addAlbumPhoto(albumID, photoID.id);
         });
       } else {
         const alb = await fetchAlbums();
         setAlbums(alb);
-        console.log('here');
-        // return;
       }
     } catch (error) {
       console.log('err', error);
     }
   };
-  // const handleAlbumCovers = async () => {
-  //   const getCover = async item => {
-  //     // console.log('cover item', item);
-  //     const res = await getAlbumCover(item.title);
-  //     return res;
-  //   };
-  //   const getCovers = albums.map(getCover);
-  //   const results = await Promise.all(getCovers);
-  //   // console.log(results.length);
-  //   setAlbumCovers(results);
-  // };
-  // const handleGetAlbums = async () => {
-  //   const response = await getAlbums();
-  //   setAlbums(response);
-  // };
 
   const renderItem = ({item, index}) => {
     console.log('ITEM', item);
-    // console.log('URI', albumCovers[index].uri);
     return (
       <Pressable
         onPress={() =>
-          navigation.navigate('PhotoStack', {
-            screen: 'Photo',
-            params: {photo: item},
+          navigation.navigate('Album', {
+            album: item,
           })
         }>
         <View style={styles.albumContainer}>
@@ -158,7 +161,6 @@ const All = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      {/* {albumCovers.length > 0 && albums.length > 0 && ( */}
       <FlatList
         data={albums}
         keyExtractor={(item, index) => index}
@@ -166,7 +168,6 @@ const All = ({navigation, route}) => {
         numColumns={3}
         columnWrapperStyle={{justifyContent: 'space-between'}}
       />
-      {/* )}  */}
     </View>
   );
 };
