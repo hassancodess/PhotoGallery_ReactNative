@@ -27,7 +27,7 @@ const EditDetails = ({route}) => {
     if (!isPersonEditing) {
       setPeople([
         ...people,
-        {id: Math.floor(Math.random() * 100) + 1, name: person},
+        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: person},
       ]);
     } else {
       const updatedPeople = people.map(item => {
