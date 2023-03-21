@@ -1,9 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TextInput, Chip, Button} from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
-import {addPerson, addAlbum, addPhotoPerson} from '../../database/PhotoDB';
+import {
+  addPerson,
+  addAlbum,
+  addPhotoPerson,
+  getPersonID,
+} from '../../database/PhotoDB';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
@@ -12,19 +17,11 @@ const EditDetails = ({route}) => {
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
   const [person, setPerson] = useState();
-  const [people, setPeople] = useState([
-    // {id: 1, name: 'Alesha'},
-    // {id: 2, name: 'Hassan'},
-    // {id: 3, name: 'Amna'},
-  ]);
+  const [people, setPeople] = useState([]);
   const [isEventEditing, setIsEventEditing] = useState();
   const [eventID, setEventID] = useState();
   const [event, setEvent] = useState();
-  const [events, setEvents] = useState([
-    {id: 1, name: 'Spring Gala 23'},
-    {id: 2, name: `Hassan's Birthday`},
-    {id: 3, name: 'NasCon 23'},
-  ]);
+  const [events, setEvents] = useState([]);
 
   const handleAddPerson = async () => {
     if (!isPersonEditing) {
@@ -32,12 +29,6 @@ const EditDetails = ({route}) => {
         ...people,
         {id: Math.floor(Math.random() * 100) + 1, name: person},
       ]);
-      // add to Persons Table
-      // await addPerson(person);
-      // add to Albums
-      // await addAlbum(person);
-      // add to PhotoPerson
-      await addPhotoPerson(1, 1);
     } else {
       const updatedPeople = people.map(item => {
         if (item.id === personID) {
@@ -79,6 +70,24 @@ const EditDetails = ({route}) => {
     setIsEventEditing(false);
   };
 
+  const handleSave = async () => {
+    people.forEach(async p => {
+      if (p.id === null) {
+        // Person Add
+        await addPerson(p.name);
+        // Album Add
+        await addAlbum(person.name);
+        // PhotoPerson Add
+        // get personID
+        const pID = await getPersonID(p.name);
+        await addPhotoPerson(photo.photo_id, pID);
+        // update State with People from DB
+      } else {
+        await updatePerson(p);
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.flexContainer}>
@@ -111,7 +120,6 @@ const EditDetails = ({route}) => {
             value={event}
             onChangeText={text => setEvent(text)}
             style={styles.input}
-            onSubmitEditing={handleAddEvent}
             placeholder="Type an event"
           />
           <ChipsContainer
@@ -136,12 +144,16 @@ const EditDetails = ({route}) => {
             placeholder="Enter a location"
             right={<TextInput.Icon icon="map-marker-radius" />}
           />
-          <View style={{flexDirection: 'row'}}>
-            <Chip mode="flat">{location}</Chip>
-          </View>
+          {location && (
+            <View style={{flexDirection: 'row'}}>
+              <Chip mode="flat">{location}</Chip>
+            </View>
+          )}
         </View>
         {/* Save Button */}
-        <Button mode="contained">Save</Button>
+        <Button mode="contained" onPress={handleSave}>
+          Save
+        </Button>
       </View>
     </View>
   );
