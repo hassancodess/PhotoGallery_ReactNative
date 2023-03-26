@@ -91,7 +91,7 @@ const All = ({navigation, route}) => {
     console.log('PhotoEvent', PhotoEvent);
   };
   const InitialSetup = async () => {
-    // checkData();
+    // await checkData();
     // await createTables();
     // await createAlbum();
     await handleImages();
@@ -100,7 +100,6 @@ const All = ({navigation, route}) => {
 
   useEffect(() => {
     InitialSetup();
-    // handleImages();
   }, []);
 
   const handleImages = async () => {
@@ -110,7 +109,6 @@ const All = ({navigation, route}) => {
       if (alb.length < 1) {
         const res = await getImages();
         res.forEach(async item => {
-          console.log('ALL', item);
           const photoName = item.image.uri.split('/').pop();
           const details = {
             title: photoName,
@@ -136,7 +134,6 @@ const All = ({navigation, route}) => {
   };
 
   const renderItem = ({item, index}) => {
-    console.log('ITEM', item);
     return (
       <Pressable
         onPress={() =>
