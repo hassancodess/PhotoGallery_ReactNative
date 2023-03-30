@@ -45,7 +45,7 @@ const EditDetails = ({route}) => {
     if (!isEventEditing) {
       setEvents([
         ...events,
-        {id: Math.floor(Math.random() * 100) + 1, name: event},
+        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: event},
       ]);
     } else {
       const updatedEvents = events.map(item => {
@@ -72,19 +72,22 @@ const EditDetails = ({route}) => {
 
   const handleSave = async () => {
     people.forEach(async p => {
-      if (p.id === null) {
-        // Person Add
-        await addPerson(p.name);
-        // Album Add
-        await addAlbum(person.name);
-        // PhotoPerson Add
-        // get personID
-        const pID = await getPersonID(p.name);
-        await addPhotoPerson(photo.photo_id, pID);
-        // update State with People from DB
-      } else {
-        await updatePerson(p);
-      }
+      const hasID = p.id.includes('uuid');
+      console.log('hasID', hasID);
+
+      // if (p.id === null) {
+      //   // Person Add
+      //   await addPerson(p.name);
+      //   // Album Add
+      //   await addAlbum(person.name);
+      //   // PhotoPerson Add
+      //   // get personID
+      //   const pID = await getPersonID(p.name);
+      //   await addPhotoPerson(photo.photo_id, pID);
+      //   // update State with People from DB
+      // } else {
+      //   await updatePerson(p);
+      // }
     });
   };
 
@@ -119,6 +122,7 @@ const EditDetails = ({route}) => {
           <TextInput
             value={event}
             onChangeText={text => setEvent(text)}
+            onSubmitEditing={handleAddEvent}
             style={styles.input}
             placeholder="Type an event"
           />
