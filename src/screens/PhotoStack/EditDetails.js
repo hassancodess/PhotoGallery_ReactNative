@@ -3,16 +3,10 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TextInput, Chip, Button} from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
-import {
-  addPerson,
-  addAlbum,
-  addPhotoPerson,
-  getPersonID,
-} from '../../database/PhotoDB';
-
+import {addPeople, updatePeople} from '../../database/utils';
 const EditDetails = ({route}) => {
   const {photo} = route.params;
-
+  // console.log('photo', photo);
   const [location, setLocation] = useState();
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
@@ -71,24 +65,35 @@ const EditDetails = ({route}) => {
   };
 
   const handleSave = async () => {
+    // handling new Persons
+    const newPersons = [];
+    const personsToUpdate = [];
     people.forEach(async p => {
       const hasID = p.id.includes('uuid');
-      console.log('hasID', hasID);
-
-      // if (p.id === null) {
-      //   // Person Add
-      //   await addPerson(p.name);
-      //   // Album Add
-      //   await addAlbum(person.name);
-      //   // PhotoPerson Add
-      //   // get personID
-      //   const pID = await getPersonID(p.name);
-      //   await addPhotoPerson(photo.photo_id, pID);
-      //   // update State with People from DB
-      // } else {
-      //   await updatePerson(p);
-      // }
+      if (hasID) {
+        newPersons.push(p);
+      } else {
+        personsToUpdate.push(p);
+      }
     });
+    await addPeople(newPersons, photo);
+    await updatePeople(personsToUpdate);
+
+    // updating old Persons
+
+    // if (p.id === null) {
+    //   // Person Add
+    //   await addPerson(p.name);
+    //   // Album Add
+    //   await addAlbum(person.name);
+    //   // PhotoPerson Add
+    //   // get personID
+    //   const pID = await getPersonID(p.name);
+    //   await addPhotoPerson(photo.photo_id, pID);
+    //   // update State with People from DB
+    // } else {
+    //   await updatePerson(p);
+    // }
   };
 
   return (
@@ -181,6 +186,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     letterSpacing: 0.5,
+    color: GlobalStyles.colors.dark,
   },
   chipContainer: {
     flexDirection: 'row',
