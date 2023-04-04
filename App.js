@@ -18,10 +18,10 @@ const InitialSetup = async () => {
 };
 
 const App = () => {
-  useLayoutEffect(() => {
-    InitialSetup();
-    // clearDatabase();
-  }, []);
+  // useLayoutEffect(() => {
+  //   InitialSetup();
+  //   // clearDatabase();
+  // }, []);
   return (
     <>
       <MainStackNavigator />

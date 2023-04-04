@@ -1,4 +1,6 @@
 import {
+  openDBConnection,
+  deleteTables,
   createAlbumTable,
   createPhotoTable,
   createPersonTable,
@@ -6,11 +8,17 @@ import {
   createAlbumPhotoTable,
   createPhotoPersonTable,
   createPhotoEventTable,
-  openDBConnection,
-  deleteTables,
   fetchPhotos,
   fetchAlbums,
+  fetchAlbumPhoto,
+  fetchPersons,
+  fetchPhotoEvent,
+  fetchPhotoPerson,
+  fetchEvents,
+  getPhotoIDByName,
+  addAlbumPhoto,
   addAlbum,
+  addPhoto,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -23,6 +31,24 @@ export const createTables = async () => {
   await createAlbumPhotoTable();
   await createPhotoPersonTable();
   await createPhotoEventTable();
+};
+
+export const checkData = async () => {
+  await openDBConnection();
+  const Falbums = await fetchAlbums();
+  console.log('Albums', Falbums);
+  const photos = await fetchPhotos();
+  console.log('Photos', photos);
+  const persons = await fetchPersons();
+  console.log('Persons', persons);
+  const events = await fetchEvents();
+  console.log('Events', events);
+  const AlbumPhoto = await fetchAlbumPhoto();
+  console.log('AlbumPhoto', AlbumPhoto);
+  const PhotoPerson = await fetchPhotoPerson();
+  console.log('PhotoPerson', PhotoPerson);
+  const PhotoEvent = await fetchPhotoEvent();
+  console.log('PhotoEvent', PhotoEvent);
 };
 
 export const clearDatabase = async () => {
@@ -51,5 +77,40 @@ export const createAlbum = async () => {
     await addAlbum('Others', image[0].image.uri);
   } else {
     console.log('Others Album Already Created');
+  }
+};
+
+export const handleAlbums = async () => {
+  try {
+    await openDBConnection();
+    const photos = await fetchPhotos();
+    if (photos.length < 1) {
+      const res = await getImages();
+      res.forEach(async item => {
+        const photoName = item.image.uri.split('/').pop();
+        const details = {
+          title: photoName,
+          lat: null,
+          lng: null,
+          path: item.image.uri,
+          date_taken: new Date(item.timestamp * 1000).toLocaleString(),
+          last_date_modified: new Date(item.modified * 1000).toLocaleString(),
+        };
+        await addPhoto(details);
+        const photoID = await getPhotoIDByName(photoName);
+        // console.log('Photo ID', photoID.id);
+        const albumID = 1;
+        await addAlbumPhoto(albumID, photoID.id);
+      });
+      const dbAlbums = await fetchAlbums();
+      // setAlbums(dbAlbums);
+      return dbAlbums;
+    } else {
+      const dbAlbums = await fetchAlbums();
+      // setAlbums(dbAlbums);
+      return dbAlbums;
+    }
+  } catch (error) {
+    console.log('Handle Albums', error);
   }
 };
