@@ -16,7 +16,7 @@ async function hasAndroidPermission() {
   return status === 'granted';
 }
 
-export const getImages = async (value = 30) => {
+export const getImages = async (value = 60) => {
   if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
     console.log('returned');
     return;
