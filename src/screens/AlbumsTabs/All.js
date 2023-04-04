@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
+import {useIsFocused} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import {
   createTables,
@@ -11,6 +12,7 @@ import {
 import GlobalStyles from '../../utils/GlobalStyles';
 
 const All = ({navigation, route}) => {
+  const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
 
   const handleShowAlbums = async () => {
@@ -26,7 +28,7 @@ const All = ({navigation, route}) => {
     InitialSetup();
     // clearDatabase();
     // checkData();
-  }, []);
+  }, [isFocused]);
 
   const renderItem = ({item, index}) => {
     return (
