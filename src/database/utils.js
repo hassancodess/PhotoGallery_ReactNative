@@ -16,9 +16,16 @@ import {
   fetchPhotoPerson,
   fetchEvents,
   getPhotoIDByName,
+  getAllPersons,
   addAlbumPhoto,
   addAlbum,
   addPhoto,
+  addPerson,
+  updatePerson,
+  getPersonID,
+  getPersonNameByID,
+  getAlbumID,
+  addPhotoPerson,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -80,6 +87,7 @@ export const createAlbum = async () => {
   }
 };
 
+// All.js
 export const handleAlbums = async () => {
   try {
     await openDBConnection();
@@ -103,14 +111,79 @@ export const handleAlbums = async () => {
         await addAlbumPhoto(albumID, photoID.id);
       });
       const dbAlbums = await fetchAlbums();
-      // setAlbums(dbAlbums);
       return dbAlbums;
     } else {
       const dbAlbums = await fetchAlbums();
-      // setAlbums(dbAlbums);
       return dbAlbums;
     }
   } catch (error) {
     console.log('Handle Albums', error);
   }
 };
+
+// Photo.js
+
+export const addAlbumOfPerson = async (personName, coverPhoto) => {
+  await addAlbum(personName, coverPhoto);
+};
+export const addToPhotoPersonTable = async (personName, photoID) => {
+  const personID = await getPersonID(personName);
+  console.log('PersonID', personID);
+  await addPhotoPerson(photoID, personID);
+};
+export const addPeople = async (peopleList, photo) => {
+  const persons = await getAllPersons();
+  const res = comparePeopleList(peopleList, persons);
+  res.forEach(async p => {
+    await addPerson(p.name);
+    await addAlbumOfPerson(p.name, photo.path);
+    await addToPhotoPersonTable(p.name, photo.photo_id);
+  });
+};
+export const updateAlbumOfPerson = async person => {
+  // get old name of person by using his ID
+  const personName = await getPersonNameByID(person.id);
+  // get AlbumID
+  const albumID = await getAlbumID(personName);
+  const album = {
+    id: albumID,
+    title: personName,
+  };
+  await updateAlbum(album);
+};
+
+export const updatePeople = async peopleList => {
+  peopleList.forEach(async p => {
+    await updateAlbumOfPerson(p);
+    await updatePerson(p);
+  });
+};
+
+const comparePeopleList = (peopleList, peopleListDB) => {
+  const newPersons = [];
+
+  // loop through first array
+  for (let i = 0; i < peopleList.length; i++) {
+    let matched = false;
+    // loop through second array
+    for (let j = 0; j < peopleListDB.length; j++) {
+      // compare elements
+      if (peopleList[i].name === peopleListDB[j].name) {
+        matched = true;
+        // mark element as matched and break out of loop
+        break;
+      }
+    }
+    // push unmatched element into third array
+    if (!matched) {
+      newPersons.push(peopleList[i]);
+    }
+  }
+
+  return newPersons;
+};
+
+// add them to the person table
+// create a new album with that person name
+// get the person ID
+//   add PhotoID & personID to PhotoPersonTable

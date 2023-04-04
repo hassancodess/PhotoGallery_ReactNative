@@ -242,7 +242,6 @@ export const addPerson = async personName => {
     let query = `INSERT INTO Person(name) VALUES('${personName}')`;
     await db.executeSql(query);
     console.log('Person Added Successfully');
-    // ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Person DB');
   }
@@ -258,6 +257,17 @@ export const updatePerson = async person => {
     // ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Person DB');
+  }
+};
+export const updateAlbum = async album => {
+  try {
+    let query = `UPDATE Album
+    SET title = ${album.title}
+    WHERE id = ${album.id}`;
+    await db.executeSql(query);
+    console.log('Album Updated Successfully');
+  } catch (error) {
+    console.log('ERROR: Update Album DB');
   }
 };
 
@@ -298,13 +308,35 @@ export const addAlbumPhoto = async (album_id, photo_id) => {
 
 export const getPersonID = async personName => {
   try {
-    let query = `SELECT * FROM Person WHERE name = '${personName}' LIMIT 1`;
+    let query = `SELECT * FROM Person WHERE name = '${personName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    console.log('GetPersonID RECORD', record);
+    return record.id;
+  } catch (error) {
+    console.log('ERROR: getPersonID DB', error);
+  }
+};
+export const getAlbumID = async albumName => {
+  try {
+    let query = `SELECT id FROM Album WHERE name = '${albumName}' LIMIT 1`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
     // console.log('RECORD', record.id);
     return record.id;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
+  }
+};
+export const getPersonNameByID = async personID => {
+  try {
+    let query = `SELECT name FROM Person WHERE id = '${personID}' LIMIT 1`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    // console.log('RECORD', record.id);
+    return record.id;
+  } catch (error) {
+    console.log('ERROR: getPersonNameByID DB', error);
   }
 };
 export const getPhotoIDByName = async photoName => {
@@ -332,6 +364,21 @@ export const getPhotosByAlbumID = async albumID => {
     return resultsSet;
   } catch (error) {
     console.log('ERROR: getPhotosByAlbumID DB', error);
+  }
+};
+
+export const getAllPersons = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Person`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAllPersons DB', error);
   }
 };
 
