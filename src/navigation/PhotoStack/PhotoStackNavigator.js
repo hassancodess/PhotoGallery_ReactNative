@@ -58,6 +58,13 @@ const PhotoStackNavigator = ({navigation, route}) => {
           }}
           title="Edit Details"
         />
+        <Menu.Item
+          onPress={() => {
+            // navigation.navigate('EditDetails');
+            closeMenu();
+          }}
+          title="Make it Cover Photo"
+        />
         <Divider />
         <Menu.Item onPress={() => {}} title="Delete" />
       </Menu>
