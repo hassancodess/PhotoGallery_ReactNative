@@ -24,8 +24,8 @@ export const getImages = async (value = 30) => {
 
   const p = await CameraRoll.getPhotos({
     first: value,
-    // groupTypes: 'All',
-    groupName: 'Pictures',
+    groupTypes: 'All',
+    // groupName: 'Recent Photos',
     assetType: 'Photos',
   });
   // console.log('await photos');
