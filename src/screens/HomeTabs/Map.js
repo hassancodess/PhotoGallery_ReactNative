@@ -1,7 +1,9 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useEffect, useState} from 'react';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {Button, ActivityIndicator} from 'react-native-paper';
 import DataTable, {COL_TYPES} from 'react-native-datatable-component';
-import {checkData} from '../../database/utils';
+import {checkData, clearDatabase} from '../../database/utils';
+import {useIsFocused} from '@react-navigation/native';
 
 const CustomDataTable = ({settings}) => {
   return (
@@ -17,6 +19,7 @@ const CustomDataTable = ({settings}) => {
 };
 
 const Map = () => {
+  const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [persons, setPersons] = useState([]);
@@ -24,8 +27,16 @@ const Map = () => {
   const [albumPhoto, setAlbumPhoto] = useState([]);
   const [photoEvent, setPhotoEvent] = useState([]);
   const [photoPerson, setPhotoPerson] = useState([]);
+
+  const handleCleanDatabase = async () => {
+    await clearDatabase();
+    await getData();
+  };
   useLayoutEffect(() => {
-    const getData = async () => {
+    getData();
+  }, [isFocused]);
+  const getData = async () => {
+    try {
       const {
         albums,
         photos,
@@ -42,9 +53,17 @@ const Map = () => {
       setAlbumPhoto(AlbumPhoto);
       setPhotoEvent(PhotoEvent);
       setPhotoPerson(PhotoPerson);
-    };
-    getData();
-  }, []);
+    } catch (error) {
+      setAlbums([]);
+      setPhotos([]);
+      setPersons([]);
+      setEvents([]);
+      setAlbumPhoto([]);
+      setPhotoEvent([]);
+      setPhotoPerson([]);
+      console.log('ERROR', error);
+    }
+  };
 
   const albumSettings = {
     data: albums,
@@ -72,7 +91,7 @@ const Map = () => {
       {name: 'album_id', type: COL_TYPES.INT, width: '20%'},
       {name: 'photo_id', type: COL_TYPES.INT, width: '40%'},
     ],
-    pages: albumPhoto.length / 5,
+    pages: albumPhoto?.length / 5,
   };
   const photoPersonSettings = {
     data: photoPerson,
@@ -104,7 +123,7 @@ const Map = () => {
       {name: 'date_taken', type: COL_TYPES.STRING, width: '15%'},
       {name: 'last_date_modified', type: COL_TYPES.STRING, width: '15%'},
     ],
-    pages: photos.length / 5,
+    pages: photos?.length / 5,
   };
   const eventSettings = {
     data: events,
@@ -128,33 +147,38 @@ const Map = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Albums Table</Text>
-          <CustomDataTable settings={albumSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Persons Table</Text>
-          <CustomDataTable settings={personsSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Photo Person Table</Text>
-          <CustomDataTable settings={photoPersonSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Album Photo Table</Text>
-          <CustomDataTable settings={albumPhotoSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Events Table</Text>
-          <CustomDataTable settings={eventSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Photo Event Table</Text>
-          <CustomDataTable settings={photoEventSettings} />
-        </View>
-        <View style={styles.tableContainer}>
-          <Text style={styles.tableText}>Photos Table</Text>
-          <CustomDataTable settings={photoSettings} />
+        <View>
+          <Button mode="contained" onPress={handleCleanDatabase}>
+            Clear Database
+          </Button>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Albums Table</Text>
+            <CustomDataTable settings={albumSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Persons Table</Text>
+            <CustomDataTable settings={personsSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Photo Person Table</Text>
+            <CustomDataTable settings={photoPersonSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Album Photo Table</Text>
+            <CustomDataTable settings={albumPhotoSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Events Table</Text>
+            <CustomDataTable settings={eventSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Photo Event Table</Text>
+            <CustomDataTable settings={photoEventSettings} />
+          </View>
+          <View style={styles.tableContainer}>
+            <Text style={styles.tableText}>Photos Table</Text>
+            <CustomDataTable settings={photoSettings} />
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -166,11 +190,9 @@ export default Map;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    // paddingBottom: 40,
   },
   tableContainer: {
     marginBottom: 5,
-    // height: 300,
   },
   tableText: {
     fontSize: 18,
