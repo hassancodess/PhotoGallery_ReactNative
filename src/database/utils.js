@@ -57,6 +57,16 @@ export const checkData = async () => {
   console.log('PhotoPerson', PhotoPerson);
   const PhotoEvent = await fetchPhotoEvent();
   console.log('PhotoEvent', PhotoEvent);
+
+  return {
+    albums: Falbums,
+    photos,
+    persons,
+    events,
+    AlbumPhoto,
+    PhotoEvent,
+    PhotoPerson,
+  };
 };
 
 export const clearDatabase = async () => {
