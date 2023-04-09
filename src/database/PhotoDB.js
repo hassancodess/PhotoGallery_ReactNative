@@ -392,3 +392,36 @@ export const deleteTables = async () => {
     console.log('ERROR: Deleting Tables');
   }
 };
+
+export const getDistinctDatesDB = async () => {
+  try {
+    const resultsSet = [];
+    // let query = `SELECT DISTINCT date_taken FROM Photo`;
+    let query = `SELECT DISTINCT substr(date_taken, 1, instr(date_taken, ',') - 1) AS date_taken FROM Photo`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getDistinctDates DB', error);
+  }
+};
+export const getPhotosByDateDB = async date => {
+  try {
+    // console.log('date', date);
+    const resultsSet = [];
+    // let query = `SELECT * FROM Photo WHERE date_taken LIKE ${date}`;
+    let query = `SELECT * FROM Photo WHERE substr(date_taken, 1, instr(date_taken, ',') - 1) LIKE '${date}'`;
+    // WHERE date(strftime('%M/%D/%Y'), date_taken) = ${date}`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getDistinctDates DB', error);
+  }
+};

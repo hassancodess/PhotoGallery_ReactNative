@@ -27,6 +27,8 @@ import {
   getPersonNameByID,
   getAlbumID,
   addPhotoPerson,
+  getDistinctDatesDB,
+  getPhotosByDateDB,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -204,4 +206,17 @@ const comparePeopleList = (peopleList, peopleListDB) => {
   }
 
   return {newPersons, oldPersons};
+};
+
+// Date.js
+
+export const getDistinctDates = async () => {
+  await openDBConnection();
+  const res = await getDistinctDatesDB();
+  return res;
+};
+
+export const getPhotosByDate = async date => {
+  const res = await getPhotosByDateDB(date);
+  return res;
 };
