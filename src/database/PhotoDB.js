@@ -205,11 +205,8 @@ export const fetchPhotoPerson = async () => {
 export const addPhoto = async photo => {
   try {
     const {title, lat, lng, path, date_taken, last_modified_date} = photo;
-    console.log('last_date_modified DB', last_modified_date);
     let query = `INSERT INTO Photo(title, lat, lng, path, date_taken, last_modified_date) VALUES('${title}','${lat}','${lng}','${path}','${date_taken}','${last_modified_date}')`;
     await db.executeSql(query);
-    console.log('Photo Added Successfully');
-    // ToastAndroid.show('Photo Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Photo DB');
   }
@@ -219,7 +216,6 @@ export const addPerson = async personName => {
   try {
     let query = `INSERT INTO Person(name) VALUES('${personName}')`;
     await db.executeSql(query);
-    console.log('Person Added Successfully');
   } catch (error) {
     console.log('ERROR: Save Person DB');
   }
@@ -228,19 +224,18 @@ export const addPerson = async personName => {
 export const updatePerson = async person => {
   try {
     let query = `UPDATE Person
-    SET name = ${person.name}
+    SET name = '${person.name}'
     WHERE id = ${person.id}`;
     await db.executeSql(query);
-    console.log('Person Updated Successfully');
-    // ToastAndroid.show('Person Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Person DB');
   }
 };
 export const updateAlbum = async album => {
   try {
+    console.log('db', album);
     let query = `UPDATE Album
-    SET title = ${album.title}
+    SET title = '${album.title}'
     WHERE id = ${album.id}`;
     await db.executeSql(query);
     console.log('Album Updated Successfully');
@@ -258,8 +253,6 @@ export const addAlbum = async (albumName, coverPhoto = null) => {
       query = `INSERT INTO Album(title) VALUES('${albumName}')`;
     }
     await db.executeSql(query);
-    console.log('Album Added Successfully');
-    // ToastAndroid.show('Album Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save Album DB');
   }
@@ -268,8 +261,6 @@ export const addPhotoPerson = async (photo_id, person_id) => {
   try {
     let query = `INSERT INTO PhotoPerson(photo_id, person_id) VALUES('${photo_id}', '${person_id}')`;
     await db.executeSql(query);
-    console.log('PhotoPerson  Added Successfully');
-    // ToastAndroid.show('PhotoPerson Added Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('ERROR: Save PhotoPerson DB', error);
   }
@@ -279,17 +270,15 @@ export const addAlbumPhoto = async (album_id, photo_id) => {
   try {
     let query = `INSERT INTO AlbumPhoto(album_id, photo_id) VALUES('${album_id}', '${photo_id}')`;
     await db.executeSql(query);
-    console.log('AlbumPhoto Added Successfully');
-    // ToastAndroid.show('AlbumPhoto Added Successfully', ToastAndroid.SHORT);
   } catch (error) {}
 };
 
 export const getPersonID = async personName => {
+  console.log('pName', personName);
   try {
     let query = `SELECT * FROM Person WHERE name = '${personName}'`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
-    console.log('GetPersonID RECORD', record);
     return record.id;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
@@ -297,10 +286,9 @@ export const getPersonID = async personName => {
 };
 export const getAlbumID = async albumName => {
   try {
-    let query = `SELECT id FROM Album WHERE title = '${albumName}' LIMIT 1`;
+    let query = `SELECT id FROM Album WHERE title = '${albumName}'`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
-    // console.log('RECORD', record.id);
     return record.id;
   } catch (error) {
     console.log('ERROR: getAlbumID DB', error);
@@ -308,11 +296,10 @@ export const getAlbumID = async albumName => {
 };
 export const getPersonNameByID = async personID => {
   try {
-    let query = `SELECT name FROM Person WHERE id = '${personID}' LIMIT 1`;
+    let query = `SELECT name FROM Person WHERE id = ${personID}`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
-    // console.log('RECORD', record.id);
-    return record.id;
+    return record.name;
   } catch (error) {
     console.log('ERROR: getPersonNameByID DB', error);
   }
@@ -366,8 +353,7 @@ export const getAllPersonsInPhoto = async photo_id => {
     let query = `SELECT * FROM Person 
     INNER JOIN PhotoPerson 
     ON PhotoPerson.person_id = Person.id 
-    INNER JOIN Photo 
-    ON Photo.id = PhotoPerson.photo_id`;
+    WHERE PhotoPerson.photo_id = ${photo_id}`;
     const res = await db.executeSql(query);
     for (let i = 0; i < res[0].rows.length; ++i) {
       let record = res[0].rows.item(i);

@@ -22,6 +22,7 @@ import {
   addPhoto,
   addPerson,
   updatePerson,
+  updateAlbum,
   getPersonID,
   getPersonNameByID,
   getAlbumID,
@@ -44,19 +45,12 @@ export const createTables = async () => {
 export const checkData = async () => {
   await openDBConnection();
   const Falbums = await fetchAlbums();
-  console.log('Albums', Falbums);
   const photos = await fetchPhotos();
-  console.log('Photos', photos);
   const persons = await fetchPersons();
-  console.log('Persons', persons);
   const events = await fetchEvents();
-  console.log('Events', events);
   const AlbumPhoto = await fetchAlbumPhoto();
-  console.log('AlbumPhoto', AlbumPhoto);
   const PhotoPerson = await fetchPhotoPerson();
-  console.log('PhotoPerson', PhotoPerson);
   const PhotoEvent = await fetchPhotoEvent();
-  console.log('PhotoEvent', PhotoEvent);
 
   return {
     albums: Falbums,
@@ -122,9 +116,11 @@ export const handleAlbums = async () => {
         await addAlbumPhoto(albumID, photoID.id);
       });
       const dbAlbums = await fetchAlbums();
+      console.log('Initial Setup');
       return dbAlbums;
     } else {
       const dbAlbums = await fetchAlbums();
+      console.log('Initial Setup');
       return dbAlbums;
     }
   } catch (error) {
@@ -145,37 +141,47 @@ export const addToPhotoPersonTable = async (personName, photoID) => {
 
 export const addPeople = async (peopleList, photo) => {
   const persons = await getAllPersons();
-  const res = comparePeopleList(peopleList, persons);
-  res.forEach(async p => {
+  const {newPersons, oldPersons} = comparePeopleList(peopleList, persons);
+  newPersons.forEach(async p => {
     await addPerson(p.name);
     await addAlbum(p.name, photo.path);
     await addToPhotoPersonTable(p.name, photo.photo_id);
     const albumID = await getAlbumID(p.name);
     await addAlbumPhoto(albumID, photo.photo_id);
   });
+  oldPersons.forEach(async p => {
+    await addToPhotoPersonTable(p.name, photo.photo_id);
+    const albumID = await getAlbumID(p.name);
+    await addAlbumPhoto(albumID, photo.photo_id);
+  });
 };
+
 export const updateAlbumOfPerson = async person => {
   // get old name of person by using his ID
   const personName = await getPersonNameByID(person.id);
-  // get AlbumID
-  const albumID = await getAlbumID(personName);
-  const album = {
-    id: albumID,
-    title: personName,
-  };
-  await updateAlbum(album);
+  // console.log(person, 'asd');
+  if (personName !== person.name) {
+    // get AlbumID
+    const albumID = await getAlbumID(personName);
+    const album = {
+      id: albumID,
+      title: person.name,
+    };
+    await updateAlbum(album);
+    await updatePerson(person);
+    console.log('Updated Successfully');
+  }
 };
 
 export const updatePeople = async peopleList => {
-  // console.log(peopleList);
   peopleList.forEach(async p => {
     await updateAlbumOfPerson(p);
-    await updatePerson(p);
   });
 };
 
 const comparePeopleList = (peopleList, peopleListDB) => {
   const newPersons = [];
+  const oldPersons = [];
 
   // loop through first array
   for (let i = 0; i < peopleList.length; i++) {
@@ -192,13 +198,10 @@ const comparePeopleList = (peopleList, peopleListDB) => {
     // push unmatched element into third array
     if (!matched) {
       newPersons.push(peopleList[i]);
+    } else {
+      oldPersons.push(peopleList[i]);
     }
   }
 
-  return newPersons;
+  return {newPersons, oldPersons};
 };
-
-// add them to the person table
-// create a new album with that person name
-// get the person ID
-//   add PhotoID & personID to PhotoPersonTable
