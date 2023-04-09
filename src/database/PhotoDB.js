@@ -1,5 +1,4 @@
 import {openDatabase, enablePromise} from 'react-native-sqlite-storage';
-import {ToastAndroid} from 'react-native';
 enablePromise(true);
 let db;
 
@@ -14,8 +13,6 @@ export const createAlbumTable = async () => {
         title TEXT NOT NULL, 
         cover_photo TEXT);`;
     await db.executeSql(query);
-    console.log('Album Table Created Successfully');
-    // ToastAndroid.show('Album Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Album Table Creation Unsuccessful');
   }
@@ -32,8 +29,6 @@ export const createPhotoTable = async () => {
           date_taken TEXT NOT NULL, 
           last_modified_date TEXT NOT NULL);`;
     await db.executeSql(query);
-    console.log('Photo Table Created Successfully');
-    // ToastAndroid.show('Photo Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Photo Table Creation Unsuccessful');
   }
@@ -45,7 +40,7 @@ export const createPersonTable = async () => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL);`;
     await db.executeSql(query);
-    console.log('Person Table Created Successfully');
+    // console.log('Person Table Created Successfully');
     // ToastAndroid.show('Person Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Person Table Creation Unsuccessful');
@@ -58,8 +53,6 @@ export const createEventTable = async () => {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL);`;
     await db.executeSql(query);
-    console.log('Event Table Created Successfully');
-    // ToastAndroid.show('Event Table Created Successfully', ToastAndroid.SHORT);
   } catch (error) {
     console.log('Event Table Creation Unsuccessful');
   }
@@ -75,11 +68,6 @@ export const createAlbumPhotoTable = async () => {
       )`;
 
     await db.executeSql(query);
-    console.log('AlbumPhoto Table Created Successfully');
-    // ToastAndroid.show(
-    //   'AlbumPhoto Table Created Successfully',
-    //   ToastAndroid.SHORT,
-    // );
   } catch (error) {
     console.log('AlbumPhoto Table Creation Unsuccessful');
   }
@@ -94,11 +82,6 @@ export const createPhotoPersonTable = async () => {
       FOREIGN KEY (person_id) REFERENCES Person(id)
       )`;
     await db.executeSql(query);
-    console.log('PhotoPerson Table Created Successfully');
-    // ToastAndroid.show(
-    //   'PhotoPerson Table Created Successfully',
-    //   ToastAndroid.SHORT,
-    // );
   } catch (error) {
     console.log('PhotoPerson Table Creation Unsuccessful');
   }
@@ -112,11 +95,6 @@ export const createPhotoEventTable = async () => {
       FOREIGN KEY (event_id) REFERENCES Event(id)
       )`;
     await db.executeSql(query);
-    console.log('PhotoEvent Table Created Successfully');
-    // ToastAndroid.show(
-    //   'PhotoEvent Table Created Successfully',
-    //   ToastAndroid.SHORT,
-    // );
   } catch (error) {
     console.log('PhotoEvent Table Creation Unsuccessful');
   }
@@ -319,13 +297,13 @@ export const getPersonID = async personName => {
 };
 export const getAlbumID = async albumName => {
   try {
-    let query = `SELECT id FROM Album WHERE name = '${albumName}' LIMIT 1`;
+    let query = `SELECT id FROM Album WHERE title = '${albumName}' LIMIT 1`;
     const res = await db.executeSql(query);
     let record = res[0].rows.item(0);
     // console.log('RECORD', record.id);
     return record.id;
   } catch (error) {
-    console.log('ERROR: getPersonID DB', error);
+    console.log('ERROR: getAlbumID DB', error);
   }
 };
 export const getPersonNameByID = async personID => {
@@ -355,7 +333,7 @@ export const getPhotosByAlbumID = async albumID => {
     const resultsSet = [];
     let query = `SELECT * FROM Photo 
     INNER JOIN AlbumPhoto ON AlbumPhoto.photo_id = Photo.id
-    INNER JOIN Album ON Album.id = AlbumPhoto.album_id;`;
+    WHERE AlbumPhoto.album_id = ${albumID}`;
     const res = await db.executeSql(query);
     for (let i = 0; i < res[0].rows.length; ++i) {
       let record = res[0].rows.item(i);
@@ -375,6 +353,29 @@ export const getAllPersons = async () => {
     for (let i = 0; i < res[0].rows.length; ++i) {
       let record = res[0].rows.item(i);
       resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAllPersons DB', error);
+  }
+};
+
+export const getAllPersonsInPhoto = async photo_id => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Person 
+    INNER JOIN PhotoPerson 
+    ON PhotoPerson.person_id = Person.id 
+    INNER JOIN Photo 
+    ON Photo.id = PhotoPerson.photo_id`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      const obj = {
+        id: record.id,
+        name: record.name,
+      };
+      resultsSet.push(obj);
     }
     return resultsSet;
   } catch (error) {
