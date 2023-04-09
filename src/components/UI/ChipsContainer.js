@@ -47,7 +47,7 @@ const ChipsContainer = ({
 
   return (
     <View style={styles.chipContainer}>
-      {items.map((item, index) => (
+      {items?.map((item, index) => (
         <Menu
           key={index}
           visible={visible == item.id}
