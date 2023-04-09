@@ -18,9 +18,12 @@ const Album = ({navigation, route}) => {
     handleGetAlbumPhotos();
   }, []);
   const handleGetAlbumPhotos = async () => {
-    const results = await getPhotosByAlbumID(album.id);
-    // console.log('RES', results);
-    setPhotos(results);
+    if (!album.photos) {
+      const results = await getPhotosByAlbumID(album.id);
+      // console.log('RES', results);
+      setPhotos(results);
+    }
+    setPhotos(album.photos);
   };
   const renderItem = ({item, index}) => {
     // console.log('ITEM', item.image.uri);
