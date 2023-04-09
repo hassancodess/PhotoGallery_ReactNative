@@ -80,7 +80,6 @@ const EditDetails = ({route}) => {
       const newPersons = [];
       const personsToUpdate = [];
       people.forEach(p => {
-        console.log(p);
         const hasID = p.id.toString().includes('uuid');
         if (hasID) {
           newPersons.push(p);
