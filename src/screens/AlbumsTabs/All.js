@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 15,
-    // backgroundColor: GlobalStyles.colors.primary,
   },
   albumContainer: {
     width: 100,
