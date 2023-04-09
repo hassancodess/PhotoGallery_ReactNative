@@ -19,6 +19,7 @@ const Album = ({navigation, route}) => {
   }, []);
   const handleGetAlbumPhotos = async () => {
     const results = await getPhotosByAlbumID(album.id);
+    // console.log('RES', results);
     setPhotos(results);
   };
   const renderItem = ({item, index}) => {
