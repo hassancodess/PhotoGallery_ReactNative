@@ -2,14 +2,7 @@ import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import {useIsFocused} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
-import {
-  createTables,
-  createAlbum,
-  handleAlbums,
-  clearDatabase,
-  checkData,
-} from '../../database/utils';
-import GlobalStyles from '../../utils/GlobalStyles';
+import {createTables, createAlbum, handleAlbums} from '../../database/utils';
 
 const All = ({navigation, route}) => {
   const isFocused = useIsFocused();
@@ -26,8 +19,6 @@ const All = ({navigation, route}) => {
   };
   useLayoutEffect(() => {
     InitialSetup();
-    // clearDatabase();
-    // checkData();
   }, [isFocused]);
 
   const renderItem = ({item, index}) => {
