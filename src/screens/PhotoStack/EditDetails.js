@@ -4,6 +4,7 @@ import {TextInput, Chip, Button} from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
 import {addPeople, updatePeople} from '../../database/utils';
+import {getAllPersonsInPhoto} from '../../database/PhotoDB';
 const EditDetails = ({route}) => {
   const {photo} = route.params;
   // console.log('photo', photo);
@@ -17,6 +18,10 @@ const EditDetails = ({route}) => {
   const [event, setEvent] = useState();
   const [events, setEvents] = useState([]);
 
+  useEffect(() => {
+    getPersonsInPhoto();
+    // Select * FROM Person INNER JOIN PhotoPerson ON PhotoPerson.person_id = Person.id INNER JOIN Photo ON Photo.id = PhotoPerson.photo_id
+  }, []);
   const handleAddPerson = async () => {
     if (!isPersonEditing) {
       setPeople([
@@ -64,36 +69,32 @@ const EditDetails = ({route}) => {
     setIsEventEditing(false);
   };
 
+  const getPersonsInPhoto = async () => {
+    const res = await getAllPersonsInPhoto(photo.id);
+    setPeople(res);
+  };
+
   const handleSave = async () => {
-    // handling new Persons
-    const newPersons = [];
-    const personsToUpdate = [];
-    people.forEach(async p => {
-      const hasID = p.id.includes('uuid');
-      if (hasID) {
-        newPersons.push(p);
-      } else {
-        personsToUpdate.push(p);
-      }
-    });
-    await addPeople(newPersons, photo);
-    await updatePeople(personsToUpdate);
-
-    // updating old Persons
-
-    // if (p.id === null) {
-    //   // Person Add
-    //   await addPerson(p.name);
-    //   // Album Add
-    //   await addAlbum(person.name);
-    //   // PhotoPerson Add
-    //   // get personID
-    //   const pID = await getPersonID(p.name);
-    //   await addPhotoPerson(photo.photo_id, pID);
-    //   // update State with People from DB
-    // } else {
-    //   await updatePerson(p);
-    // }
+    try {
+      // handling new Persons
+      const newPersons = [];
+      const personsToUpdate = [];
+      people.forEach(p => {
+        console.log(p);
+        const hasID = p.id.toString().includes('uuid');
+        if (hasID) {
+          newPersons.push(p);
+        } else {
+          personsToUpdate.push(p);
+        }
+      });
+      // console.log('persons', newPersons);
+      // console.log('persons to update', personsToUpdate);
+      await addPeople(newPersons, photo);
+      await updatePeople(personsToUpdate);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
