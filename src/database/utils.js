@@ -38,6 +38,7 @@ export const createTables = async () => {
   await createAlbumPhotoTable();
   await createPhotoPersonTable();
   await createPhotoEventTable();
+  console.log('Tables Created Successfully');
 };
 
 export const checkData = async () => {
@@ -128,16 +129,19 @@ export const addAlbumOfPerson = async (personName, coverPhoto) => {
 };
 export const addToPhotoPersonTable = async (personName, photoID) => {
   const personID = await getPersonID(personName);
-  console.log('PersonID', personID);
+  // console.log('PersonID', personID);
   await addPhotoPerson(photoID, personID);
 };
+
 export const addPeople = async (peopleList, photo) => {
   const persons = await getAllPersons();
   const res = comparePeopleList(peopleList, persons);
   res.forEach(async p => {
     await addPerson(p.name);
-    await addAlbumOfPerson(p.name, photo.path);
+    await addAlbum(p.name, photo.path);
     await addToPhotoPersonTable(p.name, photo.photo_id);
+    const albumID = await getAlbumID(p.name);
+    await addAlbumPhoto(albumID, photo.photo_id);
   });
 };
 export const updateAlbumOfPerson = async person => {
@@ -153,6 +157,7 @@ export const updateAlbumOfPerson = async person => {
 };
 
 export const updatePeople = async peopleList => {
+  // console.log(peopleList);
   peopleList.forEach(async p => {
     await updateAlbumOfPerson(p);
     await updatePerson(p);
