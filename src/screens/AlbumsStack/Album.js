@@ -1,14 +1,58 @@
-import React, {useLayoutEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
+import React, {useLayoutEffect, useState, useRef, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  Button,
+} from 'react-native';
 import {getAlbumImages} from '../../utils/CameraRoll';
 import FastImage from 'react-native-fast-image';
 import GlobalStyles from '../../utils/GlobalStyles';
 import {getPhotosByAlbumID} from '../../database/PhotoDB';
+import Animated, {
+  useAnimatedGestureHandler,
+  runOnJS,
+} from 'react-native-reanimated';
+import {
+  Gesture,
+  GestureDetector,
+  // gestureHandlerRootHOC,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 const Album = ({navigation, route}) => {
   const {album} = route.params;
   // console.log('ALBUM ROUTE Params', album);
   const [photos, setPhotos] = useState([]);
+  const [cols, setCols] = useState(3);
+  const [scale, setScale] = useState(1);
+  const maxCols = 5;
+  const minCols = 2;
+  const updateCols = action => {
+    if (action === 'increment' && cols < maxCols) {
+      setCols(cols + 1);
+    } else if (action === 'decrement' && cols > minCols) {
+      setCols(cols - 1);
+    }
+    // console.log('update', colsRef.current);
+  };
+
+  useEffect(() => {
+    console.log('cols', cols);
+  }, [cols]);
+
+  const gesture = Gesture.Pinch().onEnd(event => {
+    const newScale = event.scale;
+    if (newScale < 0.5) {
+      console.log('Pinch out');
+      runOnJS(updateCols)('increment');
+    } else if (newScale > 1.5) {
+      console.log('Pinch in');
+      runOnJS(updateCols)('decrement');
+    }
+  });
 
   useLayoutEffect(() => {
     // handleGetAlbumPhotos();
@@ -49,17 +93,22 @@ const Album = ({navigation, route}) => {
       </Pressable>
     );
   };
+  // const Root = gestureHandlerRootHOC(() => View);
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={photos}
-        keyExtractor={(item, index) => index}
-        renderItem={renderItem}
-        numColumns={3}
-        columnWrapperStyle={{justifyContent: 'space-between'}}
-        // style={{backgroundColor: 'green'}}
-      />
-    </View>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={styles.container}>
+          <FlatList
+            key={cols}
+            data={photos}
+            keyExtractor={(item, index) => index}
+            renderItem={renderItem}
+            numColumns={cols}
+          />
+        </Animated.View>
+      </GestureDetector>
+    </GestureHandlerRootView>
+    // </View>
   );
 };
 
