@@ -31,7 +31,14 @@ const Album = ({navigation, route}) => {
   const [scale, setScale] = useState(1);
   const [containerWidth, setContainerWidth] = useState(0);
   const [itemWidth, setItemWidth] = useState(0);
+  const [itemDimensions, setItemDimensions] = useState({width: 0, height: 0});
 
+  const handleContainerLayout = event => {
+    const {width} = event.nativeEvent.layout;
+    const itemWidth = (width - 16) / cols; // subtract total padding and margin of all items
+    const itemHeight = itemWidth * 1.5; // set the height of the item based on the aspect ratio of your images
+    setItemDimensions({width: itemWidth, height: itemHeight});
+  };
   const maxCols = 5;
   const minCols = 2;
 
@@ -48,10 +55,10 @@ const Album = ({navigation, route}) => {
     return (containerWidth - ITEM_MARGIN * (cols + 1)) / cols;
   };
 
-  const handleContainerLayout = event => {
-    const containerWidth = event.nativeEvent.layout.width;
-    setItemWidth((containerWidth - 16) / cols); // 16 is the total padding/margin of all items
-  };
+  // const handleContainerLayout = event => {
+  //   const containerWidth = event.nativeEvent.layout.width;
+  //   setItemWidth((containerWidth - 16) / cols); // 16 is the total padding/margin of all items
+  // };
 
   const getItemLayout = (data, index) => ({
     length: itemWidth,
@@ -99,9 +106,9 @@ const Album = ({navigation, route}) => {
     setPhotos(album.photos);
   };
   const renderItem = ({item, index}) => {
-    const aspectRatio = item.width / item.height;
-    console.log('aspectRatio', aspectRatio);
-    const itemHeight = itemWidth / aspectRatio;
+    // const aspectRatio = item.width / item.height;
+    // console.log('aspectRatio', aspectRatio);
+    // const itemHeight = itemWidth / aspectRatio;
     // console.log('ITEM', item.image.uri);
     return (
       <Pressable
@@ -114,7 +121,8 @@ const Album = ({navigation, route}) => {
         }
         // style={}/
       >
-        <View style={[styles.photoContainer, {width: itemWidth, height: 100}]}>
+        {/* <View style={[styles.photoContainer, {width: itemWidth, height: 100}]}> */}
+        <View style={[styles.photoContainer, itemDimensions]}>
           <FastImage
             style={styles.photoCover}
             source={{
