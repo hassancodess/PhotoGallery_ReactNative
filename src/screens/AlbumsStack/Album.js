@@ -22,14 +22,43 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 
+const ITEM_MARGIN = 8;
 const Album = ({navigation, route}) => {
   const {album} = route.params;
   // console.log('ALBUM ROUTE Params', album);
   const [photos, setPhotos] = useState([]);
   const [cols, setCols] = useState(3);
   const [scale, setScale] = useState(1);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [itemWidth, setItemWidth] = useState(0);
+
   const maxCols = 5;
   const minCols = 2;
+
+  const handleLayout = event => {
+    const {width} = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
+
+  const getItemWidth = () => {
+    return (containerWidth - ITEM_MARGIN * (cols + 1)) / cols;
+  };
+
+  const getItemHeight = () => {
+    return (containerWidth - ITEM_MARGIN * (cols + 1)) / cols;
+  };
+
+  const handleContainerLayout = event => {
+    const containerWidth = event.nativeEvent.layout.width;
+    setItemWidth((containerWidth - 16) / cols); // 16 is the total padding/margin of all items
+  };
+
+  const getItemLayout = (data, index) => ({
+    length: itemWidth,
+    offset: itemWidth * index,
+    index,
+  });
+
   const updateCols = action => {
     if (action === 'increment' && cols < maxCols) {
       setCols(cols + 1);
@@ -70,6 +99,9 @@ const Album = ({navigation, route}) => {
     setPhotos(album.photos);
   };
   const renderItem = ({item, index}) => {
+    const aspectRatio = item.width / item.height;
+    console.log('aspectRatio', aspectRatio);
+    const itemHeight = itemWidth / aspectRatio;
     // console.log('ITEM', item.image.uri);
     return (
       <Pressable
@@ -79,8 +111,10 @@ const Album = ({navigation, route}) => {
             // screen: 'Photo',
             // params: {photo: item},
           })
-        }>
-        <View style={styles.photoContainer}>
+        }
+        // style={}/
+      >
+        <View style={[styles.photoContainer, {width: itemWidth, height: 100}]}>
           <FastImage
             style={styles.photoCover}
             source={{
@@ -93,17 +127,24 @@ const Album = ({navigation, route}) => {
       </Pressable>
     );
   };
-  // const Root = gestureHandlerRootHOC(() => View);
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <GestureDetector gesture={gesture}>
-        <Animated.View style={styles.container}>
+        <Animated.View
+          style={styles.container}
+          // onLayout={handleContainerLayout}
+        >
           <FlatList
+            onLayout={handleContainerLayout}
+            // onLayout={handleLayout}
+            // columnWrapperStyle={{justifyContent: 'space-between'}}
             key={cols}
             data={photos}
             keyExtractor={(item, index) => index}
             renderItem={renderItem}
             numColumns={cols}
+            contentContainerStyle={{justifyContent: 'flex-start'}} // align items to start of container
+            getItemLayout={getItemLayout}
           />
         </Animated.View>
       </GestureDetector>
@@ -117,18 +158,27 @@ export default Album;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
     paddingVertical: 15,
+    // margin: 20,
+    backgroundColor: 'green',
+    // alignItems: 'center',
   },
   photoContainer: {
-    width: 100,
-    marginBottom: 20,
+    // width: '100%',
+    // height: '100%',
+    // marginBottom: 20,
+    // alignItems: 'center',
+    margin: 4,
+    // backgroundColor: '#F5FCFF',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'red',
   },
   photoCover: {
-    width: 100,
-    height: 100,
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
-    marginBottom: 8,
+    // marginBottom: 8,
   },
 });
