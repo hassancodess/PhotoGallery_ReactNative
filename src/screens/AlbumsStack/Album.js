@@ -22,8 +22,9 @@ const Album = ({navigation, route}) => {
       const results = await getPhotosByAlbumID(album.id);
       // console.log('RES', results);
       setPhotos(results);
+    } else {
+      setPhotos(album.photos);
     }
-    setPhotos(album.photos);
   };
   const renderItem = ({item, index}) => {
     // console.log('ITEM', item.image.uri);
