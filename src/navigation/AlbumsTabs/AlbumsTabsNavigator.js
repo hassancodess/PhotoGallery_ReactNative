@@ -8,6 +8,7 @@ import People from '../../screens/AlbumsTabs/People';
 import Location from '../../screens/AlbumsTabs/Location';
 import Events from '../../screens/AlbumsTabs/Events';
 import Date from '../../screens/AlbumsTabs/Date';
+import Labels from '../../screens/AlbumsTabs/Labels';
 // Styles
 import GlobalStyles from '../../utils/GlobalStyles';
 // Navigator
@@ -51,7 +52,8 @@ const AlbumsTabsNavigator = () => {
       <Screen name="People" component={People} />
       <Screen name="Events" component={Events} />
       <Screen name="Location" component={Location} />
-      <Screen name="All" component={All} />
+      <Screen name="Labels" component={Labels} />
+      {/* <Screen name="All" component={All} /> */}
     </Navigator>
   );
 };
