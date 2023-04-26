@@ -21,8 +21,11 @@ const People = ({navigation}) => {
     return (
       <Pressable
         onPress={() =>
-          navigation.navigate('Album', {
-            album: item,
+          navigation.navigate('AlbumTabs', {
+            screen: 'All',
+            params: {
+              album: item,
+            },
           })
         }>
         <View style={styles.albumContainer}>

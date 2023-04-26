@@ -6,6 +6,7 @@ import Album from '../../screens/AlbumsStack/Album';
 import AlbumsTabsNavigator from '../AlbumsTabs/AlbumsTabsNavigator';
 import PhotoStackNavigator from '../PhotoStack/PhotoStackNavigator';
 import GlobalStyles from '../../utils/GlobalStyles';
+import AlbumTabsNavigator from '../AlbumTabs/AlbumTabsNavigator';
 // Navigator
 const {Navigator, Screen} = createNativeStackNavigator();
 
@@ -29,6 +30,14 @@ const AlbumsStackNavigator = () => {
       <Screen
         name="Album"
         component={Album}
+        options={{
+          navigationBarHidden: true,
+          tabBarVisible: false,
+        }}
+      />
+      <Screen
+        name="AlbumTabs"
+        component={AlbumTabsNavigator}
         options={{
           navigationBarHidden: true,
           tabBarVisible: false,
