@@ -528,6 +528,20 @@ export const getPeopleNames = async () => {
     console.log('ERROR: getPeopleNames DB', error);
   }
 };
+export const getEventsNames = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT name from Event`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getEventsNames DB', error);
+  }
+};
 
 export const getAlbumByPersonName = async name => {
   try {
@@ -537,5 +551,16 @@ export const getAlbumByPersonName = async name => {
     return record;
   } catch (error) {
     console.log('ERROR: getAlbumByPersonName DB', error);
+  }
+};
+
+export const getAlbumByEventName = async name => {
+  try {
+    let query = `SELECT * FROM Album WHERE title = '${name}'`;
+    const res = await db.executeSql(query);
+    const record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    console.log('ERROR: getAlbumByEventName DB', error);
   }
 };

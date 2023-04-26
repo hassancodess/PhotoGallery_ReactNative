@@ -35,6 +35,8 @@ import {
   getEventID,
   addPhotoEvent,
   insertEvent,
+  getEventsNames,
+  getAlbumByEventName,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -143,6 +145,16 @@ export const handlePeopleAlbums = async () => {
   names.forEach(async item => {
     const album = await getAlbumByPersonName(item.name);
     // console.log(album);
+    albums.push(album);
+  });
+  return albums;
+};
+
+export const handleEventsAlbums = async () => {
+  const names = await getEventsNames();
+  const albums = [];
+  names.forEach(async item => {
+    const album = await getAlbumByEventName(item.name);
     albums.push(album);
   });
   return albums;
