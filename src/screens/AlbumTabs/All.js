@@ -7,14 +7,9 @@ import {getPhotosByAlbumID} from '../../database/PhotoDB';
 
 const All = ({navigation, route}) => {
   const {album} = route.params;
-  // console.log('ALBUM ROUTE Params', album);
   const [photos, setPhotos] = useState([]);
 
   useLayoutEffect(() => {
-    // handleGetAlbumPhotos();
-    // navigation.setOptions({
-    //   title: album.title,
-    // });
     handleGetAlbumPhotos();
   }, []);
   const handleGetAlbumPhotos = async () => {
