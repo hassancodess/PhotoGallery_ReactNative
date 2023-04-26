@@ -29,6 +29,8 @@ import {
   addPhotoPerson,
   getDistinctDatesDB,
   getPhotosByDateDB,
+  getPeopleNames,
+  getAlbumByPersonName,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -94,7 +96,7 @@ export const createAlbum = async () => {
   }
 };
 
-// All.js
+// Labels.js
 export const handleAlbums = async () => {
   try {
     await openDBConnection();
@@ -128,6 +130,18 @@ export const handleAlbums = async () => {
   } catch (error) {
     console.log('Handle Albums', error);
   }
+};
+
+// People Albums
+export const handlePeopleAlbums = async () => {
+  const names = await getPeopleNames();
+  const albums = [];
+  names.forEach(async item => {
+    const album = await getAlbumByPersonName(item.name);
+    // console.log(album);
+    albums.push(album);
+  });
+  return albums;
 };
 
 // Photo.js

@@ -425,3 +425,29 @@ export const getPhotosByDateDB = async date => {
     console.log('ERROR: getDistinctDates DB', error);
   }
 };
+
+export const getPeopleNames = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT name from Person`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getPeopleNames DB', error);
+  }
+};
+
+export const getAlbumByPersonName = async name => {
+  try {
+    let query = `SELECT * FROM Album WHERE title = '${name}'`;
+    const res = await db.executeSql(query);
+    const record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    console.log('ERROR: getAlbumByPersonName DB', error);
+  }
+};
