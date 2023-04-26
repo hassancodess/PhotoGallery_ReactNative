@@ -3,8 +3,16 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TextInput, Chip, Button} from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
-import {addPeople, updatePeople} from '../../database/utils';
-import {getAllPersonsInPhoto} from '../../database/PhotoDB';
+import {
+  addEvent,
+  addPeople,
+  updateEvent,
+  updatePeople,
+} from '../../database/utils';
+import {
+  getAllPersonsInPhoto,
+  getAllEventsInPhoto,
+} from '../../database/PhotoDB';
 const EditDetails = ({route}) => {
   const {photo} = route.params;
   // console.log('photo', photo);
@@ -20,7 +28,7 @@ const EditDetails = ({route}) => {
 
   useEffect(() => {
     getPersonsInPhoto();
-    // Select * FROM Person INNER JOIN PhotoPerson ON PhotoPerson.person_id = Person.id INNER JOIN Photo ON Photo.id = PhotoPerson.photo_id
+    getEventsInPhoto();
   }, []);
   const handleAddPerson = async () => {
     if (!isPersonEditing) {
@@ -74,6 +82,12 @@ const EditDetails = ({route}) => {
     setPeople(res);
   };
 
+  const getEventsInPhoto = async () => {
+    const res = await getAllEventsInPhoto(photo.id);
+    // console.log('res', res);
+    setEvents(res);
+  };
+
   const handleSave = async () => {
     try {
       // handling new Persons
@@ -91,6 +105,22 @@ const EditDetails = ({route}) => {
       // console.log('persons to update', personsToUpdate);
       await addPeople(newPersons, photo);
       await updatePeople(personsToUpdate);
+
+      // handling new Events
+      const newEvents = [];
+      const eventsToUpdate = [];
+      events.forEach(p => {
+        const hasID = p.id.toString().includes('uuid');
+        if (hasID) {
+          newEvents.push(p);
+        } else {
+          eventsToUpdate.push(p);
+        }
+      });
+      console.log('events', events);
+      console.log('events to update', eventsToUpdate);
+      await addEvent(newEvents, photo);
+      // await updateEvent(eventsToUpdate);
     } catch (error) {
       console.log(error);
     }

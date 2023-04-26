@@ -31,6 +31,10 @@ import {
   getPhotosByDateDB,
   getPeopleNames,
   getAlbumByPersonName,
+  getAllEvents,
+  getEventID,
+  addPhotoEvent,
+  insertEvent,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -155,21 +159,48 @@ export const addToPhotoPersonTable = async (personName, photoID) => {
   await addPhotoPerson(photoID, personID);
 };
 
+export const addToPhotoEventTable = async (eventName, photoID) => {
+  const eventID = await getEventID(eventName);
+  // console.log('photoID', photoID);
+  await addPhotoEvent(photoID, eventID);
+};
+
 export const addPeople = async (peopleList, photo) => {
   const persons = await getAllPersons();
   const {newPersons, oldPersons} = comparePeopleList(peopleList, persons);
   newPersons.forEach(async p => {
     await addPerson(p.name);
     await addAlbum(p.name, photo.path);
-    await addToPhotoPersonTable(p.name, photo.photo_id);
+    await addToPhotoPersonTable(p.name, photo.id);
     const albumID = await getAlbumID(p.name);
-    await addAlbumPhoto(albumID, photo.photo_id);
+    await addAlbumPhoto(albumID, photo.id);
   });
   oldPersons.forEach(async p => {
-    await addToPhotoPersonTable(p.name, photo.photo_id);
+    await addToPhotoPersonTable(p.name, photo.id);
     const albumID = await getAlbumID(p.name);
+    await addAlbumPhoto(albumID, photo.id);
+  });
+};
+
+export const addEvent = async (eventList, photo) => {
+  const events = await getAllEvents();
+  const {newEvents, oldEvents} = compareEventsList(eventList, events);
+  console.log(events);
+  console.log(newEvents);
+  console.log(oldEvents);
+  console.log(photo);
+  newEvents.forEach(async e => {
+    await insertEvent(e.name);
+    await addAlbum(e.name, photo.path);
+    await addToPhotoEventTable(e.name, photo.photo_id);
+    const albumID = await getAlbumID(e.name);
     await addAlbumPhoto(albumID, photo.photo_id);
   });
+  // oldEvents.forEach(async e => {
+  //   await addToPhotoEventTable(e.name, photo.photo_id);
+  //   const albumID = await getAlbumID(e.name);
+  //   await addAlbumPhoto(albumID, photo.photo_id);
+  // });
 };
 
 export const updateAlbumOfPerson = async person => {
@@ -189,9 +220,32 @@ export const updateAlbumOfPerson = async person => {
   }
 };
 
+export const updateAlbumOfEvent = async event => {
+  // get old name of event by using his ID
+  const eventName = await getPersonNameByID(event.id);
+  // console.log(event, 'asd');
+  if (eventName !== event.name) {
+    // get AlbumID
+    const albumID = await getAlbumID(eventName);
+    const album = {
+      id: albumID,
+      title: event.name,
+    };
+    await updateAlbum(album);
+    await updateEvent(event);
+    console.log('Updated Successfully');
+  }
+};
+
 export const updatePeople = async peopleList => {
   peopleList.forEach(async p => {
     await updateAlbumOfPerson(p);
+  });
+};
+
+export const updateEvent = async eventList => {
+  eventList.forEach(async e => {
+    await updateAlbumOfEvent(e);
   });
 };
 
@@ -220,6 +274,32 @@ const comparePeopleList = (peopleList, peopleListDB) => {
   }
 
   return {newPersons, oldPersons};
+};
+const compareEventsList = (eventsList, eventsListDB) => {
+  const newEvents = [];
+  const oldEvents = [];
+
+  // loop through first array
+  for (let i = 0; i < eventsList.length; i++) {
+    let matched = false;
+    // loop through second array
+    for (let j = 0; j < eventsListDB.length; j++) {
+      // compare elements
+      if (eventsList[i].name === eventsListDB[j].name) {
+        matched = true;
+        // mark element as matched and break out of loop
+        break;
+      }
+    }
+    // push unmatched element into third array
+    if (!matched) {
+      newEvents.push(eventsList[i]);
+    } else {
+      oldEvents.push(eventsList[i]);
+    }
+  }
+
+  return {newEvents, oldEvents};
 };
 
 // Date.js

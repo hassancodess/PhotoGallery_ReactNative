@@ -221,6 +221,15 @@ export const addPerson = async personName => {
   }
 };
 
+export const insertEvent = async eventName => {
+  try {
+    let query = `INSERT INTO Event(name) VALUES('${eventName}')`;
+    await db.executeSql(query);
+  } catch (error) {
+    console.log('ERROR: Insert Event DB');
+  }
+};
+
 export const updatePerson = async person => {
   try {
     let query = `UPDATE Person
@@ -228,7 +237,18 @@ export const updatePerson = async person => {
     WHERE id = ${person.id}`;
     await db.executeSql(query);
   } catch (error) {
-    console.log('ERROR: Save Person DB');
+    console.log('ERROR: Update Person DB');
+  }
+};
+
+export const updateEvent = async event => {
+  try {
+    let query = `UPDATE Event
+    SET name = '${event.name}'
+    WHERE id = ${event.id}`;
+    await db.executeSql(query);
+  } catch (error) {
+    console.log('ERROR: Update Event DB');
   }
 };
 export const updateAlbum = async album => {
@@ -266,6 +286,15 @@ export const addPhotoPerson = async (photo_id, person_id) => {
   }
 };
 
+export const addPhotoEvent = async (photo_id, event_id) => {
+  try {
+    let query = `INSERT INTO PhotoEvent(photo_id, event_id) VALUES('${photo_id}', '${event_id}')`;
+    await db.executeSql(query);
+  } catch (error) {
+    console.log('ERROR: Save PhotoEvent DB', error);
+  }
+};
+
 export const addAlbumPhoto = async (album_id, photo_id) => {
   try {
     let query = `INSERT INTO AlbumPhoto(album_id, photo_id) VALUES('${album_id}', '${photo_id}')`;
@@ -282,6 +311,17 @@ export const getPersonID = async personName => {
     return record.id;
   } catch (error) {
     console.log('ERROR: getPersonID DB', error);
+  }
+};
+export const getEventID = async eventName => {
+  // console.log('pName', personName);
+  try {
+    let query = `SELECT * FROM Event WHERE name = '${eventName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.id;
+  } catch (error) {
+    console.log('ERROR: getEventID DB', error);
   }
 };
 export const getAlbumID = async albumName => {
@@ -304,6 +344,18 @@ export const getPersonNameByID = async personID => {
     console.log('ERROR: getPersonNameByID DB', error);
   }
 };
+
+export const getEventNameByID = async eventID => {
+  try {
+    let query = `SELECT name FROM Event WHERE id = ${eventID}`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.name;
+  } catch (error) {
+    console.log('ERROR: getEventNameByID DB', error);
+  }
+};
+
 export const getPhotoIDByName = async photoName => {
   try {
     let query = `SELECT id FROM Photo WHERE title = '${photoName}' LIMIT 1`;
@@ -346,6 +398,20 @@ export const getAllPersons = async () => {
     console.log('ERROR: getAllPersons DB', error);
   }
 };
+export const getAllEvents = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Event`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAllEvents DB', error);
+  }
+};
 
 export const getAllPersonsInPhoto = async photo_id => {
   try {
@@ -366,6 +432,28 @@ export const getAllPersonsInPhoto = async photo_id => {
     return resultsSet;
   } catch (error) {
     console.log('ERROR: getAllPersons DB', error);
+  }
+};
+
+export const getAllEventsInPhoto = async photo_id => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Event 
+    INNER JOIN PhotoEvent 
+    ON PhotoEvent.event_id = Event.id 
+    WHERE PhotoEvent.photo_id = ${photo_id}`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      const obj = {
+        id: record.id,
+        name: record.name,
+      };
+      resultsSet.push(obj);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAllEventsInPhoto DB', error);
   }
 };
 
