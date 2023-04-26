@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 import {useIsFocused} from '@react-navigation/native';
 import {handlePeopleAlbums} from '../../database/utils';
 
-const People = () => {
+const People = ({navigation}) => {
   const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
 
