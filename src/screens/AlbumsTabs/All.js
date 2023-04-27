@@ -13,7 +13,7 @@ const All = ({navigation, route}) => {
     setAlbums(res);
   };
   const InitialSetup = async () => {
-    await createTables();
+    // await createTables();
     await createAlbum();
     await handleShowAlbums();
   };
