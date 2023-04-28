@@ -15,7 +15,9 @@ const Date = ({navigation}) => {
   const [albums, setAlbums] = useState([]);
 
   useLayoutEffect(() => {
-    InitialSetup();
+    if (isFocused) {
+      InitialSetup();
+    }
   }, [isFocused]);
 
   const InitialSetup = async () => {
