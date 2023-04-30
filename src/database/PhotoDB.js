@@ -241,7 +241,7 @@ export const updatePerson = async person => {
   }
 };
 
-export const updateEvent = async event => {
+export const updateEventDB = async event => {
   try {
     let query = `UPDATE Event
     SET name = '${event.name}'

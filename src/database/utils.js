@@ -37,6 +37,8 @@ import {
   insertEvent,
   getEventsNames,
   getAlbumByEventName,
+  getEventNameByID,
+  updateEventDB,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -234,7 +236,7 @@ export const updateAlbumOfPerson = async person => {
 
 export const updateAlbumOfEvent = async event => {
   // get old name of event by using his ID
-  const eventName = await getPersonNameByID(event.id);
+  const eventName = await getEventNameByID(event.id);
   // console.log(event, 'asd');
   if (eventName !== event.name) {
     // get AlbumID
@@ -244,7 +246,7 @@ export const updateAlbumOfEvent = async event => {
       title: event.name,
     };
     await updateAlbum(album);
-    await updateEvent(event);
+    await updateEventDB(event);
     console.log('Updated Successfully');
   }
 };
