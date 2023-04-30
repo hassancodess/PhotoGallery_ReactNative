@@ -17,6 +17,7 @@ const {Navigator, Screen} = createMaterialTopTabNavigator();
 const AlbumsTabsNavigator = () => {
   return (
     <Navigator
+      initialRouteName="Date"
       screenOptions={{
         tabBarLabelStyle: {fontSize: 12, fontWeight: '600'},
         // tabBarContentContainerStyle: {
@@ -50,7 +51,7 @@ const AlbumsTabsNavigator = () => {
       }}>
       <Screen name="Date" component={Date} />
       <Screen name="People" component={People} />
-      <Screen name="Events" component={Events} />
+      <Screen name="Events" component={Events} options={{lazy: false}} />
       <Screen name="Location" component={Location} />
       <Screen name="Labels" component={Labels} />
       {/* <Screen name="All" component={All} /> */}
