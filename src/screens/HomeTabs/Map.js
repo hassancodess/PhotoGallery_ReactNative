@@ -1,9 +1,16 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
+import {useIsFocused} from '@react-navigation/native';
 import MapView, {Marker} from 'react-native-maps';
 import GetLocation from 'react-native-get-location';
 
 const Map = () => {
+  const isFocused = useIsFocused();
+  useLayoutEffect(() => {
+    if (isFocused) {
+      getCurrentLocation();
+    }
+  }, [isFocused]);
   const [location, setLocation] = useState({
     latitudeDelta: 0.002,
     longitudeDelta: 0.002,
@@ -43,9 +50,6 @@ const Map = () => {
       longitude: region.longitude,
     });
   };
-  useLayoutEffect(() => {
-    getCurrentLocation();
-  }, []);
   return (
     <View style={styles.container}>
       {location?.latitude && (
