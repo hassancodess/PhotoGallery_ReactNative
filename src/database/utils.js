@@ -40,6 +40,7 @@ import {
   getEventNameByID,
   updateEventDB,
   updatePhotoLocationDB,
+  getPhotoCountOnMapDB,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -333,4 +334,13 @@ export const getDistinctDates = async () => {
 export const getPhotosByDate = async date => {
   const res = await getPhotosByDateDB(date);
   return res;
+};
+
+export const getPhotoCountOnMap = async () => {
+  try {
+    const res = await getPhotoCountOnMapDB();
+    return res;
+  } catch (error) {
+    console.log('ERROR: getPhotoCountOnMap Helper ->', error);
+  }
 };

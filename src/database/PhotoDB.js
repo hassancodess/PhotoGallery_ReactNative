@@ -527,6 +527,23 @@ export const getPhotosByDateDB = async date => {
   }
 };
 
+export const getPhotoCountOnMapDB = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT lat, lng, COUNT(*) as image_count FROM Photo
+    GROUP BY lat, lng
+    HAVING COUNT(*) >= 1`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getPhotosCountOnMapDB', error);
+  }
+};
+
 export const getPeopleNames = async () => {
   try {
     const resultsSet = [];
