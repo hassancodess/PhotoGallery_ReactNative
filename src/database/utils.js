@@ -39,6 +39,7 @@ import {
   getAlbumByEventName,
   getEventNameByID,
   updateEventDB,
+  updatePhotoLocationDB,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
 
@@ -314,6 +315,11 @@ const compareEventsList = (eventsList, eventsListDB) => {
   }
 
   return {newEvents, oldEvents};
+};
+// update Photo Location
+export const updatePhotoLocation = async (photoID, lat, lng) => {
+  console.log('asd');
+  updatePhotoLocationDB(photoID, lat, lng);
 };
 
 // Date.js

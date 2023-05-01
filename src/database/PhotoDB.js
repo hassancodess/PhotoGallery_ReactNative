@@ -264,6 +264,19 @@ export const updateAlbum = async album => {
   }
 };
 
+export const updatePhotoLocationDB = async (photoID, lat, lng) => {
+  try {
+    let query = `UPDATE Photo
+    SET lat = '${lat}',
+    lng = '${lng}'
+    WHERE id = ${photoID}`;
+    await db.executeSql(query);
+    console.log('Photo Location Updated Successfully');
+  } catch (error) {
+    console.log('ERROR: Update Album DB');
+  }
+};
+
 export const addAlbum = async (albumName, coverPhoto = null) => {
   let query;
   try {
