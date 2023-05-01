@@ -51,7 +51,7 @@ const HomeTabsNavigator = () => {
         name="AlbumsStack"
         component={AlbumsStackNavigator}
         options={({route}) => ({
-          lazy: true,
+          // lazy: true,
           title: 'Albums',
           tabBarStyle: (route => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? '';

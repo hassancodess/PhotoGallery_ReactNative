@@ -19,6 +19,7 @@ const AlbumsTabsNavigator = () => {
     <Navigator
       initialRouteName="Date"
       screenOptions={{
+        // lazy: true,
         tabBarLabelStyle: {fontSize: 12, fontWeight: '600'},
         // tabBarContentContainerStyle: {
         //   backgroundColor: GlobalStyles.colors.screen,
@@ -50,9 +51,9 @@ const AlbumsTabsNavigator = () => {
         },
       }}>
       <Screen name="Date" component={Date} />
-      <Screen name="People" component={People} />
-      <Screen name="Events" component={Events} options={{lazy: false}} />
-      <Screen name="Location" component={Location} />
+      <Screen name="People" component={People} options={{lazy: true}} />
+      <Screen name="Events" component={Events} options={{lazy: true}} />
+      <Screen name="Location" component={Location} options={{lazy: true}} />
       <Screen name="Labels" component={Labels} />
       {/* <Screen name="All" component={All} /> */}
     </Navigator>
