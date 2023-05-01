@@ -42,7 +42,7 @@ const Location = () => {
   useEffect(() => {
     if (isFocused) {
       // getAlbums();
-      getAlbumsByGeoloc();
+      // getAlbumsByGeoloc(); // gives API error
     }
   }, [isFocused]);
   return (
