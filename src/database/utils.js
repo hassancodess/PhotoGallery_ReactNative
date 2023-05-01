@@ -319,7 +319,6 @@ const compareEventsList = (eventsList, eventsListDB) => {
 };
 // update Photo Location
 export const updatePhotoLocation = async (photoID, lat, lng) => {
-  console.log('asd');
   updatePhotoLocationDB(photoID, lat, lng);
 };
 

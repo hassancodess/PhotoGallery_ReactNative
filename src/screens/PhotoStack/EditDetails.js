@@ -28,7 +28,6 @@ import GetLocation from 'react-native-get-location';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
-  // console.log('photo', photo);
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
   const [person, setPerson] = useState();
@@ -303,23 +302,6 @@ const EditDetails = ({route}) => {
               </Button>
             </>
           </Modal>
-          {/* <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={containerStyle}>
-            {location.latitude && (
-              <>
-                <MapView style={styles.map} initialRegion={location}>
-                  <Marker coordinate={location} title="You" />
-                </MapView>
-                <Button mode="contained" onPress={() => {}}>
-                  Add
-                </Button>
-              </>
-            )}
-          </Modal>
-          </Portal> */}
         </View>
       </View>
     </Provider>
