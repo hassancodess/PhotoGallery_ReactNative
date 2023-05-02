@@ -10,7 +10,7 @@ import React from 'react';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 
-const numColumns = 2;
+const numColumns = 3;
 const AlbumsContainer = ({albums}) => {
   const navigation = useNavigation();
 
@@ -69,17 +69,15 @@ const AlbumsContainer = ({albums}) => {
   };
 
   return (
-    // <View style={styles.container}>
     <FlatList
       data={albums}
       renderItem={renderItem}
       keyExtractor={item => item.id}
       numColumns={numColumns}
-      contentContainerStyle={styles.listContainer}
+      //   contentContainerStyle={styles.listContainer}
       style={styles.list}
       columnWrapperStyle={styles.listColumnWrapper}
     />
-    // </View>
   );
 };
 
