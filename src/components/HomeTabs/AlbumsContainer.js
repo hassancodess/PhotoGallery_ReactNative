@@ -6,23 +6,69 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
+import Animated, {
+  useAnimatedGestureHandler,
+  runOnJS,
+} from 'react-native-reanimated';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 const numColumns = 3;
 const AlbumsContainer = ({albums}) => {
   const navigation = useNavigation();
-
   const deviceWidth = Dimensions.get('window').width;
+  const [cols, setCols] = useState(3);
+  const [scale, setScale] = useState(1);
+  const maxCols = 5;
+  const minCols = 2;
 
-  const calculateItemWidth = (numColumns, deviceWidth) => {
-    const spacing = 10; // Change this value as needed
-    return (deviceWidth - spacing * (numColumns + 1)) / numColumns;
+  useEffect(() => {
+    console.log('cols', cols);
+  }, [cols]);
+
+  const gesture = Gesture.Pinch()
+    .onEnd(event => {
+      const newScale = event.scale;
+      console.log(newScale);
+      if (newScale <= 1) {
+        console.log('Pinch out');
+        // someFunc();
+        // runOnJS(someFunc)();
+        runOnJS(updateCols)('increment');
+      } else if (newScale > 1) {
+        console.log('Pinch In');
+        // someFunc();
+        // runOnJS(someFunc)();
+        runOnJS(updateCols)('decrement');
+      }
+    })
+    .runOnJS(true);
+
+  const someFunc = () => {
+    console.log('asdac');
+  };
+  const updateCols = action => {
+    console.log('update cols');
+    if (action === 'increment' && cols < maxCols) {
+      setCols(cols + 1);
+    } else if (action === 'decrement' && cols > minCols) {
+      setCols(cols - 1);
+    }
   };
 
-  const calculateItemHeight = (numColumns, deviceWidth) => {
-    const itemWidth = calculateItemWidth(numColumns, deviceWidth);
+  const calculateItemWidth = (cols, deviceWidth) => {
+    const spacing = 10; // Change this value as needed
+    return (deviceWidth - spacing * (cols + 1)) / cols;
+  };
+
+  const calculateItemHeight = (cols, deviceWidth) => {
+    const itemWidth = calculateItemWidth(cols, deviceWidth);
     return itemWidth;
   };
   const addEllipsis = str => {
@@ -34,8 +80,8 @@ const AlbumsContainer = ({albums}) => {
   };
 
   const renderItem = ({item}) => {
-    const itemWidth = calculateItemWidth(numColumns, deviceWidth);
-    const itemHeight = calculateItemHeight(numColumns, deviceWidth);
+    const itemWidth = calculateItemWidth(cols, deviceWidth);
+    const itemHeight = calculateItemHeight(cols, deviceWidth);
 
     const itemTitle = addEllipsis(item.title);
     return (
@@ -69,15 +115,22 @@ const AlbumsContainer = ({albums}) => {
   };
 
   return (
-    <FlatList
-      data={albums}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      numColumns={numColumns}
-      //   contentContainerStyle={styles.listContainer}
-      style={styles.list}
-      columnWrapperStyle={styles.listColumnWrapper}
-    />
+    <GestureHandlerRootView style={{flex: 1}}>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={{flex: 1}}>
+          <FlatList
+            key={cols}
+            data={albums}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            numColumns={cols}
+            //   contentContainerStyle={styles.listContainer}
+            style={styles.list}
+            columnWrapperStyle={styles.listColumnWrapper}
+          />
+        </Animated.View>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 };
 
