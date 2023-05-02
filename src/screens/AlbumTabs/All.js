@@ -15,7 +15,6 @@ const All = ({navigation, route}) => {
   const handleGetAlbumPhotos = async () => {
     if (!album.photos) {
       const results = await getPhotosByAlbumID(album.id);
-      // console.log('RES', results);
       setPhotos(results);
     } else {
       setPhotos(album.photos);
