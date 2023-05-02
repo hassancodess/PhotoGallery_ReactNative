@@ -1,13 +1,11 @@
 import React, {useState, useLayoutEffect} from 'react';
-import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
-import FastImage from 'react-native-fast-image';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 import {
   getDistinctDates,
   createAlbum,
   createTables,
-  handleAlbums,
   getPhotosByDate,
 } from '../../database/utils';
 
@@ -24,8 +22,6 @@ const Date = ({navigation}) => {
   const InitialSetup = async () => {
     await createTables();
     await createAlbum();
-    // const alb = await handleAlbums();
-    // console.log(alb);
     const res = await getDistinctDates();
     const distinctDates = res.map(date => date.date_taken.split(',')[0]);
     // console.log(distinctDates);

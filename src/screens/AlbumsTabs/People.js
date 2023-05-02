@@ -1,13 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Dimensions,
-  Pressable,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
-import FastImage from 'react-native-fast-image';
 import {useIsFocused} from '@react-navigation/native';
 import {handlePeopleAlbums} from '../../database/utils';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
