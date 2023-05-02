@@ -177,6 +177,7 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    marginTop: 30,
   },
   tableContainer: {
     marginBottom: 5,
