@@ -24,35 +24,22 @@ const AlbumsContainer = ({albums}) => {
   const navigation = useNavigation();
   const deviceWidth = Dimensions.get('window').width;
   const [cols, setCols] = useState(3);
-  const [scale, setScale] = useState(1);
   const maxCols = 5;
   const minCols = 2;
-
-  useEffect(() => {
-    console.log('cols', cols);
-  }, [cols]);
 
   const gesture = Gesture.Pinch()
     .onEnd(event => {
       const newScale = event.scale;
-      console.log(newScale);
       if (newScale <= 1) {
         console.log('Pinch out');
-        // someFunc();
-        // runOnJS(someFunc)();
         runOnJS(updateCols)('increment');
       } else if (newScale > 1) {
         console.log('Pinch In');
-        // someFunc();
-        // runOnJS(someFunc)();
         runOnJS(updateCols)('decrement');
       }
     })
     .runOnJS(true);
 
-  const someFunc = () => {
-    console.log('asdac');
-  };
   const updateCols = action => {
     console.log('update cols');
     if (action === 'increment' && cols < maxCols) {
