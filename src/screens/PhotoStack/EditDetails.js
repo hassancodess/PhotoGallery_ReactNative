@@ -279,7 +279,7 @@ const EditDetails = ({route}) => {
             onBackdropPress={hideModal}
             style={{gap: 10}}>
             <>
-              {modalLocation?.latitude ? (
+              {modalLocation?.latitude && (
                 <View
                   style={{
                     height: '80%',
@@ -296,10 +296,12 @@ const EditDetails = ({route}) => {
                     />
                   </MapView>
                 </View>
-              ) : null}
-              <Button mode="contained" onPress={handleAddLocationFromModal}>
-                Add
-              </Button>
+              )}
+              {!location?.latitude && (
+                <Button mode="contained" onPress={handleAddLocationFromModal}>
+                  Add
+                </Button>
+              )}
             </>
           </Modal>
         </View>
