@@ -9,7 +9,8 @@ const Location = () => {
   const isFocused = useIsFocused();
   // const [location, setLocation] = useState('');
   const getAlbumsByGeoloc = async () => {
-    Geocoder.init('AIzaSyCdmIHvKSHu-vKEeN0hcvjQrOtr8row6qE'); // use a valid API key
+    // Geocoder.init('AIzaSyCdmIHvKSHu-vKEeN0hcvjQrOtr8row6qE'); // use a valid API key
+    Geocoder.init('AIzaSyD18_spyngG_K-n8QsNlm1NoyEV230Nc_s'); // use a valid API key
     Geocoder.from(33.52781049050959, 73.0970041) // GreenValley Bahria Phase 7 Coordinates
       .then(json => {
         var addressComponent = json.results[0].address_components[0];
