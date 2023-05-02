@@ -208,9 +208,9 @@ export const addEvent = async (eventList, photo) => {
   newEvents.forEach(async e => {
     await insertEvent(e.name);
     await addAlbum(e.name, photo.path);
-    await addToPhotoEventTable(e.name, photo.photo_id);
+    await addToPhotoEventTable(e.name, photo.id);
     const albumID = await getAlbumID(e.name);
-    await addAlbumPhoto(albumID, photo.photo_id);
+    await addAlbumPhoto(albumID, photo.id);
   });
   // oldEvents.forEach(async e => {
   //   await addToPhotoEventTable(e.name, photo.photo_id);
