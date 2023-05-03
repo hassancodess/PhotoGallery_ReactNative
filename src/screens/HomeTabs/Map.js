@@ -77,6 +77,22 @@ const Map = () => {
       console.log('Error', error);
     }
   };
+  const navigateToAlbumTabs = markers => {
+    console.log('log', markers);
+    const album = {
+      // should be uuid
+      id: Math.floor(Math.random() * 100),
+      cover_photo: markers[0].path,
+      title: 'Location Name',
+      photos: markers,
+    };
+    navigation.navigate('AlbumTabs', {
+      screen: 'All',
+      params: {
+        album,
+      },
+    });
+  };
   return (
     <View style={styles.container}>
       {location?.latitude && (
@@ -95,6 +111,7 @@ const Map = () => {
                 key={index}
                 coordinate={coordinates}
                 title={`Photo Count - ${photoCount}`}
+                onPress={() => navigateToAlbumTabs(markers[index])}
               />
             );
           })}
