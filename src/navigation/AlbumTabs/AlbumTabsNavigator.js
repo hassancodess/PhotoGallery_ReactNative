@@ -1,8 +1,9 @@
 import React from 'react';
-import {Dimensions} from 'react-native';
 // Navigation
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 const {Navigator, Screen} = createMaterialTopTabNavigator();
+import {useRoute} from '@react-navigation/native';
+
 // Screens
 import Date from '../../screens/AlbumTabs/Date';
 import People from '../../screens/AlbumTabs/People.js';
@@ -14,14 +15,13 @@ import All from '../../screens/AlbumTabs/All';
 import GlobalStyles from '../../utils/GlobalStyles';
 
 const AlbumTabsNavigator = () => {
+  const route = useRoute();
+  const {album} = route.params;
   return (
     <Navigator
       screenOptions={{
+        lazy: true,
         tabBarLabelStyle: {fontSize: 12, fontWeight: '600'},
-        // tabBarContentContainerStyle: {
-        //   backgroundColor: GlobalStyles.colors.screen,
-        // },
-        // tabBarItemStyle: {width: 50},
         tabBarStyle: {
           width: '100%',
           elevation: 0,
@@ -37,11 +37,11 @@ const AlbumTabsNavigator = () => {
         },
       }}
       initialRouteName="All">
-      <Screen name="All" component={All} />
-      <Screen name="Date" component={Date} />
-      <Screen name="People" component={People} />
-      <Screen name="Events" component={Events} />
-      <Screen name="Location" component={Location} />
+      <Screen name="All" component={All} initialParams={{album}} />
+      <Screen name="Date" component={Date} initialParams={{album}} />
+      <Screen name="People" component={People} initialParams={{album}} />
+      <Screen name="Events" component={Events} initialParams={{album}} />
+      <Screen name="Location" component={Location} initialParams={{album}} />
     </Navigator>
   );
 };
