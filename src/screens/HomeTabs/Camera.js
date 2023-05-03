@@ -7,10 +7,15 @@ const Camera = ({navigation}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    // captureImage('photo');
-    chooseFile('photo');
-    navigation.navigate('AlbumsStack');
+    if (isFocused) {
+      captureImage('photo');
+      // chooseFile('photo');
+      navigation.navigate('AlbumsStack');
+    }
   }, [isFocused]);
+  // TODOS
+  // 1 - Save Image to SQLITE
+
   return <View></View>;
 };
 
