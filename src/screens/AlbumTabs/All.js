@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useState, useEffect} from 'react';
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {getPhotosByAlbumID} from '../../database/PhotoDB';
@@ -10,7 +10,9 @@ const All = ({navigation, route}) => {
   const isFocused = useIsFocused();
 
   useLayoutEffect(() => {
-    handleGetAlbumPhotos();
+    if (isFocused) {
+      handleGetAlbumPhotos();
+    }
   }, [isFocused]);
 
   const handleGetAlbumPhotos = async () => {
@@ -28,8 +30,6 @@ const All = ({navigation, route}) => {
         onPress={() =>
           navigation.navigate('PhotoStack', {
             photo: item,
-            // screen: 'Photo',
-            // params: {photo: item},
           })
         }>
         <View style={styles.photoContainer}>
