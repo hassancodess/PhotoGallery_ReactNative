@@ -530,9 +530,10 @@ export const getPhotosByDateDB = async date => {
 export const getPhotoCountOnMapDB = async () => {
   try {
     const resultsSet = [];
-    let query = `SELECT *, COUNT(*) as image_count FROM Photo
-    GROUP BY lat, lng
-    HAVING COUNT(*) >= 1`;
+    // let query = `SELECT *, COUNT(*) as image_count FROM Photo
+    // GROUP BY lat, lng
+    // HAVING COUNT(*) >= 1`;
+    let query = `SELECT * FROM Photo`;
     const res = await db.executeSql(query);
     for (let i = 0; i < res[0].rows.length; ++i) {
       let record = res[0].rows.item(i);
