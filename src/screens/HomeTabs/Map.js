@@ -78,7 +78,7 @@ const Map = () => {
     }
   };
   const navigateToAlbumTabs = markers => {
-    console.log('log', markers);
+    // console.log('log', markers);
     const album = {
       // should be uuid
       id: Math.floor(Math.random() * 100),
@@ -87,10 +87,10 @@ const Map = () => {
       photos: markers,
     };
     navigation.navigate('AlbumTabs', {
-      screen: 'All',
-      params: {
-        album,
-      },
+      // screen: 'All',
+      // params: {
+      album,
+      // },
     });
   };
   return (
