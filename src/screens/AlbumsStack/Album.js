@@ -1,15 +1,12 @@
 import React, {useLayoutEffect, useState} from 'react';
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
-import {getAlbumImages} from '../../utils/CameraRoll';
 import FastImage from 'react-native-fast-image';
-import GlobalStyles from '../../utils/GlobalStyles';
 import {getPhotosByAlbumID} from '../../database/PhotoDB';
 
 const Album = ({navigation, route}) => {
   const {album} = route.params;
   // console.log('ALBUM ROUTE Params', album);
   const [photos, setPhotos] = useState([]);
-
   useLayoutEffect(() => {
     // handleGetAlbumPhotos();
     navigation.setOptions({
