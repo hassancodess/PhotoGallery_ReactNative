@@ -1,17 +1,18 @@
 import React, {useLayoutEffect, useState} from 'react';
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
-import {getAlbumImages} from '../../utils/CameraRoll';
 import FastImage from 'react-native-fast-image';
-import GlobalStyles from '../../utils/GlobalStyles';
 import {getPhotosByAlbumID} from '../../database/PhotoDB';
+import {useIsFocused} from '@react-navigation/native';
 
 const All = ({navigation, route}) => {
   const {album} = route.params;
   const [photos, setPhotos] = useState([]);
+  const isFocused = useIsFocused();
 
   useLayoutEffect(() => {
     handleGetAlbumPhotos();
-  }, []);
+  }, [isFocused]);
+
   const handleGetAlbumPhotos = async () => {
     if (!album.photos) {
       const results = await getPhotosByAlbumID(album.id);
