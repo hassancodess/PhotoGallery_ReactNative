@@ -62,7 +62,7 @@ const AlbumsContainer = ({albums}) => {
     if (str.length <= 10) {
       return str;
     } else {
-      return str.slice(0, 10) + '...';
+      return str.slice(0, 9) + '...';
     }
   };
 
