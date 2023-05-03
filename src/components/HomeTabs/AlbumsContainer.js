@@ -31,7 +31,7 @@ const AlbumsContainer = ({albums}) => {
     .onEnd(event => {
       const newScale = event.scale;
       if (newScale <= 1) {
-        console.log('Pinch out');
+        console.log('Pinch Out');
         runOnJS(updateCols)('increment');
       } else if (newScale > 1) {
         console.log('Pinch In');
@@ -41,7 +41,7 @@ const AlbumsContainer = ({albums}) => {
     .runOnJS(true);
 
   const updateCols = action => {
-    console.log('update cols');
+    // console.log('update cols');
     if (action === 'increment' && cols < maxCols) {
       setCols(cols + 1);
     } else if (action === 'decrement' && cols > minCols) {
