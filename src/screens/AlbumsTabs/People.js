@@ -13,7 +13,9 @@ const People = ({navigation}) => {
     setAlbums(res);
   };
   useLayoutEffect(() => {
-    InitialSetup();
+    if (isFocused) {
+      InitialSetup();
+    }
   }, [isFocused]);
 
   return (

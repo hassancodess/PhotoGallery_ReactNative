@@ -17,7 +17,9 @@ const Labels = ({navigation, route}) => {
     await handleShowAlbums();
   };
   useLayoutEffect(() => {
-    InitialSetup();
+    if (isFocused) {
+      InitialSetup();
+    }
   }, [isFocused]);
 
   return (

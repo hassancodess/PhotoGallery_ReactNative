@@ -1,5 +1,5 @@
 import {StyleSheet, View} from 'react-native';
-import React, {useState, useLayoutEffect} from 'react';
+import React, {useState, useLayoutEffect, useMemo} from 'react';
 import {useIsFocused} from '@react-navigation/native';
 import {handleEventsAlbums} from '../../database/utils';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
@@ -13,7 +13,9 @@ const Events = ({navigation}) => {
     setAlbums(res);
   };
   useLayoutEffect(() => {
-    InitialSetup();
+    if (isFocused) {
+      InitialSetup();
+    }
   }, [isFocused]);
 
   return (
