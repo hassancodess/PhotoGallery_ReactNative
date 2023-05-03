@@ -1,8 +1,8 @@
 import React, {useLayoutEffect, useState, useEffect} from 'react';
-import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
-import FastImage from 'react-native-fast-image';
+import {StyleSheet, View} from 'react-native';
 import {getPhotosByAlbumID} from '../../database/PhotoDB';
 import {useIsFocused} from '@react-navigation/native';
+import PhotoContainer from '../../components/AlbumTabs/PhotoContainer';
 
 const All = ({navigation, route}) => {
   const {album} = route.params;
@@ -23,38 +23,9 @@ const All = ({navigation, route}) => {
       setPhotos(album.photos);
     }
   };
-  const renderItem = ({item, index}) => {
-    // console.log('ITEM', item.image.uri);
-    return (
-      <Pressable
-        onPress={() =>
-          navigation.navigate('PhotoStack', {
-            photo: item,
-          })
-        }>
-        <View style={styles.photoContainer}>
-          <FastImage
-            style={styles.photoCover}
-            source={{
-              uri: item.path,
-              priority: FastImage.priority.normal,
-            }}
-            resizeMode={FastImage.resizeMode.cover}
-          />
-        </View>
-      </Pressable>
-    );
-  };
   return (
     <View style={styles.container}>
-      <FlatList
-        data={photos}
-        keyExtractor={(item, index) => index}
-        renderItem={renderItem}
-        numColumns={3}
-        columnWrapperStyle={{justifyContent: 'space-between'}}
-        // style={{backgroundColor: 'green'}}
-      />
+      <PhotoContainer photos={photos} />
     </View>
   );
 };
@@ -64,18 +35,7 @@ export default All;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 15,
-  },
-  photoContainer: {
-    width: 100,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  photoCover: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginBottom: 8,
   },
 });
