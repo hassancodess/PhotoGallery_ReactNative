@@ -201,10 +201,10 @@ export const addPeople = async (peopleList, photo) => {
 export const addEvent = async (eventList, photo) => {
   const events = await getAllEvents();
   const {newEvents, oldEvents} = compareEventsList(eventList, events);
-  console.log(events);
-  console.log(newEvents);
-  console.log(oldEvents);
-  console.log(photo);
+  // console.log('utils events', events);
+  // console.log('utils newevents', newEvents);
+  // console.log('utils oldevents', oldEvents);
+  // console.log(photo);
   newEvents.forEach(async e => {
     await insertEvent(e.name);
     await addAlbum(e.name, photo.path);
@@ -212,11 +212,11 @@ export const addEvent = async (eventList, photo) => {
     const albumID = await getAlbumID(e.name);
     await addAlbumPhoto(albumID, photo.id);
   });
-  // oldEvents.forEach(async e => {
-  //   await addToPhotoEventTable(e.name, photo.photo_id);
-  //   const albumID = await getAlbumID(e.name);
-  //   await addAlbumPhoto(albumID, photo.photo_id);
-  // });
+  oldEvents.forEach(async e => {
+    await addToPhotoEventTable(e.name, photo.id);
+    const albumID = await getAlbumID(e.name);
+    await addAlbumPhoto(albumID, photo.id);
+  });
 };
 
 export const updateAlbumOfPerson = async person => {
