@@ -25,10 +25,10 @@ const Map = () => {
     }
   }, [isFocused]);
 
-  // useEffect(() => {
-  //   console.log('Marker Distance', markerDistance);
-  //   getMarkers();
-  // }, [markerDistance]);
+  useEffect(() => {
+    // console.log('Marker Distance', markerDistance);
+    getMarkers();
+  }, [markerDistance]);
 
   //  fetch current location
   const getLocation = async () => {
