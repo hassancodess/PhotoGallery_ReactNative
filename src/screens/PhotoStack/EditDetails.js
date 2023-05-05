@@ -28,14 +28,22 @@ import GetLocation from 'react-native-get-location';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
+  // Person States
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
   const [person, setPerson] = useState();
   const [people, setPeople] = useState([]);
+  // Event States
   const [isEventEditing, setIsEventEditing] = useState();
   const [eventID, setEventID] = useState();
   const [event, setEvent] = useState();
   const [events, setEvents] = useState([]);
+  // Labels States
+  const [isLabelEditing, setIsLabelEditing] = useState();
+  const [labelID, setLabelID] = useState();
+  const [label, setLabel] = useState();
+  const [labels, setLabels] = useState([]);
+  // Location States
   const [location, setLocation] = useState({
     latitude: photo?.lat != 'null' ? photo.lat : null,
     longitude: photo?.lng != 'null' ? photo.lng : null,
@@ -49,6 +57,7 @@ const EditDetails = ({route}) => {
     longitudeDelta: 0.002,
   });
   const [isLocationAdded, setIsLocationAdded] = useState(false);
+  // Modal States
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -56,9 +65,6 @@ const EditDetails = ({route}) => {
   useEffect(() => {
     getPersonsInPhoto();
     getEventsInPhoto();
-  }, []);
-  useEffect(() => {
-    console.log('location', location);
   }, []);
 
   const getCurrentLocation = async () => {
@@ -79,15 +85,16 @@ const EditDetails = ({route}) => {
     }
   };
   const handleAddPerson = async () => {
+    const personName = person.trim();
     if (!isPersonEditing) {
       setPeople([
         ...people,
-        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: person},
+        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: personName},
       ]);
     } else {
       const updatedPeople = people.map(item => {
         if (item.id === personID) {
-          return {...item, name: person};
+          return {...item, name: personName};
         }
         return item;
       });
@@ -97,21 +104,40 @@ const EditDetails = ({route}) => {
   };
 
   const handleAddEvent = () => {
+    const eventName = event.trim();
     if (!isEventEditing) {
       setEvents([
         ...events,
-        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: event},
+        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: eventName},
       ]);
     } else {
       const updatedEvents = events.map(item => {
         if (item.id === eventID) {
-          return {...item, name: event};
+          return {...item, name: eventName};
         }
         return item;
       });
       setEvents(updatedEvents);
     }
     clearEventsEditingStates();
+  };
+  const handleAddLabel = () => {
+    const labelName = label.trim();
+    if (!isLabelEditing) {
+      setLabels([
+        ...labels,
+        {id: `uuid-${Math.floor(Math.random() * 100) + 1}`, name: labelName},
+      ]);
+    } else {
+      const updatedLabels = labels.map(item => {
+        if (item.id === labelID) {
+          return {...item, name: labelName};
+        }
+        return item;
+      });
+      setLabels(updatedLabels);
+    }
+    clearLabelsEditingStates();
   };
 
   const clearPersonEditingStates = () => {
@@ -123,6 +149,11 @@ const EditDetails = ({route}) => {
     setEvent('');
     setEventID('');
     setIsEventEditing(false);
+  };
+  const clearLabelsEditingStates = () => {
+    setLabel('');
+    setLabelID('');
+    setIsLabelEditing(false);
   };
 
   const getPersonsInPhoto = async () => {
@@ -149,8 +180,8 @@ const EditDetails = ({route}) => {
           personsToUpdate.push(p);
         }
       });
-      console.log('persons', newPersons);
-      console.log('persons to update', personsToUpdate);
+      // console.log('persons', newPersons);
+      // console.log('persons to update', personsToUpdate);
       await addPeople(newPersons, photo);
       await updatePeople(personsToUpdate);
 
@@ -165,19 +196,22 @@ const EditDetails = ({route}) => {
           eventsToUpdate.push(p);
         }
       });
-      console.log('events', events);
-      console.log('events to update', eventsToUpdate);
+      // console.log('events', events);
+      // console.log('events new', newEvents);
+      // console.log('events to update', eventsToUpdate);
       await addEvent(newEvents, photo);
       await updateEvent(eventsToUpdate);
 
       // handling Labels
 
       // handling Location
-      const photoID = photo.id;
-      const lat = location.latitude;
-      const lng = location.longitude;
-      // console.log('loc', photoID, lat, lng);
-      await updatePhotoLocation(photoID, lat, lng);
+      if (location.latitude != null) {
+        const photoID = photo.id;
+        const lat = location.latitude;
+        const lng = location.longitude;
+        // console.log('loc', photoID, lat, lng);
+        await updatePhotoLocation(photoID, lat, lng);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -251,6 +285,28 @@ const EditDetails = ({route}) => {
               isEditing={isEventEditing}
               setIsEditing={setIsEventEditing}
               clearStates={clearEventsEditingStates}
+            />
+          </View>
+          {/* Labels */}
+          <View style={styles.rowContainer}>
+            <Text style={styles.title}>Labels</Text>
+            <TextInput
+              value={label}
+              onChangeText={text => setLabel(text)}
+              onSubmitEditing={handleAddLabel}
+              style={styles.input}
+              placeholder="Type a label"
+            />
+            <ChipsContainer
+              items={labels}
+              setItems={setLabels}
+              itemID={labelID}
+              setItemID={setLabelID}
+              itemName={label}
+              setItemName={setLabel}
+              isEditing={isLabelEditing}
+              setIsEditing={setIsLabelEditing}
+              clearStates={clearLabelsEditingStates}
             />
           </View>
           {/* Location */}
