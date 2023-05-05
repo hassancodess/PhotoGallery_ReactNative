@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  StatusBar,
+  SafeAreaView,
+} from 'react-native';
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
 import {
@@ -41,7 +48,7 @@ const Search = () => {
     toggleModal();
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
         <Searchbar
           placeholder="Search"
@@ -197,7 +204,7 @@ const Search = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -206,8 +213,8 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
     paddingHorizontal: 10,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 20,
   },
   modalContainer: {
     marginHorizontal: 20,
