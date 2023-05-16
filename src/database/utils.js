@@ -43,6 +43,9 @@ import {
   getPhotoCountOnMapDB,
 } from '../database/PhotoDB';
 import {getImages} from '../utils/CameraRoll';
+import {convertDate, getFormattedDate} from '../utils/date';
+import {getAllImages, getSomeImages} from '../utils/fileSystem';
+import {getExifData} from '../utils/metadata';
 
 export const createTables = async () => {
   await openDBConnection();
@@ -105,6 +108,46 @@ export const createAlbum = async () => {
     console.log('Others Album Already Created');
   }
 };
+export const new_createAlbum = async () => {
+  await openDBConnection();
+  const albums = await fetchAlbums();
+  const image = await getSomeImages(1);
+  const imagePath = `file://${image[0].path}`;
+
+  if (albums.length < 1) {
+    await addAlbum('Others', imagePath);
+  } else {
+    console.log('Others Album Already Created');
+  }
+};
+
+export const new_addPhotosToDatabase = async photos => {
+  try {
+    await openDBConnection();
+    photos?.forEach(async photo => {
+      const photoName = photo.path.split('/').pop();
+      const exif = await getExifData(photo);
+      const date_taken = convertDate(exif.DateTime);
+      const last_modified_date = convertDate(exif.DateTimeDigitized);
+      const photoDetails = {
+        title: photoName,
+        path: photo.path,
+        lat: null,
+        lng: null,
+        date_taken,
+        last_modified_date,
+      };
+      // console.log('details', photoDetails);
+      // console.log('details', photoDetails);
+      await addPhoto(photoDetails);
+      const photoID = await getPhotoIDByName(photoName);
+      const albumID = 1;
+      await addAlbumPhoto(albumID, photoID.id);
+    });
+  } catch (error) {
+    console.log('error', error);
+  }
+};
 
 // Labels.js
 export const handleAlbums = async () => {
@@ -121,7 +164,7 @@ export const handleAlbums = async () => {
           lng: null,
           path: item.image.uri,
           date_taken: new Date(item.timestamp * 1000).toLocaleString(),
-          last_date_modified: new Date(item.modified * 1000).toLocaleString(),
+          last_modified_date: new Date(item.modified * 1000).toLocaleString(),
         };
         await addPhoto(details);
         const photoID = await getPhotoIDByName(photoName);
@@ -140,6 +183,39 @@ export const handleAlbums = async () => {
   } catch (error) {
     console.log('Handle Albums', error);
   }
+};
+
+export const new_HandleAlbums = async () => {
+  try {
+    await openDBConnection();
+    const photos = await fetchPhotos();
+    if (photos.length < 1) {
+      const res = await getAllImages();
+      await new_addPhotosToDatabase(res);
+    }
+  } catch (error) {
+    console.log('New Handle Albums', error);
+  }
+};
+
+export const new_getAlbumsByDate = async () => {
+  const res = await getDistinctDates();
+  // console.log('res', res);
+  const distinctDates = res.map(date => date.date_taken.split(',')[0]);
+  // console.log(distinctDates);
+  const albums = [];
+  for (const date of distinctDates) {
+    const photos = await getPhotosByDate(date);
+    const album = {
+      // should be uuid
+      id: Math.floor(Math.random() * 100),
+      cover_photo: photos[0].path,
+      title: date,
+      photos,
+    };
+    albums.push(album);
+  }
+  return albums;
 };
 
 // People Albums
