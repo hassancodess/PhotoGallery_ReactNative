@@ -14,10 +14,11 @@ const ViewDetails = ({navigation, route}) => {
           <Text style={styles.detailsText}>{photo.path.split('/').pop()}</Text>
         </Text>
         <Text style={styles.text}>
-          Persons: <Text style={styles.detailsText}>Amna, Hassan</Text>
+          Persons: <Text style={styles.detailsText}>No People</Text>
         </Text>
         <Text style={styles.text}>
-          Events: <Text style={styles.detailsText}>Trip to Sudhan Gali</Text>
+          Events:{' '}
+          <Text style={styles.detailsText}>Calligraphy by Islamic Society</Text>
         </Text>
         <Text style={styles.text}>
           Location: <Text style={styles.detailsText}>None</Text>
@@ -27,7 +28,7 @@ const ViewDetails = ({navigation, route}) => {
         </Text>
         <Text style={styles.text}>
           Last Modified Date:{' '}
-          <Text style={styles.detailsText}>{dateModified}</Text>
+          <Text style={styles.detailsText}>{dateTaken}</Text>
         </Text>
       </View>
     </View>
