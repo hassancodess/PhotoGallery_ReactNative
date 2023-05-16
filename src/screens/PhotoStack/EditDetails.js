@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
+import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
 import {
   // Modal,
   Portal,
@@ -25,9 +25,12 @@ import {
 } from '../../database/PhotoDB';
 import MapView, {Marker} from 'react-native-maps';
 import GetLocation from 'react-native-get-location';
+import {useIsFocused} from '@react-navigation/native';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
+  const isFocused = useIsFocused();
+  // console.log('photo', photo);
   // Person States
   const [isPersonEditing, setIsPersonEditing] = useState();
   const [personID, setPersonID] = useState();
@@ -62,11 +65,57 @@ const EditDetails = ({route}) => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(() => {
-    getPersonsInPhoto();
-    getEventsInPhoto();
-  }, []);
+  useLayoutEffect(() => {
+    if (isFocused) {
+      getPersonsInPhoto();
+      getEventsInPhoto();
+      if (!people.length > 0) {
+        console.log('here');
+        sendImagetoAPI();
+      }
+    }
+  }, [isFocused]);
 
+  const sendImagetoAPI = async () => {
+    try {
+      const photoType = photo.title.split('.').pop();
+      // console.log('photo type', photoType);
+      const formData = new FormData();
+      formData.append('file', {
+        uri: photo.path,
+        name: photo.title,
+        type: `image/${photoType}`,
+      });
+      var requestOptions = {
+        method: 'POST',
+        body: formData,
+        // redirect: 'follow',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const response = await fetch(
+        'http://192.168.100.80:8082/saveImage',
+        requestOptions,
+      );
+      const data = await response.json();
+      console.log('data', data);
+      const dataPeople = [];
+      for (const key in data) {
+        const data = {
+          id: `uuid-${Math.floor(Math.random() * 100) + 1}`,
+          name: key,
+        };
+        dataPeople.push(data);
+      }
+      // console.log(dataPeople); // logs 'foo', 'baz', and 'qux'
+      // console.log([...people, ...dataPeople]); // logs 'foo', 'baz', and 'qux'
+      setPeople([...people, ...dataPeople]);
+    } catch (error) {
+      console.log('Error', error);
+    }
+  };
   const getCurrentLocation = async () => {
     try {
       const location = await GetLocation.getCurrentPosition({
@@ -241,7 +290,12 @@ const EditDetails = ({route}) => {
   };
   return (
     <Provider>
-      <View style={styles.container}>
+      {/* <View style={styles.container}> */}
+      <ScrollView
+        style={styles.container}
+        // style={styles.container}
+        // style={{backgroundColor: 'purple'}}
+        contentContainerStyle={{flex: 1}}>
         <View style={styles.flexContainer}>
           {/* People */}
           <View style={styles.rowContainer}>
@@ -313,11 +367,13 @@ const EditDetails = ({route}) => {
           <View style={styles.rowContainer}>
             <Text style={styles.title}>Location</Text>
             {location?.latitude ? (
-              <Pressable onPress={handleModal} style={styles.mapContainer}>
+              <Pressable onPress={handleModal}>
                 {location && (
-                  <MapView style={styles.map} initialRegion={location}>
-                    <Marker coordinate={location} title="You" />
-                  </MapView>
+                  <View style={styles.mapContainer}>
+                    <MapView style={styles.map} initialRegion={location}>
+                      <Marker coordinate={location} title="You" />
+                    </MapView>
+                  </View>
                 )}
               </Pressable>
             ) : (
@@ -361,7 +417,8 @@ const EditDetails = ({route}) => {
             </>
           </Modal>
         </View>
-      </View>
+      </ScrollView>
+      {/* </View> */}
     </Provider>
   );
 };
@@ -373,20 +430,28 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 15,
+    // backgroundColor: 'red',
   },
   flexContainer: {
+    flex: 1,
     gap: 20,
+    // backgroundColor: 'green',
   },
   rowContainer: {
     gap: 10,
+    // backgroundColor: 'yellow',
+    // overflow: 'hidden',
   },
   mapContainer: {
-    height: '50%',
+    height: 250,
     width: '100%',
+    // overflow: 'hidden',
   },
   map: {
     height: '100%',
     width: '100%',
+    // backgroundColor: 'red',
+    // overflow: 'hidden',
   },
   title: {
     fontWeight: 'bold',
