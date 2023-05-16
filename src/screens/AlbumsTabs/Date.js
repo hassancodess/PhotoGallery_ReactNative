@@ -1,16 +1,43 @@
+//   const InitialSetup = async () => {
+//     await new_HandleAlbums();
+//   };
+//   // const InitialSetup = async () => {
+//   //   try {
+//   //   } catch (error) {
+//   //     console.log('error', error);
+//   //   }
+//   // };
+
+//
+
+//   return (
+//     <View style={styles.container}>
+//       <AlbumsContainer albums={albums} />
+//     </View>
+//   );
+// };
+
+// export default Date;
+
 import React, {useState, useLayoutEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useIsFocused} from '@react-navigation/native';
+import {StyleSheet, View, Text} from 'react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 import {
   getDistinctDates,
   createAlbum,
   createTables,
   getPhotosByDate,
+  new_HandleAlbums,
+  new_createAlbum,
+  new_addPhotosToDatabase,
+  new_getAlbumsByDate,
 } from '../../database/utils';
+import {getAllImages} from '../../utils/fileSystem';
 
-const Date = ({navigation}) => {
+const Date = () => {
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
   const [albums, setAlbums] = useState([]);
 
   useLayoutEffect(() => {
@@ -20,63 +47,17 @@ const Date = ({navigation}) => {
   }, [isFocused]);
 
   const InitialSetup = async () => {
+    // creates all the necessary tables
     await createTables();
-    await createAlbum();
-    const res = await getDistinctDates();
-    const distinctDates = res.map(date => date.date_taken.split(',')[0]);
-    // console.log(distinctDates);
-    const fetchedAlbums = [];
-    distinctDates.forEach(async date => {
-      // console.log('date', date);
-      const photos = await getPhotosByDate(date);
-      const album = {
-        // should be uuid
-        id: Math.floor(Math.random() * 100),
-        cover_photo: photos[0].path,
-        title: date,
-        photos,
-      };
-      // const parsedDate = Date.parse(date);
-      // const newDate = new Date();
-      // console.log(newDate);
-      getFormattedDate(date);
-      fetchedAlbums.push(album);
-      // console.log('alb', album);
-    });
-    setAlbums(fetchedAlbums);
-  };
+    // it creates Others Album
+    await new_createAlbum();
+    // adds all the photos to database
+    await new_HandleAlbums();
 
-  const getFormattedDate = date => {
-    // parse date
-    const newDate = date.split('/');
-    // Get the day name
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    // const dayName = dayNames[Parse.int(newDate[1]) / 7];
-    console.log();
+    // DATE RELATED STUFF
+    const res = await new_getAlbumsByDate();
 
-    // Get the month name
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    // const monthName = monthNames[date.getMonth()];
-
-    // // Get the day of the month
-    // const dayOfMonth = date.getDate();
-
-    // // Combine the values into a formatted string
-    // const formattedDate = dayOfMonth + monthName + ' - ' + date.getYear();
-    // return formattedDate;
+    setAlbums(res);
   };
 
   return (
