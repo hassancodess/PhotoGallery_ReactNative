@@ -6,6 +6,7 @@ import PhotoContainer from '../../components/AlbumTabs/PhotoContainer';
 
 const All = ({navigation, route}) => {
   const {album} = route.params;
+  // console.log('album', album);
   const [photos, setPhotos] = useState([]);
   const isFocused = useIsFocused();
 
