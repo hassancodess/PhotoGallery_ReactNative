@@ -78,7 +78,7 @@ const PhotoContainer = ({photos}) => {
           <FastImage
             style={styles.photoCover}
             source={{
-              uri: item.path,
+              uri: 'file://' + item.path,
               priority: FastImage.priority.normal,
             }}
             resizeMode={FastImage.resizeMode.cover}

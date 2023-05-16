@@ -89,7 +89,7 @@ const AlbumsContainer = ({albums}) => {
           <FastImage
             style={styles.albumCover}
             source={{
-              uri: item.cover_photo,
+              uri: 'file://' + item.cover_photo,
               priority: FastImage.priority.normal,
             }}
             resizeMode={FastImage.resizeMode.cover}
