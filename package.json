@@ -24,6 +24,7 @@
     "react-native-datatable-component": "^2.1.13",
     "react-native-exif": "^0.5.0",
     "react-native-fast-image": "^8.6.3",
+    "react-native-fs": "^2.20.0",
     "react-native-geocoding": "^0.5.0",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-get-location": "^3.0.1",
