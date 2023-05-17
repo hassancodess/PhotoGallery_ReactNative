@@ -56,7 +56,7 @@ export const createTables = async () => {
   await createAlbumPhotoTable();
   await createPhotoPersonTable();
   await createPhotoEventTable();
-  console.log('Tables Created Successfully');
+  console.log('Tables Initialized');
 };
 
 export const checkData = async () => {
@@ -109,41 +109,68 @@ export const createAlbum = async () => {
   }
 };
 export const new_createAlbum = async () => {
-  await openDBConnection();
-  const albums = await fetchAlbums();
-  const image = await getSomeImages(1);
-  const imagePath = `file://${image[0].path}`;
+  try {
+    const albums = await fetchAlbums();
+    const image = await getSomeImages(1);
+    const imagePath = `file://${image[0].path}`;
 
-  if (albums.length < 1) {
-    await addAlbum('Others', imagePath);
-  } else {
-    console.log('Others Album Already Created');
+    if (albums.length < 1) {
+      await addAlbum('Others', imagePath);
+      console.log('Others Album Created');
+    } else {
+      console.log('Others Album Already Created');
+    }
+  } catch (error) {
+    console.log('new Create Album:', error);
   }
 };
 
 export const new_addPhotosToDatabase = async photos => {
   try {
-    await openDBConnection();
-    photos?.forEach(async photo => {
+    for (const photo of photos) {
+      // Gets Photo Name
       const photoName = photo.path.split('/').pop();
+      // Gets Exif Data of Image
       const exif = await getExifData(photo);
-      const date_taken = convertDate(exif.DateTime);
-      const last_modified_date = convertDate(exif.DateTimeDigitized);
+      // Creating photo details object
       const photoDetails = {
         title: photoName,
         path: photo.path,
         lat: null,
         lng: null,
-        date_taken,
-        last_modified_date,
+        date_taken: convertDate(exif.DateTime),
+        last_modified_date: convertDate(exif.DateTimeDigitized),
       };
-      // console.log('details', photoDetails);
-      // console.log('details', photoDetails);
+      // adds photodetails to photo table
       await addPhoto(photoDetails);
+      // gets photo ID by name
       const photoID = await getPhotoIDByName(photoName);
+      // adds to the first album -> Others
       const albumID = 1;
+      // adds to the Album Photo
       await addAlbumPhoto(albumID, photoID.id);
-    });
+    }
+
+    // photos?.forEach(async photo => {
+    //   const photoName = photo.path.split('/').pop();
+    //   const exif = await getExifData(photo);
+    //   const date_taken = convertDate(exif.DateTime);
+    //   const last_modified_date = convertDate(exif.DateTimeDigitized);
+    //   const photoDetails = {
+    //     title: photoName,
+    //     path: photo.path,
+    //     lat: null,
+    //     lng: null,
+    //     date_taken,
+    //     last_modified_date,
+    //   };
+    //   // console.log('details', photoDetails);
+    //   // console.log('details', photoDetails);
+    //   await addPhoto(photoDetails);
+    //   const photoID = await getPhotoIDByName(photoName);
+    //   const albumID = 1;
+    //   await addAlbumPhoto(albumID, photoID.id);
+    // });
   } catch (error) {
     console.log('error', error);
   }
@@ -185,37 +212,49 @@ export const handleAlbums = async () => {
   }
 };
 
-export const new_HandleAlbums = async () => {
+export const new_handleAlbums = async () => {
   try {
-    await openDBConnection();
     const photos = await fetchPhotos();
     if (photos.length < 1) {
       const res = await getAllImages();
       await new_addPhotosToDatabase(res);
+      console.log('Photos Added to Database');
     }
   } catch (error) {
     console.log('New Handle Albums', error);
   }
 };
 
-export const new_getAlbumsByDate = async () => {
-  const res = await getDistinctDates();
-  // console.log('res', res);
-  const distinctDates = res.map(date => date.date_taken.split(',')[0]);
-  // console.log(distinctDates);
-  const albums = [];
-  for (const date of distinctDates) {
-    const photos = await getPhotosByDate(date);
-    const album = {
-      // should be uuid
-      id: Math.floor(Math.random() * 100),
-      cover_photo: photos[0].path,
-      title: date,
-      photos,
-    };
-    albums.push(album);
+export const new_handleAlbumsByDate = async () => {
+  try {
+    await openDBConnection();
+    // creates all the necessary tables
+    await createTables();
+    // it creates Others Album
+    await new_createAlbum();
+    // adds all the photos to database
+    await new_handleAlbums();
+    // get distinct dates from database
+    const res = await getDistinctDates();
+    // console.log('res', res);
+    // splits dates and get only the date part
+    const distinctDates = res.map(date => date.date_taken.split(',')[0]);
+    // console.log(distinctDates);
+    const albums = [];
+    for (const date of distinctDates) {
+      const photos = await getPhotosByDate(date);
+      const album = {
+        id: Math.floor(Math.random() * 100),
+        cover_photo: photos[0].path,
+        title: date,
+        photos,
+      };
+      albums.push(album);
+    }
+    return albums;
+  } catch (error) {
+    console.log('getAlbumsByDate', error);
   }
-  return albums;
 };
 
 // People Albums
