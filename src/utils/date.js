@@ -31,19 +31,21 @@ export const getFormattedDate = date => {
 };
 
 export const convertDate = dateString => {
-  //   console.log(typeof dateString);
-  const [datePart, timePart] = dateString.split(' ');
+  if (typeof dateString === 'string') {
+    const [datePart, timePart] = dateString.split(' ');
 
-  const [year, month, day] = datePart.split(':');
-  const [hour, minute, second] = timePart.split(':');
+    const [year, month, day] = datePart.split(':');
+    const [hour, minute, second] = timePart.split(':');
 
-  const realDate = new Date(
-    year,
-    month,
-    day,
-    hour,
-    minute,
-    second,
-  ).toLocaleString();
-  return realDate;
+    const realDate = new Date(
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+    ).toLocaleString();
+    return realDate;
+  }
+  return null;
 };
