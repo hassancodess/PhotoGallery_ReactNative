@@ -46,6 +46,7 @@ import {getImages} from '../utils/CameraRoll';
 import {convertDate, getFormattedDate} from '../utils/date';
 import {getAllImages, getSomeImages} from '../utils/fileSystem';
 import {getExifData} from '../utils/metadata';
+import {getPermissions} from '../utils/permissions';
 
 export const createTables = async () => {
   await openDBConnection();
@@ -171,6 +172,7 @@ export const handleInitialAlbum = async () => {
 
 export const handleAlbumsByDate = async () => {
   try {
+    await getPermissions();
     await openDBConnection();
     // creates all the necessary tables
     await createTables();
