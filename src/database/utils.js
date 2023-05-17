@@ -98,17 +98,6 @@ export const getAlbums = async () => {
   return res;
 };
 export const createAlbum = async () => {
-  await openDBConnection();
-  const albums = await fetchAlbums();
-  const image = await getImages(1);
-  // console.log('Image', image);
-  if (albums.length < 1) {
-    await addAlbum('Others', image[0].image.uri);
-  } else {
-    console.log('Others Album Already Created');
-  }
-};
-export const new_createAlbum = async () => {
   try {
     const albums = await fetchAlbums();
     const image = await getSomeImages(1);
@@ -125,7 +114,7 @@ export const new_createAlbum = async () => {
   }
 };
 
-export const new_addPhotosToDatabase = async photos => {
+export const addPhotosToDatabase = async photos => {
   try {
     for (const photo of photos) {
       // Gets Photo Name
@@ -150,74 +139,29 @@ export const new_addPhotosToDatabase = async photos => {
       // adds to the Album Photo
       await addAlbumPhoto(albumID, photoID.id);
     }
-
-    // photos?.forEach(async photo => {
-    //   const photoName = photo.path.split('/').pop();
-    //   const exif = await getExifData(photo);
-    //   const date_taken = convertDate(exif.DateTime);
-    //   const last_modified_date = convertDate(exif.DateTimeDigitized);
-    //   const photoDetails = {
-    //     title: photoName,
-    //     path: photo.path,
-    //     lat: null,
-    //     lng: null,
-    //     date_taken,
-    //     last_modified_date,
-    //   };
-    //   // console.log('details', photoDetails);
-    //   // console.log('details', photoDetails);
-    //   await addPhoto(photoDetails);
-    //   const photoID = await getPhotoIDByName(photoName);
-    //   const albumID = 1;
-    //   await addAlbumPhoto(albumID, photoID.id);
-    // });
   } catch (error) {
     console.log('error', error);
   }
 };
 
 // Labels.js
-export const handleAlbums = async () => {
+export const handleLabelsAlbums = async () => {
   try {
     await openDBConnection();
-    const photos = await fetchPhotos();
-    if (photos.length < 1) {
-      const res = await getImages();
-      res.forEach(async item => {
-        const photoName = item.image.uri.split('/').pop();
-        const details = {
-          title: photoName,
-          lat: null,
-          lng: null,
-          path: item.image.uri,
-          date_taken: new Date(item.timestamp * 1000).toLocaleString(),
-          last_modified_date: new Date(item.modified * 1000).toLocaleString(),
-        };
-        await addPhoto(details);
-        const photoID = await getPhotoIDByName(photoName);
-        // console.log('Photo ID', photoID.id);
-        const albumID = 1;
-        await addAlbumPhoto(albumID, photoID.id);
-      });
-      const dbAlbums = await fetchAlbums();
-      console.log('Initial Setup');
-      return dbAlbums;
-    } else {
-      const dbAlbums = await fetchAlbums();
-      console.log('Initial Setup');
-      return dbAlbums;
-    }
+    const albums = await fetchAlbums();
+    console.log('Fetched Label Albums');
+    return albums;
   } catch (error) {
     console.log('Handle Albums', error);
   }
 };
 
-export const new_handleAlbums = async () => {
+export const handleInitialAlbum = async () => {
   try {
     const photos = await fetchPhotos();
     if (photos.length < 1) {
       const res = await getAllImages();
-      await new_addPhotosToDatabase(res);
+      await addPhotosToDatabase(res);
       console.log('Photos Added to Database');
     }
   } catch (error) {
@@ -225,15 +169,15 @@ export const new_handleAlbums = async () => {
   }
 };
 
-export const new_handleAlbumsByDate = async () => {
+export const handleAlbumsByDate = async () => {
   try {
     await openDBConnection();
     // creates all the necessary tables
     await createTables();
     // it creates Others Album
-    await new_createAlbum();
+    await createAlbum();
     // adds all the photos to database
-    await new_handleAlbums();
+    await handleInitialAlbum();
     // get distinct dates from database
     const res = await getDistinctDates();
     // console.log('res', res);
@@ -259,6 +203,7 @@ export const new_handleAlbumsByDate = async () => {
 
 // People Albums
 export const handlePeopleAlbums = async () => {
+  await openDBConnection();
   const names = await getPeopleNames();
   const albums = [];
   names.forEach(async item => {
@@ -272,10 +217,12 @@ export const handlePeopleAlbums = async () => {
 export const handleEventsAlbums = async () => {
   const names = await getEventsNames();
   const albums = [];
-  names.forEach(async item => {
+  for (const item of names) {
     const album = await getAlbumByEventName(item.name);
     albums.push(album);
-  });
+  }
+  // names.forEach(async item => {
+  // });
   return albums;
 };
 
