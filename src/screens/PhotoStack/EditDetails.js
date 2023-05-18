@@ -25,11 +25,12 @@ import {
 } from '../../database/PhotoDB';
 import MapView, {Marker} from 'react-native-maps';
 import GetLocation from 'react-native-get-location';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
   // console.log('photo', photo);
   // Person States
   const [isPersonEditing, setIsPersonEditing] = useState();
@@ -71,7 +72,7 @@ const EditDetails = ({route}) => {
       getEventsInPhoto();
       if (!people.length > 0) {
         console.log('here');
-        sendImagetoAPI();
+        // sendImagetoAPI();
       }
     }
   }, [isFocused]);
@@ -96,7 +97,8 @@ const EditDetails = ({route}) => {
       };
 
       const response = await fetch(
-        'http://192.168.100.80:8082/saveImage',
+        // 'http://192.168.100.80:8082/saveImage',
+        'http://192.168.0.8:81/saveImage',
         requestOptions,
       );
       const data = await response.json();
@@ -261,6 +263,8 @@ const EditDetails = ({route}) => {
         // console.log('loc', photoID, lat, lng);
         await updatePhotoLocation(photoID, lat, lng);
       }
+      console.log('Image Data Updated');
+      navigation.goBack();
     } catch (error) {
       console.log(error);
     }
