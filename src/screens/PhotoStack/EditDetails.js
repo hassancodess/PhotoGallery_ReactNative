@@ -9,7 +9,7 @@ import {
   Provider,
 } from 'react-native-paper';
 import Modal from 'react-native-modal';
-
+import FastImage from 'react-native-fast-image';
 import GlobalStyles from '../../utils/GlobalStyles';
 import ChipsContainer from '../../components/UI/ChipsContainer';
 import {
@@ -26,9 +26,15 @@ import {
 import MapView, {Marker} from 'react-native-maps';
 import GetLocation from 'react-native-get-location';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {BASE_URI} from '../../utils/api';
+import AvatarList from '../../components/Photo/AvatarList';
+import MapModal from '../../components/Photo/MapModal';
+import {getCurrentLocation} from '../../utils/location';
 
 const EditDetails = ({route}) => {
   const {photo} = route.params;
+  const photoName = photo.path.split('/').pop().split('.')[0];
+  const photoType = photo.title.split('.').pop();
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // console.log('photo', photo);
@@ -79,12 +85,11 @@ const EditDetails = ({route}) => {
 
   const sendImagetoAPI = async () => {
     try {
-      const photoType = photo.title.split('.').pop();
-      // console.log('photo type', photoType);
+      // console.log('photo type', photoType, 'file://'+photo.path, photo.title);
 
       const formdata = new FormData();
       formdata.append('file', {
-        uri: photo.path,
+        uri: 'file://' + photo.path,
         name: photo.title,
         type: `image/${photoType}`,
       });
@@ -94,10 +99,7 @@ const EditDetails = ({route}) => {
         redirect: 'follow',
       };
 
-      const response = await fetch(
-        'http://192.168.100.80:8082/saveImage',
-        requestOptions,
-      );
+      const response = await fetch(`${BASE_URI}/saveImage`, requestOptions);
 
       const data = await response.json();
       console.log('data', data);
@@ -116,23 +118,7 @@ const EditDetails = ({route}) => {
       console.log('Error', error);
     }
   };
-  const getCurrentLocation = async () => {
-    try {
-      const location = await GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 60000,
-      });
-
-      setModalLocation({
-        ...modalLocation,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-    } catch (error) {
-      const {code, message} = error;
-      console.warn(code, message);
-    }
-  };
+  // OLD WORKING
   const handleAddPerson = async () => {
     const personName = person.trim();
     if (!isPersonEditing) {
@@ -280,8 +266,13 @@ const EditDetails = ({route}) => {
   const handleModal = () => {
     showModal();
   };
-  const handleAddLocation = () => {
-    getCurrentLocation();
+  const handleAddLocation = async () => {
+    const {longitude, latitude} = await getCurrentLocation();
+    setModalLocation({
+      ...modalLocation,
+      latitude: latitude,
+      longitude: longitude,
+    });
     setIsLocationAdded(true);
     showModal();
   };
@@ -320,7 +311,14 @@ const EditDetails = ({route}) => {
               setIsEditing={setIsPersonEditing}
               clearStates={clearPersonEditingStates}
             />
+            {/* Faces */}
+            <AvatarList
+              photoName={photoName}
+              photoType={photoType}
+              items={people}
+            />
           </View>
+          {/* </View> */}
           {/* Events */}
           <View style={styles.rowContainer}>
             <Text style={styles.title}>Events</Text>
@@ -397,7 +395,7 @@ const EditDetails = ({route}) => {
                 <View
                   style={{
                     height: '80%',
-                    backgroundColor: 'red',
+                    backgroundColor: 'blakc',
                     borderRadius: 10,
                     overflow: 'hidden',
                   }}>

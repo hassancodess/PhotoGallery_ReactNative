@@ -1,15 +1,26 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View, ScrollView, Pressable} from 'react-native';
+import React, {useState} from 'react';
 import AvatarCircle from '../UI/Avatar';
-const AvatarList = ({people, photoType, photoName}) => {
+import {
+  Portal,
+  TextInput,
+  Chip,
+  Button,
+  PaperProvider,
+  Menu,
+  Divider,
+} from 'react-native-paper';
+
+const AvatarList = ({photoType, photoName, items}) => {
   return (
     <View style={styles.avatarsContainer}>
       <ScrollView horizontal={true}>
-        {people?.map((person, index) => {
+        {items?.map((item, index) => {
+          console.log('item', item);
           return (
             <AvatarCircle
               key={index}
-              personName={person.name}
+              personName={item.name}
               photoName={photoName}
               photoType={photoType}
             />
