@@ -1,11 +1,17 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  Dimensions,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 const Photo = ({navigation, route}) => {
   const {photo} = route.params;
   const photoName = photo.path.split('/').pop();
-
   useLayoutEffect(() => {
     navigation.setOptions({
       title: photoName,
@@ -31,7 +37,6 @@ export default Photo;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 5,
   },
   photoCover: {
     width: '100%',
