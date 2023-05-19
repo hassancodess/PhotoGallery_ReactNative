@@ -72,7 +72,7 @@ const EditDetails = ({route}) => {
       getEventsInPhoto();
       if (!people.length > 0) {
         console.log('here');
-        // sendImagetoAPI();
+        sendImagetoAPI();
       }
     }
   }, [isFocused]);
@@ -81,28 +81,27 @@ const EditDetails = ({route}) => {
     try {
       const photoType = photo.title.split('.').pop();
       // console.log('photo type', photoType);
-      const formData = new FormData();
-      formData.append('file', {
+
+      const formdata = new FormData();
+      formdata.append('file', {
         uri: photo.path,
         name: photo.title,
         type: `image/${photoType}`,
       });
       var requestOptions = {
         method: 'POST',
-        body: formData,
-        // redirect: 'follow',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        body: formdata,
+        redirect: 'follow',
       };
 
       const response = await fetch(
-        // 'http://192.168.100.80:8082/saveImage',
-        'http://192.168.0.8:81/saveImage',
+        'http://192.168.100.80:8082/saveImage',
         requestOptions,
       );
+
       const data = await response.json();
       console.log('data', data);
+
       const dataPeople = [];
       for (const key in data) {
         const data = {
@@ -111,8 +110,7 @@ const EditDetails = ({route}) => {
         };
         dataPeople.push(data);
       }
-      // console.log(dataPeople); // logs 'foo', 'baz', and 'qux'
-      // console.log([...people, ...dataPeople]); // logs 'foo', 'baz', and 'qux'
+
       setPeople([...people, ...dataPeople]);
     } catch (error) {
       console.log('Error', error);
