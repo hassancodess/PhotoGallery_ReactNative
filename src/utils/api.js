@@ -1,1 +1,1 @@
-export const uri = 'http://192.168.0.8:81/saveImage';
+export const BASE_URI = 'http://192.168.100.80:81';
