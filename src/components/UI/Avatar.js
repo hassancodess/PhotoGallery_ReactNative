@@ -3,8 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {BASE_URI} from '../../utils/api';
 
-const AvatarCircle = ({photoName, photoType, personName}) => {
-  const photoURL = `${BASE_URI}/faces/${photoName}/${personName}.${photoType}`;
+const AvatarCircle = ({photoName, photoType, person}) => {
+  const photoURL = `${BASE_URI}/faces/${photoName}/${person.oldName}.${photoType}`;
   // console.log('photourl ', photoName, photoType, personName);
   console.log('photourl ', photoURL);
   return (
@@ -15,7 +15,7 @@ const AvatarCircle = ({photoName, photoType, personName}) => {
           uri: photoURL,
         }}
       />
-      <Text style={styles.avatarText}>{personName}</Text>
+      <Text style={styles.avatarText}>{person.newName}</Text>
     </View>
   );
 };
