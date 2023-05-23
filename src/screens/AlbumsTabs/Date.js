@@ -9,14 +9,14 @@ const Date = () => {
   const [albums, setAlbums] = useState([]);
 
   const init = async () => {
-    initialSetup();
+    await initialSetup();
     const res = await initialDateSetup();
-    console.log('date', res);
     setAlbums(res);
   };
 
   useLayoutEffect(() => {
     if (isFocused) {
+      setAlbums([]);
       init();
     }
   }, [isFocused]);
