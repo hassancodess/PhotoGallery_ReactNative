@@ -29,6 +29,14 @@ import {
   deletePhotoEvent,
   fetchPhotoCountOfEvent,
   deleteEvent,
+  updatePhotoLabel,
+  updatePhotoLocation,
+  getEventsNames,
+  getAlbumByEventName,
+  fetchPhotoOfEvent,
+  fetchPhotosOfEvent,
+  fetchDistinctLabels,
+  fetchPhotosByLabel,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -171,6 +179,14 @@ export const deleteEventFromDatabase = async (event, photo_id) => {
   }
 };
 
+export const updateLabelOfPhoto = async (photo_id, label) => {
+  await updatePhotoLabel(photo_id, label);
+};
+
+export const updateLocationOfPhoto = async (photoID, lat, lng) => {
+  updatePhotoLocation(photoID, lat, lng);
+};
+
 const getPhotosCountOfEvent = async event_id => {
   const res = await fetchPhotoCountOfEvent(event_id);
   return res;
@@ -180,4 +196,50 @@ export const getAllEventsOfPhoto = async photo_id => {
   await openDBConnection();
   const res = await fetchEventsOfPhoto(photo_id);
   return res;
+};
+
+// Events
+export const handleEventsAlbums = async () => {
+  try {
+    await openDBConnection();
+    const events = await fetchEvents();
+    const albums = [];
+    for (const event of events) {
+      const photos = await fetchPhotosOfEvent(event.id);
+      // console.log('Cover', coverPhoto);
+      const album = {
+        id: event.id,
+        title: event.name,
+        cover_photo: photos[0].path,
+        photos: photos,
+      };
+      albums.push(album);
+      showToast('Fetched Albums by Events');
+    }
+    return albums;
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+};
+
+// Labels
+export const handleLabelsAlbums = async () => {
+  try {
+    await openDBConnection();
+    const albums = [];
+    const labels = await fetchDistinctLabels();
+    for (const label of labels) {
+      const photos = await fetchPhotosByLabel(label);
+      const album = {
+        id: Math.floor(Math.random() * 1000),
+        title: label,
+        cover_photo: photos[0].path,
+        photos: photos,
+      };
+      albums.push(album);
+    }
+    return albums;
+  } catch (error) {
+    console.log('Handle Albums', error);
+  }
 };

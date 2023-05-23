@@ -275,6 +275,30 @@ export const updateEventNameByID = async (id, name) => {
   }
 };
 
+export const updatePhotoLabel = async (photo_id, label) => {
+  try {
+    let query = `UPDATE Photo
+    SET label = '${label}'
+    WHERE id = ${photo_id}`;
+    await db.executeSql(query);
+    showToast('Label Updated');
+  } catch (error) {
+    console.log('ERROR: Update Label DB');
+  }
+};
+export const updatePhotoLocation = async (photoID, lat, lng) => {
+  try {
+    let query = `UPDATE Photo
+    SET lat = '${lat}',
+    lng = '${lng}'
+    WHERE id = ${photoID}`;
+    await db.executeSql(query);
+    showToast('Photo Location Updated Successfully');
+  } catch (error) {
+    console.log('ERROR: Update Album DB');
+  }
+};
+
 export const fetchPhotoEventByID = async (photo_id, event_id) => {
   try {
     let query = `SELECT * FROM PhotoEvent WHERE photo_id = '${photo_id}' AND event_id = ${event_id}`;
@@ -340,5 +364,77 @@ export const fetchPhotoCountOfEvent = async event_id => {
     return record.photo_count;
   } catch (error) {
     showToast('Fetch Photo Count Of Event', 'error');
+  }
+};
+export const getEventsNames = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT name from Event`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getEventsNames DB', error);
+  }
+};
+export const getAlbumByEventName = async name => {
+  try {
+    let query = `SELECT * FROM Album WHERE title = '${name}'`;
+    const res = await db.executeSql(query);
+    const record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    console.log('ERROR: getAlbumByEventName DB', error);
+  }
+};
+export const fetchPhotosOfEvent = async id => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT *
+    FROM Photo 
+    INNER JOIN PhotoEvent ON Photo.id = PhotoEvent.photo_id
+    WHERE PhotoEvent.event_id = ${id};`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAlbumByEventName DB', error);
+  }
+};
+
+export const fetchDistinctLabels = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT DISTINCT label FROM Photo`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record.label);
+    }
+    return resultsSet;
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+};
+
+export const fetchPhotosByLabel = async label => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Photo WHERE label = '${label}'`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('error', error);
+    showToast(error.message, 'error');
   }
 };
