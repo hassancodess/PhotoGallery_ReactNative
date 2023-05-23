@@ -24,6 +24,6 @@ export const photoEventTableHead = ['photo_id', 'event_id'];
 export const photoEventWidthArr = [100, 100];
 
 export const getDataInArray = (data, order) => {
-  const convertedData = data.map(obj => order.map(key => obj[key]));
+  const convertedData = data && data.map(obj => order.map(key => obj[key]));
   return convertedData;
 };
