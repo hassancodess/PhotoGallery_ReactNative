@@ -1,6 +1,6 @@
 import {Platform, PermissionsAndroid} from 'react-native';
 
-export const getPermissions = async () => {
+export const getStoragePermissions = async () => {
   if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
     console.log('Permissions Granted');
     return;

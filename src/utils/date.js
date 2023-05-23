@@ -30,8 +30,8 @@ export const getFormattedDate = date => {
   // return formattedDate;
 };
 
-export const convertDate = dateString => {
-  if (typeof dateString === 'string') {
+export const convertExifDate = dateString => {
+  if (typeof dateString == 'string') {
     const [datePart, timePart] = dateString.split(' ');
 
     const [year, month, day] = datePart.split(':');
@@ -48,4 +48,33 @@ export const convertDate = dateString => {
     return realDate;
   }
   return null;
+};
+
+export const getCurrentDate = () => {
+  var today = new Date();
+  var month = (today.getMonth() + 1).toString().padStart(2, '0');
+  var day = today.getDate().toString().padStart(2, '0');
+  var year = today.getFullYear();
+  var hour = today.getHours().toString().padStart(2, '0');
+  var minute = today.getMinutes().toString().padStart(2, '0');
+  var second = today.getSeconds().toString().padStart(2, '0');
+  var ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  hour = hour ? hour : 12;
+
+  var formatted_date =
+    month +
+    '/' +
+    day +
+    '/' +
+    year +
+    ', ' +
+    hour +
+    ':' +
+    minute +
+    ':' +
+    second +
+    ' ' +
+    ampm;
+  return formatted_date;
 };
