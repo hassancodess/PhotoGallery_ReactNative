@@ -23,7 +23,7 @@ const numColumns = 3;
 const AlbumsContainer = ({albums}) => {
   const navigation = useNavigation();
   const deviceWidth = Dimensions.get('window').width;
-  const [cols, setCols] = useState(3);
+  const [cols, setCols] = useState(2);
   const maxCols = 5;
   const minCols = 2;
 
