@@ -44,6 +44,7 @@ const Settings = () => {
     showToast('Fetching Data');
     const {persons, photos, events, photoEvents, photoPersons} =
       await fetchData();
+    // console.log('photos', photos);
     if (photos) {
       const convertedPersons = getDataInArray(persons, personTableHead);
       const convertedPhotos = getDataInArray(photos, photoTableHead);
@@ -73,15 +74,19 @@ const Settings = () => {
     setPhotoPerson([]);
   };
   useLayoutEffect(() => {
-    if (isFocused) {
-      init();
-    }
-  }, [isFocused]);
+    init();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <Button mode="contained" onPress={handleCleanDatabase}>
+      <Button
+        mode="contained"
+        onPress={handleCleanDatabase}
+        style={{marginBottom: 10}}>
         Clear Database
+      </Button>
+      <Button mode="contained" onPress={init}>
+        Refresh Database
       </Button>
       {/* Persons Table */}
       <View style={styles.itemContainer}>
@@ -137,7 +142,7 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
-    marginVertical: 15,
+    marginTop: 50,
   },
   itemContainer: {
     marginBottom: 10,
