@@ -2,23 +2,24 @@ import React, {useState, useLayoutEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
-import {initialDateSetup} from '../../database/helpers';
+import {initialSetup, initialDateSetup} from '../../database/helpers';
 
 const Date = () => {
   const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
 
+  const init = async () => {
+    initialSetup();
+    const res = await initialDateSetup();
+    console.log('date', res);
+    setAlbums(res);
+  };
+
   useLayoutEffect(() => {
     if (isFocused) {
-      initialDateSetup();
+      init();
     }
   }, [isFocused]);
-
-  // const InitialSetup = async () => {
-  // handleEmptyDatabse
-  //   const res = await handleAlbumsByDate();
-  //   setAlbums(res);
-  // };
 
   return (
     <View style={styles.container}>
