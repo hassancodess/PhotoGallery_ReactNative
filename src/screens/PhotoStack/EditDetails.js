@@ -465,7 +465,9 @@
 //     gap: 10,
 //   },
 // });
-
+// import GetLocation from 'react-native-get-location';
+// import {useIsFocused, useNavigation} from '@react-navigation/native';
+// import MapModal from '../../components/Photo/MapModal';
 import {
   StyleSheet,
   Text,
@@ -476,29 +478,58 @@ import {
 } from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import GlobalStyles from '../../utils/GlobalStyles';
-import {TextInput, List, Chip} from 'react-native-paper';
-import {FlatList} from 'react-native-gesture-handler';
+import {TextInput, List, Chip, Button} from 'react-native-paper';
 import ChipContainer from '../../components/ChipContainer';
 import {
   addEventToDatabase,
   editEventToDatabase,
   handleAddEvents,
   getAllEventsOfPhoto,
+  updateLabelOfPhoto,
+  updateLocationOfPhoto,
 } from '../../database/helpers';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+import MapView, {Marker} from 'react-native-maps';
+import {getCurrentLocation} from '../../utils/location';
+import {BASE_URI} from '../../utils/api';
+import AvatarList from '../../components/Photo/AvatarList';
+import MapModal from '../../components/Photo/MapModal';
+import Modal from 'react-native-modal';
+
 const EditDetails = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const route = useRoute();
   const {photo} = route.params;
-
+  // console.log(photo);
   const photoName = photo.path.split('/').pop().split('.')[0];
   const photoType = photo.title.split('.').pop();
+  // Events States
   const [event, setEvent] = useState('');
   const [eventID, setEventID] = useState('');
   const [events, setEvents] = useState([]);
   const [isEventEditing, setIsEventEditing] = useState(false);
+  // Label States
+  const [labelText, setLabelText] = useState('');
+  const [label, setLabel] = useState(photo.label);
+  // Location States
+  const [location, setLocation] = useState({
+    latitude: photo?.lat != 'null' ? photo.lat : null,
+    longitude: photo?.lng != 'null' ? photo.lng : null,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  });
+  const [modalLocation, setModalLocation] = useState({
+    latitude: location.latitude,
+    longitude: location.longitude,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  });
+  const [isLocationAdded, setIsLocationAdded] = useState(false);
+  // Modal States
+  const [visible, setVisible] = useState(false);
 
+  // Events Functions
   const handleAddEvent = async () => {
     if (!isEventEditing) {
       const obj = {
@@ -526,9 +557,71 @@ const EditDetails = () => {
     await init();
   };
 
+  // Label Functions
+  const handleAddLabel = async () => {
+    console.log(':P');
+    setLabel(labelText);
+    await updateLabelOfPhoto(photo.id, labelText);
+    setLabelText('');
+  };
+
+  const handleLabelEdit = async () => {
+    setLabelText(label);
+  };
+
+  // Modal & Functions
+  const showModal = () => setVisible(true);
+  const hideModal = async () => {
+    console.log('here');
+    setVisible(false);
+    await updatePhotoLocation();
+  };
+  const handleMarkerChange = event => {
+    // console.log('HEHE', event.nativeEvent.coordinate);
+    const region = event.nativeEvent.coordinate;
+    setModalLocation({
+      ...modalLocation,
+      latitude: region.latitude,
+      longitude: region.longitude,
+    });
+  };
+
+  const handleModal = () => {
+    showModal();
+  };
+  const updatePhotoLocation = async () => {
+    console.log('hereasdas');
+    if (location.latitude != null) {
+      console.log('here');
+      const photoID = photo.id;
+      const lat = location.latitude;
+      const lng = location.longitude;
+      // console.log('loc', photoID, lat, lng);
+      await updateLocationOfPhoto(photoID, lat, lng);
+    }
+  };
+  const handleAddLocation = async () => {
+    // console.log('here')
+    const {longitude, latitude} = await getCurrentLocation();
+    console.log('here', longitude, latitude);
+    setModalLocation({
+      ...modalLocation,
+      latitude: latitude,
+      longitude: longitude,
+    });
+    setIsLocationAdded(true);
+    showModal();
+    await updatePhotoLocation();
+  };
+  const handleAddLocationFromModal = async () => {
+    setIsLocationAdded(true);
+    setLocation(modalLocation);
+    hideModal();
+    await updatePhotoLocation();
+  };
+
   const init = async () => {
     const res = await getAllEventsOfPhoto(photo.id);
-    console.log('events', res);
     setEvents(res);
   };
 
@@ -538,7 +631,7 @@ const EditDetails = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <View style={styles.flexContainer}>
         <View style={styles.rowContainer}>
           <Text style={styles.title}>Events</Text>
           <ChipContainer
@@ -555,12 +648,106 @@ const EditDetails = () => {
           />
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.title}>Labels</Text>
+          <Text style={styles.title}>Label</Text>
+          <TextInput
+            placeholder="Type something"
+            value={labelText}
+            onChangeText={text => setLabelText(text)}
+            onSubmitEditing={handleAddLabel}
+          />
+          <View style={{flexDirection: 'row'}}>
+            <Chip onClose={handleLabelEdit} closeIcon="pencil">
+              <Pressable>
+                <Text>{label}</Text>
+              </Pressable>
+            </Chip>
+          </View>
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.title}>Maps</Text>
+          <Text style={styles.title}>Location</Text>
+          {location?.latitude ? (
+            <Pressable onPress={handleModal}>
+              {location && (
+                <View style={styles.mapContainer}>
+                  <MapView style={styles.map} initialRegion={location}>
+                    <Marker coordinate={location} title="You" />
+                  </MapView>
+                </View>
+              )}
+            </Pressable>
+          ) : (
+            <Button mode="contained" onPress={handleAddLocation}>
+              Add Location
+            </Button>
+          )}
+          {/* <MapModal
+            modalLocation={modalLocation}
+            isLocationAdded={isLocationAdded}
+            handleMarkerChange={handleMarkerChange}
+            setModalLocation={setModalLocation}
+            visible={visible}
+            showModal={showModal}
+            location={location}
+            hideModal={hideModal}
+            handleAddLocationFromModal={handleAddLocationFromModal}
+          /> */}
+          <Modal
+            isVisible={visible}
+            onBackdropPress={hideModal}
+            style={styles.modalContentContainer}>
+            <>
+              {modalLocation?.latitude && (
+                <View style={styles.modalView}>
+                  <MapView style={styles.map} initialRegion={modalLocation}>
+                    <Marker
+                      coordinate={modalLocation}
+                      title="You"
+                      // isPreselected={true}
+                      draggable={isLocationAdded ? true : false}
+                      onDragEnd={handleMarkerChange}
+                    />
+                  </MapView>
+                </View>
+              )}
+              {!location?.latitude && (
+                <Button mode="contained" onPress={handleAddLocationFromModal}>
+                  Add
+                </Button>
+              )}
+            </>
+          </Modal>
+          {/* <Modal
+            isVisible={visible}
+            onBackdropPress={hideModal}
+            style={{gap: 10}}>
+            <>
+              {modalLocation?.latitude && (
+                <View
+                  style={{
+                    height: '80%',
+                    backgroundColor: 'blakc',
+                    borderRadius: 10,
+                    overflow: 'hidden',
+                  }}>
+                  <MapView style={styles.map} initialRegion={modalLocation}>
+                    <Marker
+                      coordinate={modalLocation}
+                      title="You"
+                      draggable={isLocationAdded ? true : false}
+                      onDragEnd={handleMarkerChange}
+                    />
+                  </MapView>
+                </View>
+              )}
+              {!location?.latitude && (
+                <Button mode="contained" onPress={handleAddLocationFromModal}>
+                  Add
+                </Button>
+              )}
+            </>
+          </Modal> */}
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -580,7 +767,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'green',
   },
   rowContainer: {
-    gap: 10,
+    gap: 8,
     // backgroundColor: 'yellow',
     // overflow: 'hidden',
   },
@@ -597,7 +784,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
     letterSpacing: 0.5,
     color: GlobalStyles.colors.dark,
   },
@@ -605,5 +792,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+  },
+  modalContentContainer: {
+    gap: 10,
+  },
+  modalView: {
+    height: '80%',
+    backgroundColor: 'blakc',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
 });

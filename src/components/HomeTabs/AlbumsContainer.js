@@ -6,7 +6,7 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import Animated, {
@@ -59,7 +59,7 @@ const AlbumsContainer = ({albums}) => {
     return itemWidth;
   };
   const addEllipsis = str => {
-    if (str.length <= 10) {
+    if (str.length <= 15) {
       return str;
     } else {
       return str.slice(0, 9) + '...';
@@ -94,7 +94,6 @@ const AlbumsContainer = ({albums}) => {
             }}
             resizeMode={FastImage.resizeMode.cover}
           />
-          {/* <Text style={styles.albumContainerText}>{item.title}</Text> */}
           <Text style={styles.albumContainerText}>{itemTitle}</Text>
         </View>
       </Pressable>
@@ -109,7 +108,7 @@ const AlbumsContainer = ({albums}) => {
             key={cols}
             data={albums}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={(item, index) => index}
             numColumns={cols}
             //   contentContainerStyle={styles.listContainer}
             style={styles.list}
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   albumContainerText: {
-    fontSize: numColumns <= 3 ? 14 : 12,
+    fontSize: numColumns <= 3 ? 15 : 12,
     color: 'black',
     textAlign: 'center',
   },

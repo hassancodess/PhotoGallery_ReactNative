@@ -42,14 +42,9 @@ const ChipContainer = ({
       setIsEditing(true);
     };
     return (
-      <Chip
-        onLongPress={() => console.log('asd')}
-        onClose={handleDelete}
-        closeIcon="close">
+      <Chip onClose={handleDelete} closeIcon="close">
         <Pressable style={{flexDirection: 'row'}} onLongPress={handleEdit}>
-          <Text>
-            {item.name} - {item.id}
-          </Text>
+          <Text>{item.name}</Text>
         </Pressable>
       </Chip>
     );
