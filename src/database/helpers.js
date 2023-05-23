@@ -1,5 +1,6 @@
 import {convertExifDate, getCurrentDate} from '../utils/date';
 import {getAllImages} from '../utils/fileSystem';
+import {getCity} from '../utils/geocoder';
 import {getExifData} from '../utils/metadata';
 import {getStoragePermissions} from '../utils/permissions';
 import {showToast} from '../utils/toast';
@@ -37,6 +38,7 @@ import {
   fetchPhotosOfEvent,
   fetchDistinctLabels,
   fetchPhotosByLabel,
+  fetchPhotosHavingLocation,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -237,6 +239,39 @@ export const handleLabelsAlbums = async () => {
         photos: photos,
       };
       albums.push(album);
+    }
+    return albums;
+  } catch (error) {
+    console.log('Handle Albums', error);
+  }
+};
+
+// Location
+
+export const handleLocationAlbums = async () => {
+  try {
+    // console.log('started');
+    await openDBConnection();
+    const albums = [];
+    const photos = await fetchPhotosHavingLocation();
+    // console.log('asd', photos);
+    for (const photo of photos) {
+      // console.log(photo.lat, photo.lng);
+      const cityName = await getCity(photo.lat, photo.lng);
+      // console.log(cityName);
+      const isFound = albums.find(obj => obj.title === cityName);
+      // console.log('isFound', isFound);
+      if (isFound) {
+        isFound.photos.push(photo);
+      } else {
+        const album = {
+          id: Math.floor(Math.random() * 100),
+          title: cityName,
+          cover_photo: photo.path,
+          photos: [photo],
+        };
+        albums.push(album);
+      }
     }
     return albums;
   } catch (error) {
