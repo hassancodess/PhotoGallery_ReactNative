@@ -466,107 +466,102 @@
 //   },
 // });
 
-import React, {useEffect, useState, useLayoutEffect} from 'react';
-import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
-  // Modal,
-  Portal,
-  TextInput,
-  Chip,
-  Button,
-  Provider,
-} from 'react-native-paper';
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+  Pressable,
+} from 'react-native';
+import React, {useState, useLayoutEffect} from 'react';
 import GlobalStyles from '../../utils/GlobalStyles';
+import {TextInput, List, Chip} from 'react-native-paper';
+import {FlatList} from 'react-native-gesture-handler';
+import ChipContainer from '../../components/ChipContainer';
 import {
-  addEvent,
-  addPeople,
-  updateEvent,
-  updatePeople,
-  updatePhotoLocation,
-} from '../../database/utils';
-import {
-  getAllPersonsInPhoto,
-  getAllEventsInPhoto,
-} from '../../database/PhotoDB';
-import {BASE_URI} from '../../utils/api';
-import {getCurrentLocation} from '../../utils/location';
-import AvatarCircle from '../../components/UI/Avatar';
-
+  addEventToDatabase,
+  editEventToDatabase,
+  handleAddEvents,
+  getAllEventsOfPhoto,
+} from '../../database/helpers';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 const EditDetails = () => {
-  // navigation
-  const isFocused = useIsFocused();
   const navigation = useNavigation();
-  // Persons States
-  const [persons, setPersons] = useState([
-    {id: 1, oldName: 'unknown_face_84df', newName: 'unknown_face_84df'},
-  ]);
-  const [person, setPerson] = useState({id: '', name: ''});
-  const [isEditing, setIsEditing] = useState(true);
-  // Person Methods
-  const handleAvatarPress = person => {
-    setPerson(prev => ({...prev, name: person.newName}));
-    setIsEditing(!setIsEditing);
-  };
-  const handleAddPerson = person => {
-    setPerson({});
-    const updatedPersons = persons.map(p => {
-      if (p.id == person.id) {
-        return {...p, name: person.new_name};
-      }
-    });
-    console.log('persons updated', updatedPersons);
+  const isFocused = useIsFocused();
+  const route = useRoute();
+  const {photo} = route.params;
 
-    setPersons(updatedPersons);
-    // const
+  const photoName = photo.path.split('/').pop().split('.')[0];
+  const photoType = photo.title.split('.').pop();
+  const [event, setEvent] = useState('');
+  const [eventID, setEventID] = useState('');
+  const [events, setEvents] = useState([]);
+  const [isEventEditing, setIsEventEditing] = useState(false);
+
+  const handleAddEvent = async () => {
+    if (!isEventEditing) {
+      const obj = {
+        id: Math.floor(Math.random() * 100),
+        name: event.trim(),
+      };
+      setEvents(prev => [...prev, obj]);
+      setEvent('');
+      // add to Database
+      await addEventToDatabase(obj.name, photo.id);
+    } else {
+      const editedEvent = {
+        id: eventID,
+        name: event.trim(),
+      };
+      const filteredItems = events.filter(e => e.id !== eventID);
+      filteredItems.push(editedEvent);
+      setEvents(filteredItems);
+      setEvent('');
+      setIsEventEditing(false);
+      setEventID('');
+      // add to Datbase
+      await editEventToDatabase(editedEvent);
+    }
+    await init();
   };
+
+  const init = async () => {
+    const res = await getAllEventsOfPhoto(photo.id);
+    console.log('events', res);
+    setEvents(res);
+  };
+
+  useLayoutEffect(() => {
+    init();
+  }, []);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{flex: 1}}>
-      <View style={styles.flexContainer}>
-        {/* People */}
-        <View style={styles.rowContainer}>
-          <Text style={styles.title}>People</Text>
-          <TextInput
-            disabled={isEditing}
-            value={person.oldName}
-            onChangeText={text => setPerson({...person, name: text})}
-            style={styles.input}
-            onSubmitEditing={() => handleAddPerson(person)}
-            placeholder="Type a person's name"
-          />
-          {persons.map((person, index) => {
-            return (
-              <Pressable onPress={() => handleAvatarPress(person)}>
-                <AvatarCircle
-                  person={person}
-                  photoName={'IMG_20230127_171908'}
-                  photoType={'jpg'}
-                />
-              </Pressable>
-            );
-          })}
-        </View>
-        {/* Events */}
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
         <View style={styles.rowContainer}>
           <Text style={styles.title}>Events</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Type an event"
-            value={person}
-            onSubmitEditing={handleAddPerson}
+          <ChipContainer
+            item={event}
+            setItem={setEvent}
+            itemID={eventID}
+            setItemID={setEventID}
+            items={events}
+            setItems={setEvents}
+            handleAddItem={handleAddEvent}
+            isEditing={isEventEditing}
+            setIsEditing={setIsEventEditing}
+            refresh={init}
           />
         </View>
-        {/* Labels */}
         <View style={styles.rowContainer}>
           <Text style={styles.title}>Labels</Text>
-          <TextInput style={styles.input} placeholder="Type a label" />
         </View>
-        {/* Location */}
         <View style={styles.rowContainer}>
-          <Text style={styles.title}>Location</Text>
+          <Text style={styles.title}>Maps</Text>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
