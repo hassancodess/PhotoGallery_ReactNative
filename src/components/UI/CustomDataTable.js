@@ -14,14 +14,15 @@ const CustomDataTable = ({tableData, tableHead, widthArr}) => {
         </Table>
         <ScrollView style={styles.dataWrapper}>
           <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-            {tableData.map((rowData, index) => (
-              <Row
-                key={index}
-                data={rowData}
-                widthArr={widthArr}
-                textStyle={styles.rowText}
-              />
-            ))}
+            {tableData &&
+              tableData.map((rowData, index) => (
+                <Row
+                  key={index}
+                  data={rowData}
+                  widthArr={widthArr}
+                  textStyle={styles.rowText}
+                />
+              ))}
           </Table>
         </ScrollView>
       </View>
