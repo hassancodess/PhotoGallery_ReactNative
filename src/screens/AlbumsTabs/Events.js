@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import React, {useState, useLayoutEffect, useMemo} from 'react';
 import {useIsFocused} from '@react-navigation/native';
-import {handleEventsAlbums} from '../../database/utils';
+import {handleEventsAlbums} from '../../database/helpers';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 
 const Events = ({navigation}) => {
@@ -10,6 +10,7 @@ const Events = ({navigation}) => {
 
   const InitialSetup = async () => {
     const res = await handleEventsAlbums();
+    console.log('eve', res);
     setAlbums(res);
   };
   useLayoutEffect(() => {

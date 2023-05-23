@@ -1,21 +1,14 @@
 import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import {useIsFocused} from '@react-navigation/native';
-import FastImage from 'react-native-fast-image';
-import {
-  createTables,
-  createAlbum,
-  handleAlbums,
-  handleLabelsAlbums,
-} from '../../database/utils';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
+import {handleLabelsAlbums} from '../../database/helpers';
 
 const Labels = ({navigation, route}) => {
   const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
 
   const InitialSetup = async () => {
-    // const res = await handleAlbums();
     const res = await handleLabelsAlbums();
     setAlbums(res);
   };

@@ -16,7 +16,7 @@ const Date = () => {
 
   useLayoutEffect(() => {
     if (isFocused) {
-      setAlbums([]);
+      // setAlbums([]);
       init();
     }
   }, [isFocused]);
