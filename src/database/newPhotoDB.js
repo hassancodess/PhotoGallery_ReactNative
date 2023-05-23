@@ -1,4 +1,5 @@
 import {openDatabase, enablePromise} from 'react-native-sqlite-storage';
+import {showToast} from '../utils/toast';
 enablePromise(true);
 let db;
 
@@ -78,10 +79,6 @@ export const createPhotoEventTable = async () => {
 export const deleteTables = async () => {
   try {
     let query;
-    query = `DROP TABLE IF EXISTS Album`;
-    await db.executeSql(query);
-    query = `DROP TABLE IF EXISTS AlbumPhoto`;
-    await db.executeSql(query);
     query = `DROP TABLE IF EXISTS Event`;
     await db.executeSql(query);
     query = `DROP TABLE IF EXISTS Person`;
@@ -221,5 +218,127 @@ export const fetchPhotosByDate = async date => {
     return resultsSet;
   } catch (error) {
     console.log('ERROR: getDistinctDates DB', error);
+  }
+};
+
+// EditDetails
+export const fetchEventByName = async eventName => {
+  try {
+    let query = `SELECT * FROM Event WHERE name = '${eventName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const insertEvent = async eventName => {
+  try {
+    let query = `INSERT INTO Event(name) VALUES('${eventName}')`;
+    await db.executeSql(query);
+    showToast('Event Added');
+  } catch (error) {
+    console.log('ERROR: Insert Event DB');
+  }
+};
+
+export const fetchEventIDByName = async eventName => {
+  try {
+    let query = `SELECT id FROM Event WHERE name = '${eventName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.id;
+  } catch (error) {
+    return null;
+  }
+};
+export const insertPhotoEvent = async (photo_id, event_id) => {
+  try {
+    let query = `INSERT INTO PhotoEvent(photo_id, event_id) VALUES('${photo_id}', '${event_id}')`;
+    await db.executeSql(query);
+    showToast('Insert To PhotoEvent');
+  } catch (error) {
+    console.log('ERROR: Fetch Event by ID DB');
+  }
+};
+
+export const updateEventNameByID = async (id, name) => {
+  try {
+    let query = `UPDATE Event
+    SET name = '${name}'
+    WHERE id = ${id}`;
+    await db.executeSql(query);
+    showToast('Event Updated');
+  } catch (error) {
+    console.log('ERROR: Update Event DB');
+  }
+};
+
+export const fetchPhotoEventByID = async (photo_id, event_id) => {
+  try {
+    let query = `SELECT * FROM PhotoEvent WHERE photo_id = '${photo_id}' AND event_id = ${event_id}`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    console.log('ERROR: Fetch PhotoEvent');
+  }
+};
+
+export const fetchEventsOfPhoto = async photo_id => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Event 
+    INNER JOIN PhotoEvent 
+    ON PhotoEvent.event_id = Event.id 
+    WHERE PhotoEvent.photo_id = ${photo_id}`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      const obj = {
+        id: record.id,
+        name: record.name,
+      };
+      resultsSet.push(obj);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: getAllEventsInPhoto DB', error);
+  }
+};
+
+export const deletePhotoEvent = async (event_id, photo_id) => {
+  try {
+    let query = `DELETE FROM PhotoEvent
+  WHERE photo_id = ${photo_id} AND
+  event_id = ${event_id}`;
+    await db.executeSql(query);
+    showToast('Delete From PhotoEvent');
+  } catch (error) {
+    console.log('ERROR: Update Event DB');
+  }
+};
+export const deleteEvent = async event_id => {
+  try {
+    let query = `DELETE FROM Event
+  WHERE id = ${event_id}`;
+    await db.executeSql(query);
+    showToast('Event Deleted');
+  } catch (error) {
+    console.log('ERROR: DELETE EVENT DB');
+  }
+};
+
+export const fetchPhotoCountOfEvent = async event_id => {
+  try {
+    let query = `SELECT COUNT(photo_id) AS photo_count
+    FROM PhotoEvent
+    WHERE event_id = ${event_id};`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.photo_count;
+  } catch (error) {
+    showToast('Fetch Photo Count Of Event', 'error');
   }
 };
