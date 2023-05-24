@@ -1,6 +1,6 @@
 import Exif from 'react-native-exif';
 
-export const getExifData = async photo => {
-  const data = await Exif.getExif(photo.path);
+export const getExifData = async path => {
+  const data = await Exif.getExif(path);
   return data.exif;
 };
