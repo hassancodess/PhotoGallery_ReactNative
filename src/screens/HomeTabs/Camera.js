@@ -1,22 +1,31 @@
-import {View} from 'react-native';
-import React, {useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import {captureImage, chooseFile} from '../../utils/imagePicker';
-import {useIsFocused} from '@react-navigation/native';
-
-const Camera = ({navigation}) => {
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Button, Text} from 'react-native-paper';
+import {handleCaptureImage} from '../../database/helpers';
+const Camera = () => {
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  const [image, setImage] = useState({});
 
+  const init = async () => {
+    await handleCaptureImage();
+  };
   useEffect(() => {
     if (isFocused) {
-      captureImage('photo');
-      // chooseFile('photo');
+      init();
       navigation.navigate('AlbumsStack');
     }
   }, [isFocused]);
-  // TODOS
-  // 1 - Save Image to SQLITE
 
-  return <View></View>;
+  return <View style={styles.container}></View>;
 };
 
 export default Camera;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+  },
+});
