@@ -574,7 +574,9 @@ const EditDetails = () => {
   const hideModal = async () => {
     console.log('here');
     setVisible(false);
-    await updatePhotoLocation();
+    if (location.latitude != modalLocation.latitude) {
+      await updatePhotoLocation();
+    }
   };
   const handleMarkerChange = event => {
     // console.log('HEHE', event.nativeEvent.coordinate);
@@ -590,18 +592,15 @@ const EditDetails = () => {
     showModal();
   };
   const updatePhotoLocation = async () => {
-    console.log('hereasdas');
-    if (location.latitude != null) {
-      console.log('here');
+    if (modalLocation.latitude != null) {
       const photoID = photo.id;
-      const lat = location.latitude;
-      const lng = location.longitude;
+      const lat = modalLocation.latitude;
+      const lng = modalLocation.longitude;
       // console.log('loc', photoID, lat, lng);
       await updateLocationOfPhoto(photoID, lat, lng);
     }
   };
   const handleAddLocation = async () => {
-    // console.log('here')
     const {longitude, latitude} = await getCurrentLocation();
     console.log('here', longitude, latitude);
     setModalLocation({
@@ -667,7 +666,7 @@ const EditDetails = () => {
           <Text style={styles.title}>Location</Text>
           {location?.latitude ? (
             <Pressable onPress={handleModal}>
-              {location && (
+              {location.latitude && (
                 <View style={styles.mapContainer}>
                   <MapView style={styles.map} initialRegion={location}>
                     <Marker coordinate={location} title="You" />
