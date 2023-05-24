@@ -164,6 +164,5 @@ const styles = StyleSheet.create({
   },
   listColumnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 40,
   },
 });
