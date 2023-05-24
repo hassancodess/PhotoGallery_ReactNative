@@ -1,6 +1,8 @@
 import {convertExifDate, getCurrentDate} from '../utils/date';
-import {getAllImages} from '../utils/fileSystem';
+import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
+import {captureImage} from '../utils/imagePicker';
+import {getCurrentLocation} from '../utils/location';
 import {getExifData} from '../utils/metadata';
 import {getStoragePermissions} from '../utils/permissions';
 import {showToast} from '../utils/toast';
@@ -98,7 +100,7 @@ export const addPhotosToDatabase = async photos => {
     // Gets Photo Name
     const photoName = photo.path.split('/').pop();
     // Gets Exif Data of Image
-    const exif = await getExifData(photo);
+    const exif = await getExifData(photo.path);
     // Creating photo details object
     const photoDetails = {
       title: photoName,
@@ -250,9 +252,10 @@ export const handleLabelsAlbums = async () => {
 
 export const handleLocationAlbums = async () => {
   try {
-    // console.log('started');
+    console.log('started');
     await openDBConnection();
     const albums = [];
+    showToast('Fetching Albums by Location');
     const photos = await fetchPhotosHavingLocation();
     // console.log('asd', photos);
     for (const photo of photos) {
@@ -273,8 +276,42 @@ export const handleLocationAlbums = async () => {
         albums.push(album);
       }
     }
+    showToast('Fetched Albums by Location');
     return albums;
   } catch (error) {
     console.log('Handle Albums', error);
   }
+};
+
+// Camera
+
+export const handleCaptureImage = async () => {
+  const photo = await captureImage();
+  console.log('photo', photo);
+
+  // Gets Exif Data of Image
+  const exif = await getExifData(photo.uri);
+  // Gets Current Location
+  const {latitude, longitude} = await getCurrentLocation();
+  // Removes file:// from image path
+  const cleanedPhotoPath = photo.uri.substring(7);
+
+  // Creating photo details object
+  const photoDetails = {
+    title: photo.fileName,
+    path: cleanedPhotoPath,
+    lat: latitude,
+    lng: longitude,
+    date_taken: convertExifDate(exif.DateTime),
+    last_modified_date: getCurrentDate(),
+    isSynced: 0,
+    label: 'Others',
+  };
+  const photoToStore = {
+    uri: photo.uri,
+    type: photo.type,
+    name: photo.fileName,
+  };
+  await storeImage(photoToStore);
+  await insertPhoto(photoDetails);
 };
