@@ -186,6 +186,7 @@ export const insertPhoto = async photo => {
 
     let query = `INSERT INTO Photo(title, lat, lng, path, date_taken, last_modified_date, isSynced, label) VALUES('${title}','${lat}','${lng}','${path}','${date_taken}','${last_modified_date}', '${isSynced}', '${label}')`;
     await db.executeSql(query);
+    showToast('Photo Inserted');
   } catch (error) {
     console.log('ERROR: Save Photo DB');
   }
