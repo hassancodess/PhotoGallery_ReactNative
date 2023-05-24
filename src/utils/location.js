@@ -54,6 +54,11 @@ export const getCurrentLocation = async () => {
     return obj;
   } catch (error) {
     const {code, message} = error;
-    console.warn('getCurrentLocation Error', code, message);
+    console.log('getCurrentLocation Error: returning null', code, message);
+    const obj = {
+      latitude: null,
+      longitude: null,
+    };
+    return obj;
   }
 };
