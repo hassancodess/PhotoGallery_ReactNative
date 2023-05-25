@@ -3,7 +3,7 @@ import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
 import {captureImage} from '../utils/imagePicker';
 import {getCurrentLocation} from '../utils/location';
-import {getExifData} from '../utils/metadata';
+import {getExifData, getLatLngExif} from '../utils/metadata';
 import {getStoragePermissions} from '../utils/permissions';
 import {showToast} from '../utils/toast';
 import {
@@ -101,12 +101,14 @@ export const addPhotosToDatabase = async photos => {
     const photoName = photo.path.split('/').pop();
     // Gets Exif Data of Image
     const exif = await getExifData(photo.path);
+    const {latitude, longitude} = await getLatLngExif(photo.path);
+    console.log('erer', latitude, longitude);
     // Creating photo details object
     const photoDetails = {
       title: photoName,
       path: photo.path,
-      lat: null,
-      lng: null,
+      lat: latitude === 0 ? null : latitude,
+      lng: longitude === 0 ? null : longitude,
       date_taken: convertExifDate(exif.DateTime),
       last_modified_date: getCurrentDate(),
       isSynced: 0,
@@ -297,9 +299,16 @@ export const handleCaptureImage = async () => {
   const cleanedPhotoPath = photo.uri.substring(7);
 
   // Creating photo details object
+  const photoToStore = {
+    uri: photo.uri,
+    type: photo.type,
+    name: photo.fileName,
+  };
+  const destinationPath = await storeImage(photoToStore);
+  console.log('destinationPath', destinationPath);
   const photoDetails = {
     title: photo.fileName,
-    path: cleanedPhotoPath,
+    path: destinationPath,
     lat: latitude,
     lng: longitude,
     date_taken: convertExifDate(exif.DateTime),
@@ -307,11 +316,5 @@ export const handleCaptureImage = async () => {
     isSynced: 0,
     label: 'Others',
   };
-  const photoToStore = {
-    uri: photo.uri,
-    type: photo.type,
-    name: photo.fileName,
-  };
-  await storeImage(photoToStore);
   await insertPhoto(photoDetails);
 };
