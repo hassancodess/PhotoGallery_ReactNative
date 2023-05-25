@@ -25,4 +25,5 @@ export const storeImage = async photo => {
       console.log(err.message);
       showToast(err.message, 'error');
     });
+  return destinationPath;
 };
