@@ -78,3 +78,22 @@ export const getCurrentDate = () => {
     ampm;
   return formatted_date;
 };
+
+export const extractDate = date => {
+  // Expected Input 05/24/2023, 11:02:18 PM
+  // Expected Output 05/24/2023
+  const dateOnly = date.split(',')[0].trim();
+  return dateOnly;
+};
+
+export const getUniqueDates = dates => {
+  // Expected Input 05/24/2023, 11:02:18 PM
+  // Expected Output 05/24/2023
+  const uniqueDates = dates.filter(
+    (date, index) => dates.indexOf(date) === index,
+  );
+
+  console.log('unique', uniqueDates);
+  // const dateOnly = date.split(',')[0].trim();
+  // return dateOnly;
+};
