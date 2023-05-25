@@ -78,11 +78,12 @@ const AlbumsContainer = ({albums}) => {
           {width: itemWidth, height: itemHeight, backgroundColor: item.color},
         ]}
         onPress={() =>
+          // navigation.getState()
           navigation.navigate('AlbumTabs', {
-            screen: 'All',
-            params: {
-              album: item,
-            },
+            // screen: 'All',
+            // params: {
+            album: item,
+            // },
           })
         }>
         <View style={styles.albumContainer}>
