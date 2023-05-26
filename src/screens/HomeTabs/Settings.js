@@ -3,7 +3,13 @@ import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {Button, ActivityIndicator} from 'react-native-paper';
 import {useIsFocused} from '@react-navigation/native';
 import CustomDataTable from '../../components/UI/CustomDataTable';
-import {fetchData, createTables, clearDatabase} from '../../database/helpers';
+import {
+  fetchData,
+  createTables,
+  clearDatabase,
+  clearPersons,
+  clearEvents,
+} from '../../database/helpers';
 import {LogBox} from 'react-native';
 
 import {
@@ -79,15 +85,26 @@ const Settings = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Button
-        mode="contained"
-        onPress={handleCleanDatabase}
-        style={{marginBottom: 10}}>
-        Clear Database
-      </Button>
-      <Button mode="contained" onPress={init}>
-        Refresh Database
-      </Button>
+      <ScrollView horizontal style={{flexDirection: 'row'}}>
+        <Button
+          mode="contained"
+          onPress={clearPersons}
+          style={{marginRight: 5}}>
+          Clear Persons
+        </Button>
+        <Button mode="contained" onPress={clearEvents} style={{marginRight: 5}}>
+          Clear Events
+        </Button>
+        <Button mode="contained" onPress={init} style={{marginRight: 5}}>
+          Refresh Database
+        </Button>
+        <Button
+          mode="contained"
+          onPress={handleCleanDatabase}
+          style={{marginRight: 5}}>
+          Clear Database
+        </Button>
+      </ScrollView>
       {/* Persons Table */}
       <View style={styles.itemContainer}>
         <Text style={styles.headingText}>Person Table</Text>
