@@ -454,3 +454,23 @@ export const fetchPhotosHavingLocation = async () => {
     showToast(error.message, 'error');
   }
 };
+
+// Nested Events
+// SELECT *
+// FROM customers
+// INNER JOIN orders ON customers.customer_id = orders.customer_id;
+export const fetchEventsWithPhotoRelation = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Event INNER JOIN PhotoEvent ON Event.id = PhotoEvent.event_id`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('error', error);
+    showToast(error.message, 'error');
+  }
+};

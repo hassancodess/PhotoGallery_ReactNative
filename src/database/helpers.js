@@ -41,6 +41,7 @@ import {
   fetchDistinctLabels,
   fetchPhotosByLabel,
   fetchPhotosHavingLocation,
+  fetchEventsWithPhotoRelation,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -317,4 +318,34 @@ export const handleCaptureImage = async () => {
     label: 'Others',
   };
   await insertPhoto(photoDetails);
+};
+
+// Nested Events
+
+export const initialEventsSetup = async album => {
+  await openDBConnection();
+  const events = await fetchEventsWithPhotoRelation();
+  const results = [];
+  // console.log('Album', album.photos);
+  // console.log('Events', events);
+
+  album.photos.forEach(photo => {
+    const isPresent = events.find(e => e.photo_id === photo.id);
+    if (isPresent) {
+      // console.log('is Present', isPresent);
+      const existingEvent = results.find(e => e.title === isPresent.name);
+      if (existingEvent) {
+        existingEvent.photos.push(photo);
+      } else {
+        const id = Math.floor(Math.random() * 1000);
+        results.push({
+          id,
+          title: isPresent.name, //Event name
+          cover_photo: photo.path,
+          photos: [photo],
+        });
+      }
+    }
+  });
+  return results;
 };
