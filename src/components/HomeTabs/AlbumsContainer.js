@@ -71,21 +71,20 @@ const AlbumsContainer = ({albums}) => {
     const itemHeight = calculateItemHeight(cols, deviceWidth);
 
     const itemTitle = addEllipsis(item.title);
+
+    const handleNavigation = () => {
+      navigation.push('AlbumTabs', {
+        album: item,
+      });
+    };
+
     return (
       <Pressable
         style={[
           styles.item,
           {width: itemWidth, height: itemHeight, backgroundColor: item.color},
         ]}
-        onPress={() =>
-          // navigation.getState()
-          navigation.navigate('AlbumTabs', {
-            // screen: 'All',
-            // params: {
-            album: item,
-            // },
-          })
-        }>
+        onPress={handleNavigation}>
         <View style={styles.albumContainer}>
           <FastImage
             style={styles.albumCover}
