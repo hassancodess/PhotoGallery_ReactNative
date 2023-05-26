@@ -93,6 +93,30 @@ export const deleteTables = async () => {
     console.log('ERROR: Deleting Tables');
   }
 };
+export const deletePersons = async () => {
+  try {
+    let query;
+    query = `DELETE FROM Person`;
+    await db.executeSql(query);
+    query = `DELETE FROM PhotoPerson`;
+    await db.executeSql(query);
+    showToast('Person Table Cleared');
+  } catch (error) {
+    console.log('ERROR: Deleting Tables');
+  }
+};
+export const deleteEvents = async () => {
+  try {
+    let query;
+    query = `DELETE FROM Event`;
+    await db.executeSql(query);
+    query = `DELETE FROM PhotoEvent`;
+    await db.executeSql(query);
+    showToast('Event Table Cleared');
+  } catch (error) {
+    console.log('ERROR: Deleting Tables');
+  }
+};
 
 // Fetch Data
 export const fetchPhotos = async () => {
@@ -472,5 +496,67 @@ export const fetchEventsWithPhotoRelation = async () => {
   } catch (error) {
     console.log('error', error);
     showToast(error.message, 'error');
+  }
+};
+
+export const updatePerson = async person => {
+  try {
+    let query = `UPDATE Person
+    SET name = '${person.name}'
+    WHERE id = ${person.id}`;
+    await db.executeSql(query);
+  } catch (error) {
+    console.log('ERROR: Update Person DB');
+  }
+};
+
+export const insertPerson = async personName => {
+  try {
+    let query = `INSERT INTO Person(name) VALUES('${personName}')`;
+    await db.executeSql(query);
+    showToast(`${personName} added to DB`);
+  } catch (error) {
+    console.log('ERROR: Save Person DB');
+  }
+};
+export const insertPhotoPerson = async (photo_id, person_id) => {
+  try {
+    let query = `INSERT INTO PhotoPerson(photo_id, person_id) VALUES('${photo_id}', '${person_id}')`;
+    await db.executeSql(query);
+    showToast(`PhotoPerson added to DB`);
+  } catch (error) {
+    console.log('ERROR: Save PhotoPerson DB', error);
+  }
+};
+
+export const getPersonID = async personName => {
+  try {
+    let query = `SELECT * FROM Person WHERE name = '${personName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.id;
+  } catch (error) {
+    console.log('ERROR: getPersonID DB', error);
+  }
+};
+export const getPerson = async personName => {
+  try {
+    let query = `SELECT * FROM Person WHERE name = '${personName}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record;
+  } catch (error) {
+    console.log('ERROR: getPersonID DB', error);
+  }
+};
+
+export const getPhotoPersonCountByID = async photo_id => {
+  try {
+    let query = `SELECT COUNT(*) as count FROM PhotoPerson WHERE photo_id = '${photo_id}'`;
+    const res = await db.executeSql(query);
+    let record = res[0].rows.item(0);
+    return record.count;
+  } catch (error) {
+    console.log('ERROR: getPersonID DB', error);
   }
 };

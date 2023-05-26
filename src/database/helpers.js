@@ -1,3 +1,4 @@
+import {BASE_URI} from '../utils/api';
 import {convertExifDate, getCurrentDate} from '../utils/date';
 import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
@@ -42,6 +43,13 @@ import {
   fetchPhotosByLabel,
   fetchPhotosHavingLocation,
   fetchEventsWithPhotoRelation,
+  insertPerson,
+  insertPhotoPerson,
+  getPersonID,
+  deleteEvents,
+  deletePersons,
+  getPhotoPersonCountByID,
+  getPerson,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -58,6 +66,13 @@ export const createTables = async () => {
 export const clearDatabase = async () => {
   await deleteTables();
   showToast('Tables Deleted');
+};
+
+export const clearPersons = async () => {
+  await deletePersons();
+};
+export const clearEvents = async () => {
+  await deleteEvents();
 };
 
 export const fetchData = async () => {
@@ -348,4 +363,83 @@ export const initialEventsSetup = async album => {
     }
   });
   return results;
+};
+
+//
+export const addPeopleToDatabase = async (people, photo_id) => {
+  await openDBConnection();
+  console.log('pid', photo_id);
+  for (const p of people) {
+    // console.log(p.name, p);
+    await insertPerson(p.name);
+    const personID = await getPersonID(p.name);
+    console.log('personID', personID);
+    await insertPhotoPerson(photo_id, personID);
+  }
+};
+
+export const handlePersons = async photo => {
+  await openDBConnection();
+  const count = await getPhotoPersonCountByID(photo.id);
+  console.log('count', count);
+
+  if (count === 0) {
+    showToast('API Called');
+    const peopleList = await callAPI(photo);
+    console.log('peopleList', peopleList);
+    for (const p of peopleList) {
+      //name exisits in DB
+      console.log('p', p);
+      const checkPerson = await getPerson(p.name);
+      console.log('checkperson', checkPerson);
+      if (!checkPerson) {
+        await insertPerson(p.name);
+        const personID = await getPersonID(p.name);
+        await insertPhotoPerson(photo.id, personID);
+      } else {
+        const personID = await getPersonID(p.name);
+        await insertPhotoPerson(photo.id, personID);
+      }
+    }
+  } else {
+    showToast('NO API CALLED');
+  }
+};
+
+const callAPI = async photo => {
+  try {
+    const photoType = photo.title.split('.').pop();
+    // console.log('photo type', photoType, 'file://'+photo.path, photo.title);
+    console.log('started');
+    const formdata = new FormData();
+    formdata.append('file', {
+      uri: 'file://' + photo.path,
+      name: photo.title,
+      type: `image/${photoType}`,
+    });
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    const response = await fetch(`${BASE_URI}/saveImage`, requestOptions);
+
+    const data = await response.json();
+    // console.log('data', data);
+
+    const dataPeople = [];
+    if (typeof data !== 'string') {
+      for (const key in data) {
+        const data = {
+          id: `uuid-${Math.floor(Math.random() * 100) + 1}`,
+          name: key,
+        };
+        dataPeople.push(data);
+      }
+    }
+    return dataPeople;
+  } catch (error) {
+    console.log('Error', error);
+  }
 };
