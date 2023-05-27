@@ -247,6 +247,21 @@ export const fetchPhotosByDate = async date => {
 };
 
 // EditDetails
+export const fetchPersonsOfPhoto = async photo_id => {
+  try {
+    let query = `SELECT * FROM Person INNER JOIN PhotoPerson ON Person.id = PhotoPerson.person_id  
+    WHERE photo_id = '${photo_id}'`;
+    const res = await db.executeSql(query);
+    const resultsSet = [];
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    return null;
+  }
+};
 export const fetchEventByName = async eventName => {
   try {
     let query = `SELECT * FROM Event WHERE name = '${eventName}'`;
@@ -429,7 +444,24 @@ export const fetchPhotosOfEvent = async id => {
     }
     return resultsSet;
   } catch (error) {
-    console.log('ERROR: getAlbumByEventName DB', error);
+    console.log('ERROR: fetchPhotosOfEvent DB', error);
+  }
+};
+export const fetchPhotosOfPerson = async id => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT *
+    FROM Photo 
+    INNER JOIN PhotoPerson ON Photo.id = PhotoPerson.photo_id
+    WHERE PhotoPerson.person_id = ${id};`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('ERROR: fetchPhototsOfPerson DB', error);
   }
 };
 
@@ -505,6 +537,7 @@ export const updatePerson = async person => {
     SET name = '${person.name}'
     WHERE id = ${person.id}`;
     await db.executeSql(query);
+    showToast('Person Name Updated');
   } catch (error) {
     console.log('ERROR: Update Person DB');
   }

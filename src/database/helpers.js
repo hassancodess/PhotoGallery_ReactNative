@@ -50,6 +50,9 @@ import {
   deletePersons,
   getPhotoPersonCountByID,
   getPerson,
+  fetchPersonsOfPhoto,
+  updatePerson,
+  fetchPhotosOfPerson,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -220,6 +223,51 @@ export const getAllEventsOfPhoto = async photo_id => {
   return res;
 };
 
+export const getPeopleInPhoto = async photo_id => {
+  await openDBConnection();
+  const res = await fetchPersonsOfPhoto(photo_id);
+  return res;
+};
+
+export const handleUpdatePerson = async (new_person, old_person) => {
+  const res = await updatePersonNameFromAPI(old_person.name, new_person.name);
+  if (res) {
+    await updatePersonNameFromDB(new_person);
+  }
+};
+
+const updatePersonNameFromDB = async person => {
+  await openDBConnection();
+  updatePerson(person);
+};
+
+const updatePersonNameFromAPI = async (old_name, new_name) => {
+  let myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+
+  const raw = JSON.stringify({
+    old_names: [`${old_name}`],
+    new_names: [`${new_name}`],
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+  // const response = await fetch(`${BASE_URI}/updateName`, requestOptions);
+  const response = await fetch(`${BASE_URI}/updateName`, requestOptions);
+  showToast('here');
+  if (response.status === 200) {
+    const data = response.json();
+    showToast(data);
+    return data;
+  }
+  showToast('returning null');
+  return null;
+};
+
 // Events
 export const handleEventsAlbums = async () => {
   try {
@@ -237,6 +285,29 @@ export const handleEventsAlbums = async () => {
       };
       albums.push(album);
       showToast('Fetched Albums by Events');
+    }
+    return albums;
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+};
+// Events
+export const handlePeopleAlbums = async () => {
+  try {
+    await openDBConnection();
+    const persons = await fetchPersons();
+    const albums = [];
+    for (const person of persons) {
+      const photos = await fetchPhotosOfPerson(person.id);
+      // console.log('Cover', coverPhoto);
+      const album = {
+        id: person.id,
+        title: person.name,
+        cover_photo: photos[0].path,
+        photos: photos,
+      };
+      albums.push(album);
+      showToast('Fetched Albums of People');
     }
     return albums;
   } catch (error) {
