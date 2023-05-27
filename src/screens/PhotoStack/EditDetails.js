@@ -468,46 +468,50 @@
 // import GetLocation from 'react-native-get-location';
 // import {useIsFocused, useNavigation} from '@react-navigation/native';
 // import MapModal from '../../components/Photo/MapModal';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  SafeAreaView,
-  Pressable,
-} from 'react-native';
-import React, {useState, useLayoutEffect} from 'react';
+import {StyleSheet, Text, View, SafeAreaView, Pressable} from 'react-native';
+import React, {useState, useLayoutEffect, useContext, useEffect} from 'react';
 import GlobalStyles from '../../utils/GlobalStyles';
 import {TextInput, List, Chip, Button} from 'react-native-paper';
 import ChipContainer from '../../components/ChipContainer';
 import {
   addEventToDatabase,
   editEventToDatabase,
-  handleAddEvents,
-  getAllEventsOfPhoto,
   updateLabelOfPhoto,
   updateLocationOfPhoto,
+  handleUpdatePerson,
 } from '../../database/helpers';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import MapView, {Marker} from 'react-native-maps';
 import {getCurrentLocation} from '../../utils/location';
-import {BASE_URI} from '../../utils/api';
 import AvatarList from '../../components/Photo/AvatarList';
-import MapModal from '../../components/Photo/MapModal';
 import Modal from 'react-native-modal';
+import PhotoContext from '../../context/PhotoContext';
+import {showToast} from '../../utils/toast';
 
 const EditDetails = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const route = useRoute();
   const {photo} = route.params;
-  // console.log(photo);
-  const photoName = photo.path.split('/').pop().split('.')[0];
-  const photoType = photo.title.split('.').pop();
+  // Context
+  //API CALLS
+  const {
+    person,
+    setPerson,
+    isPersonTextDisabled,
+    resetPersonStates,
+    photoName,
+    photoType,
+    people,
+    events,
+    setPeople,
+    setEvents,
+    fetchPeopleAndEvents,
+  } = useContext(PhotoContext);
+
   // Events States
   const [event, setEvent] = useState('');
   const [eventID, setEventID] = useState('');
-  const [events, setEvents] = useState([]);
   const [isEventEditing, setIsEventEditing] = useState(false);
   // Label States
   const [labelText, setLabelText] = useState('');
@@ -554,12 +558,11 @@ const EditDetails = () => {
       // add to Datbase
       await editEventToDatabase(editedEvent);
     }
-    await init();
+    // await init();
   };
 
   // Label Functions
   const handleAddLabel = async () => {
-    console.log(':P');
     setLabel(labelText);
     await updateLabelOfPhoto(photo.id, labelText);
     setLabelText('');
@@ -579,7 +582,6 @@ const EditDetails = () => {
     }
   };
   const handleMarkerChange = event => {
-    // console.log('HEHE', event.nativeEvent.coordinate);
     const region = event.nativeEvent.coordinate;
     setModalLocation({
       ...modalLocation,
@@ -602,7 +604,6 @@ const EditDetails = () => {
   };
   const handleAddLocation = async () => {
     const {longitude, latitude} = await getCurrentLocation();
-    console.log('here', longitude, latitude);
     setModalLocation({
       ...modalLocation,
       latitude: latitude,
@@ -612,25 +613,49 @@ const EditDetails = () => {
     showModal();
     await updatePhotoLocation();
   };
+
   const handleAddLocationFromModal = async () => {
     setIsLocationAdded(true);
     setLocation(modalLocation);
     hideModal();
     await updatePhotoLocation();
   };
-
   const init = async () => {
-    const res = await getAllEventsOfPhoto(photo.id);
-    setEvents(res);
+    console.log('init');
+  };
+  const handleChangePerson = async () => {
+    const old_person = people.find(p => p.id == person.id);
+    if (old_person.name === person.name) {
+      showToast('No Update API Called');
+    } else {
+      await handleUpdatePerson(person, old_person);
+      await fetchPeopleAndEvents();
+    }
+    resetPersonStates();
   };
 
-  useLayoutEffect(() => {
-    init();
-  }, []);
+  // useLayoutEffect(() => {
+  //   // init();
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flexContainer}>
+        <View style={styles.rowContainer}>
+          <Text style={styles.title}>Persons</Text>
+          <TextInput
+            disabled={isPersonTextDisabled}
+            value={person.name}
+            placeholder="Type something"
+            onChangeText={text => setPerson({...person, name: text})}
+            onSubmitEditing={handleChangePerson}
+          />
+          <AvatarList
+            photoName={photoName}
+            photoType={photoType}
+            items={people}
+          />
+        </View>
         <View style={styles.rowContainer}>
           <Text style={styles.title}>Events</Text>
           <ChipContainer

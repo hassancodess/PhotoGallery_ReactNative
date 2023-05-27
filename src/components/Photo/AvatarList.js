@@ -1,33 +1,23 @@
-import {StyleSheet, Text, View, ScrollView, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, View, ScrollView} from 'react-native';
+import React from 'react';
 import AvatarCircle from '../UI/Avatar';
-import {
-  Portal,
-  TextInput,
-  Chip,
-  Button,
-  PaperProvider,
-  Menu,
-  Divider,
-} from 'react-native-paper';
 
 const AvatarList = ({photoType, photoName, items}) => {
   return (
-    <View style={styles.avatarsContainer}>
-      <ScrollView horizontal={true}>
+    <ScrollView horizontal={true}>
+      <View style={styles.avatarsContainer}>
         {items?.map((item, index) => {
-          console.log('item', item);
           return (
             <AvatarCircle
               key={index}
-              personName={item.name}
+              item={item}
               photoName={photoName}
               photoType={photoType}
             />
           );
         })}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -37,6 +27,5 @@ const styles = StyleSheet.create({
   avatarsContainer: {
     flexDirection: 'row',
     gap: 5,
-    // backgroundColor: 'red',
   },
 });

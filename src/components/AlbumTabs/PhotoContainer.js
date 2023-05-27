@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState, useEffect} from 'react';
+import React, {useLayoutEffect, useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,9 +18,9 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-
-const numColumns = 3;
+import PhotoContext from '../../context/PhotoContext';
 const PhotoContainer = ({photos}) => {
+  const {setPhoto} = useContext(PhotoContext);
   const navigation = useNavigation();
   const deviceWidth = Dimensions.get('window').width;
   const [cols, setCols] = useState(2);
@@ -69,11 +69,12 @@ const PhotoContainer = ({photos}) => {
           styles.item,
           {width: itemWidth, height: itemHeight, backgroundColor: item.color},
         ]}
-        onPress={() =>
+        onPress={() => {
+          setPhoto(item);
           navigation.navigate('PhotoStack', {
             photo: item,
-          })
-        }>
+          });
+        }}>
         <View style={styles.photoContainer}>
           <FastImage
             style={styles.photoCover}
@@ -87,28 +88,6 @@ const PhotoContainer = ({photos}) => {
       </Pressable>
     );
   };
-  //   const renderItem = ({item, index}) => {
-  //     // console.log('ITEM', item.image.uri);
-  //     return (
-  //       <Pressable
-  //         onPress={() =>
-  //           navigation.navigate('PhotoStack', {
-  //             photo: item,
-  //           })
-  //         }>
-  //         <View style={styles.photoContainer}>
-  //           <FastImage
-  //             style={styles.photoCover}
-  //             source={{
-  //               uri: item.path,
-  //               priority: FastImage.priority.normal,
-  //             }}
-  //             resizeMode={FastImage.resizeMode.cover}
-  //           />
-  //         </View>
-  //       </Pressable>
-  //     );
-  //   };
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <GestureDetector gesture={gesture}>
@@ -132,10 +111,6 @@ const PhotoContainer = ({photos}) => {
 export default PhotoContainer;
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   paddingVertical: 15,
-  // },
   container: {
     flex: 1,
     paddingHorizontal: 20,
