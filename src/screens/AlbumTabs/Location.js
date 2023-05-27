@@ -52,8 +52,11 @@ const Location = () => {
   }, []);
   return (
     <View style={styles.container}>
-      {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />}
-      {albums.length > 1 && <AlbumsContainer albums={albums} />}
+      {albums?.length === 1 && <PhotoContainer photos={albums[0].photos} />}
+      {albums?.length > 1 && <AlbumsContainer albums={albums} />}
+      {albums?.length === 0 && (
+        <Text>No albums Found or Turn ON your location</Text>
+      )}
     </View>
   );
 };

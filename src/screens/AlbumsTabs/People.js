@@ -1,8 +1,8 @@
 import {StyleSheet, View} from 'react-native';
 import React, {useState, useLayoutEffect} from 'react';
 import {useIsFocused} from '@react-navigation/native';
-import {handlePeopleAlbums} from '../../database/utils';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
+import {handlePeopleAlbums} from '../../database/helpers';
 
 const People = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -10,8 +10,10 @@ const People = ({navigation}) => {
 
   const InitialSetup = async () => {
     const res = await handlePeopleAlbums();
+    console.log('people albums', res);
     setAlbums(res);
   };
+
   useLayoutEffect(() => {
     if (isFocused) {
       InitialSetup();

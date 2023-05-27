@@ -4,6 +4,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import MapView, {Marker, Circle} from 'react-native-maps';
 import {getPhotoCountOnMap} from '../../database/utils';
 import {getCurrentLocation, getDistanceGroups} from '../../utils/location';
+import {fetchPhotos} from '../../database/newPhotoDB';
 
 const Map = () => {
   // Navigation Hooks
@@ -43,7 +44,7 @@ const Map = () => {
   // fetch markers and group them by distance
   const getMarkers = async () => {
     try {
-      const res = await getPhotoCountOnMap();
+      const res = await fetchPhotos();
       const filteredMarkers = res.filter(item => item.lat != 'null');
       const distanceGroups = getDistanceGroups(filteredMarkers, markerDistance);
       setMarkers(distanceGroups);
