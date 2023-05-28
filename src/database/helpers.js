@@ -1,11 +1,15 @@
 import {BASE_URI} from '../utils/api';
-import {convertExifDate, getCurrentDate} from '../utils/date';
+import {convertExifDate, getCurrentDate, getFormattedDate} from '../utils/date';
 import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
 import {captureImage} from '../utils/imagePicker';
 import {getCurrentLocation} from '../utils/location';
 import {getExifData, getLatLngExif} from '../utils/metadata';
-import {getStoragePermissions} from '../utils/permissions';
+import {
+  checkAndroidPermission,
+  checkAndroidPermissionCameraRoll,
+  getStoragePermissions,
+} from '../utils/permissions';
 import {showToast} from '../utils/toast';
 import {
   openDBConnection,
@@ -92,6 +96,8 @@ export const fetchData = async () => {
 export const initialSetup = async () => {
   // gets Storage Permissions
   await getStoragePermissions();
+  await checkAndroidPermission();
+  await checkAndroidPermissionCameraRoll();
   //   Opens Database Connection
   await openDBConnection();
   // creates all the necessary tables
@@ -160,7 +166,7 @@ const getAlbumsByDate = async distinctDates => {
     const album = {
       id: Math.floor(Math.random() * 100),
       cover_photo: photos[0].path,
-      title: date,
+      title: getFormattedDate(date),
       photos,
     };
     albums.push(album);
@@ -452,24 +458,24 @@ export const addPeopleToDatabase = async (people, photo_id) => {
 export const handlePersons = async photo => {
   await openDBConnection();
   const count = await getPhotoPersonCountByID(photo.id);
-  console.log('count', count);
 
   if (count === 0) {
-    showToast('API Called');
     const peopleList = await callAPI(photo);
-    console.log('peopleList', peopleList);
-    for (const p of peopleList) {
-      //name exisits in DB
-      console.log('p', p);
-      const checkPerson = await getPerson(p.name);
-      console.log('checkperson', checkPerson);
-      if (!checkPerson) {
-        await insertPerson(p.name);
-        const personID = await getPersonID(p.name);
-        await insertPhotoPerson(photo.id, personID);
-      } else {
-        const personID = await getPersonID(p.name);
-        await insertPhotoPerson(photo.id, personID);
+    console.log('People List FROM API', peopleList);
+    if (peopleList) {
+      for (const p of peopleList) {
+        //name exisits in DB
+        console.log('p', p);
+        const checkPerson = await getPerson(p.name);
+        console.log('checkperson', checkPerson);
+        if (!checkPerson) {
+          await insertPerson(p.name);
+          const personID = await getPersonID(p.name);
+          await insertPhotoPerson(photo.id, personID);
+        } else {
+          const personID = await getPersonID(p.name);
+          await insertPhotoPerson(photo.id, personID);
+        }
       }
     }
   } else {
@@ -480,8 +486,6 @@ export const handlePersons = async photo => {
 const callAPI = async photo => {
   try {
     const photoType = photo.title.split('.').pop();
-    // console.log('photo type', photoType, 'file://'+photo.path, photo.title);
-    console.log('started');
     const formdata = new FormData();
     formdata.append('file', {
       uri: 'file://' + photo.path,
@@ -495,22 +499,24 @@ const callAPI = async photo => {
     };
 
     const response = await fetch(`${BASE_URI}/saveImage`, requestOptions);
-
-    const data = await response.json();
-    // console.log('data', data);
-
-    const dataPeople = [];
-    if (typeof data !== 'string') {
-      for (const key in data) {
-        const data = {
-          id: `uuid-${Math.floor(Math.random() * 100) + 1}`,
-          name: key,
-        };
-        dataPeople.push(data);
+    showToast('API Called');
+    if (response.ok) {
+      const data = await response.json();
+      const dataPeople = [];
+      if (typeof data !== 'string') {
+        for (const key in data) {
+          const data = {
+            id: `uuid-${Math.floor(Math.random() * 100) + 1}`,
+            name: key,
+          };
+          dataPeople.push(data);
+        }
       }
+      return dataPeople;
     }
-    return dataPeople;
   } catch (error) {
-    console.log('Error', error);
+    showToast('API Not Available', 'error');
+    console.log('API Not Available Error', error);
+    return null;
   }
 };

@@ -26,24 +26,6 @@ export const PhotoContextProvider = ({children}) => {
     }
   }, [photo]);
 
-  // useEffect(() => {
-  //   if (photo) {
-  //     handlePeopleAndEvents();
-  //   }
-  // }, [events]);
-  // useEffect(() => {
-  //   if (photo) {
-  //     handlePeopleAndEvents();
-  //   }
-  // }, [people]);
-
-  // useEffect(() => {
-  //   if (people || events) {
-  //     console.log('People', people);
-  //     console.log('Events', events);
-  //   }
-  // }, [events, people]);
-
   const fetchPeopleAndEvents = async () => {
     const eventsList = await getAllEventsOfPhoto(photo.id);
     const personsList = await getPeopleInPhoto(photo.id);

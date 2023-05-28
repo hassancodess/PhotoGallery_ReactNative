@@ -1,33 +1,16 @@
-export const getFormattedDate = date => {
-  // parse date
-  const newDate = date.split('/');
-  // Get the day name
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  // const dayName = dayNames[Parse.int(newDate[1]) / 7];
+export const getFormattedDate = dateString => {
+  // Convert input string to a Date object
+  var dateParts = dateString.split('/');
+  var date = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
 
-  // Get the month name
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  // const monthName = monthNames[date.getMonth()];
+  // Format the Date object as "25-May-2023"
+  var formattedDate = date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 
-  // // Get the day of the month
-  // const dayOfMonth = date.getDate();
-
-  // // Combine the values into a formatted string
-  // const formattedDate = dayOfMonth + monthName + ' - ' + date.getYear();
-  // return formattedDate;
+  return formattedDate;
 };
 
 export const convertExifDate = dateString => {

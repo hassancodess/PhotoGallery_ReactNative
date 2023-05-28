@@ -11,7 +11,8 @@ export const getStoragePermissions = async () => {
 
 const hasAndroidPermission = async () => {
   const permission =
-    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE &&
+    // PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE &&
+    PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES &&
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
   const hasPermission = await PermissionsAndroid.check(permission);
@@ -21,4 +22,34 @@ const hasAndroidPermission = async () => {
 
   const status = await PermissionsAndroid.request(permission);
   return status === 'granted';
+};
+
+export const checkAndroidPermission = async () => {
+  if (Platform.OS === 'android' && Platform.Version < 33) {
+    const granted = await PermissionsAndroid.requestMultiple([
+      'android.permission.CAMERA',
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+    ]);
+    if (
+      granted['android.permission.CAMERA'] !== 'granted' ||
+      granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== 'granted'
+    ) {
+      throw new Error('Required permission not granted');
+    }
+  }
+};
+
+export const checkAndroidPermissionCameraRoll = async () => {
+  if (Platform.OS === 'android' && Platform.Version < 33) {
+    const granted = await PermissionsAndroid.requestMultiple([
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+      'android.permission.READ_EXTERNAL_STORAGE',
+    ]);
+    if (
+      granted['android.permission.WRITE_EXTERNAL_STORAGE'] !== 'granted' ||
+      granted['android.permission.READ_EXTERNAL_STORAGE'] !== 'granted'
+    ) {
+      throw new Error('Required permission not granted');
+    }
+  }
 };

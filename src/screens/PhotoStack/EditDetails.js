@@ -468,7 +468,14 @@
 // import GetLocation from 'react-native-get-location';
 // import {useIsFocused, useNavigation} from '@react-navigation/native';
 // import MapModal from '../../components/Photo/MapModal';
-import {StyleSheet, Text, View, SafeAreaView, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 import React, {useState, useLayoutEffect, useContext, useEffect} from 'react';
 import GlobalStyles from '../../utils/GlobalStyles';
 import {TextInput, List, Chip, Button} from 'react-native-paper';
@@ -634,10 +641,6 @@ const EditDetails = () => {
     resetPersonStates();
   };
 
-  // useLayoutEffect(() => {
-  //   // init();
-  // }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flexContainer}>
@@ -740,36 +743,6 @@ const EditDetails = () => {
               )}
             </>
           </Modal>
-          {/* <Modal
-            isVisible={visible}
-            onBackdropPress={hideModal}
-            style={{gap: 10}}>
-            <>
-              {modalLocation?.latitude && (
-                <View
-                  style={{
-                    height: '80%',
-                    backgroundColor: 'blakc',
-                    borderRadius: 10,
-                    overflow: 'hidden',
-                  }}>
-                  <MapView style={styles.map} initialRegion={modalLocation}>
-                    <Marker
-                      coordinate={modalLocation}
-                      title="You"
-                      draggable={isLocationAdded ? true : false}
-                      onDragEnd={handleMarkerChange}
-                    />
-                  </MapView>
-                </View>
-              )}
-              {!location?.latitude && (
-                <Button mode="contained" onPress={handleAddLocationFromModal}>
-                  Add
-                </Button>
-              )}
-            </>
-          </Modal> */}
         </View>
       </View>
     </SafeAreaView>
