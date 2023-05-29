@@ -32,6 +32,35 @@ export const convertExifDate = dateString => {
   }
   return null;
 };
+export const getNewDate = () => {
+  const now = new Date();
+
+  // Get date components
+  const month = now.getMonth() + 1; // Months are zero-based, so add 1
+  const day = now.getDate();
+  const year = now.getFullYear();
+
+  // Get time components
+  let hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const ampm = hours >= 12 ? 'PM' : 'AM'; // Determine AM/PM
+
+  // Convert hours to 12-hour format
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+  // Format date and time
+  const formattedDate = `${month.toString().padStart(2, '0')}/${day
+    .toString()
+    .padStart(2, '0')}/${year}`;
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+  const dateTime = `${formattedDate}, ${formattedTime}`;
+  return dateTime;
+};
 
 export const getCurrentDate = () => {
   var today = new Date();

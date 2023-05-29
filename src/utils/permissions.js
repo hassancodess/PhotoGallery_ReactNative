@@ -1,4 +1,5 @@
 import {Platform, PermissionsAndroid} from 'react-native';
+import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 
 export const getStoragePermissions = async () => {
   if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
@@ -52,4 +53,18 @@ export const checkAndroidPermissionCameraRoll = async () => {
       throw new Error('Required permission not granted');
     }
   }
+};
+
+export const askForImagePermission = async () => {
+  const result = await request(PERMISSIONS.ANDROID.READ_MEDIA_IMAGES);
+  console.log('read images', result);
+};
+
+export const askForExternalStoragePermission = async () => {
+  const result = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+  console.log('external storage', result);
+};
+export const askForCameraPermission = async () => {
+  const result = await request(PERMISSIONS.ANDROID.CAMERA);
+  console.log('camera', result);
 };
