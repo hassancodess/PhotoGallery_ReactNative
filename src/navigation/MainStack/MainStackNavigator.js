@@ -8,22 +8,25 @@ import Login from '../../screens/MainStack/Login';
 import SignUp from '../../screens/MainStack/SignUp';
 import Splash from '../../screens/MainStack/Splash';
 import HomeTabsNavigator from '../HomeTabs/HomeTabsNavigator';
+import {PhotoContextProvider} from '../../context/PhotoContext';
 
 // Navigator
 const {Navigator, Screen} = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
   return (
-    <NavigationContainer>
-      <Navigator
-        initialRouteName="HomeTabs"
-        screenOptions={{headerShown: false}}>
-        <Screen name="Splash" component={Splash} />
-        <Screen name="Login" component={Login} />
-        <Screen name="SignUp" component={SignUp} />
-        <Screen name="HomeTabs" component={HomeTabsNavigator} />
-      </Navigator>
-    </NavigationContainer>
+    <PhotoContextProvider>
+      <NavigationContainer>
+        <Navigator
+          initialRouteName="HomeTabs"
+          screenOptions={{headerShown: false}}>
+          <Screen name="Splash" component={Splash} />
+          <Screen name="Login" component={Login} />
+          <Screen name="SignUp" component={SignUp} />
+          <Screen name="HomeTabs" component={HomeTabsNavigator} />
+        </Navigator>
+      </NavigationContainer>
+    </PhotoContextProvider>
   );
 };
 
