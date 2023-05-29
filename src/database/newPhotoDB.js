@@ -530,6 +530,21 @@ export const fetchEventsWithPhotoRelation = async () => {
     showToast(error.message, 'error');
   }
 };
+export const fetchPeopleWithPhotoRelation = async () => {
+  try {
+    const resultsSet = [];
+    let query = `SELECT * FROM Person INNER JOIN PhotoPerson ON Person.id = PhotoPerson.person_id`;
+    const res = await db.executeSql(query);
+    for (let i = 0; i < res[0].rows.length; ++i) {
+      let record = res[0].rows.item(i);
+      resultsSet.push(record);
+    }
+    return resultsSet;
+  } catch (error) {
+    console.log('error', error);
+    showToast(error.message, 'error');
+  }
+};
 
 export const updatePerson = async person => {
   try {
