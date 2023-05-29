@@ -24,18 +24,23 @@ const People = () => {
     init();
   }, []);
 
-  useEffect(() => {
-    console.log('albums', albums);
-  }, [albums]);
-
   return (
     <View style={styles.container}>
-      {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />}
-      {albums.length > 1 && <AlbumsContainer albums={albums} />}
+      {/* {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />} */}
+      <AlbumsContainer albums={albums} />
+      {albums?.length === 0 && (
+        <Text style={styles.text}>No people found in this album</Text>
+      )}
     </View>
   );
 };
 
 export default People;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+  },
+});

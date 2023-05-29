@@ -2,7 +2,7 @@ import {StyleSheet, Text, View, FlatList} from 'react-native';
 import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import PhotoContainer from '../../components/AlbumTabs/PhotoContainer';
-import {extractDate, getUniqueDates} from '../../utils/date';
+import {extractDate, getFormattedDate, getUniqueDates} from '../../utils/date';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 const Date = () => {
   // Navigation
@@ -30,7 +30,7 @@ const Date = () => {
         results.push({
           id,
           date: photoDate,
-          title: photoDate,
+          title: getFormattedDate(photoDate),
           cover_photo: photo.path,
           photos: [photo],
         });
@@ -48,8 +48,9 @@ const Date = () => {
 
   return (
     <View style={styles.container}>
-      {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />}
-      {albums.length > 1 && <AlbumsContainer albums={albums} />}
+      {/* {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />} */}
+      {/* {albums.length > 1 && <AlbumsContainer albums={albums} />} */}
+      <AlbumsContainer albums={albums} />
     </View>
   );
 };

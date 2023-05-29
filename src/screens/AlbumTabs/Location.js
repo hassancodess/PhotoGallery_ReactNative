@@ -5,6 +5,7 @@ import {initialEventsSetup} from '../../database/helpers';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 import PhotoContainer from '../../components/AlbumTabs/PhotoContainer';
 import {getCity} from '../../utils/geocoder';
+import GlobalStyles from '../../utils/GlobalStyles';
 
 const Location = () => {
   // Navigation
@@ -54,7 +55,7 @@ const Location = () => {
       {albums?.length === 1 && <PhotoContainer photos={albums[0].photos} />}
       {albums?.length > 1 && <AlbumsContainer albums={albums} />}
       {albums?.length === 0 && (
-        <Text>No albums Found or Turn ON your location</Text>
+        <Text style={styles.text}>No location albums found</Text>
       )}
     </View>
   );
@@ -67,5 +68,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingVertical: 15,
+  },
+  text: {
+    color: GlobalStyles.colors.dark,
   },
 });
