@@ -11,7 +11,6 @@ export const getCity = async (lat, lng) => {
         return d;
       }
     });
-    // console.log('city', cityObject);
     return cityObject.long_name;
   } catch (error) {
     console.log('error: getCity', error);
