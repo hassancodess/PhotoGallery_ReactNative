@@ -3,11 +3,9 @@ import {StyleSheet, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import AlbumsContainer from '../../components/HomeTabs/AlbumsContainer';
 import {initialSetup, initialDateSetup} from '../../database/helpers';
-
 const Date = () => {
   const isFocused = useIsFocused();
   const [albums, setAlbums] = useState([]);
-
   const init = async () => {
     await initialSetup();
     const res = await initialDateSetup();
