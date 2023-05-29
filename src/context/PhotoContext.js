@@ -22,6 +22,7 @@ export const PhotoContextProvider = ({children}) => {
       // SET Photo Type & Name
       const name = photo.path.split('/').pop().split('.')[0];
       const type = photo.title.split('.').pop();
+      console.log('name', name, 'type', type);
       setPhotoName(name);
       setPhotoType(type);
       // RESET Person States
