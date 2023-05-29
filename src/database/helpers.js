@@ -603,3 +603,109 @@ const callAPI = async photo => {
     return null;
   }
 };
+
+export const handleSyncPhotos = async () => {
+  const photos = await fetchPhotos();
+  console.log('photos', photos);
+  const dataToSend = [];
+  for (const photo of photos) {
+    // PERSONS
+    const persons = await fetchPersonsOfPhoto(photo.id);
+    const personsArray = [];
+    for (const person of persons) {
+      personsArray.push(person.name);
+    }
+    // console.log('persons', personsArray);
+
+    // EVENTS
+    const events = await fetchEventsOfPhoto(photo.id);
+    const eventsArray = [];
+    for (const event of events) {
+      eventsArray.push(event.name);
+    }
+    // console.log('events', eventsArray);
+
+    const obj = {
+      title: photo.title,
+      people: personsArray,
+      events: eventsArray,
+      label: photo.label,
+      lat: photo.lat,
+      lng: photo.lng,
+      date_taken: photo.date_taken,
+      last_modified_date: photo.last_modified_date,
+      isSynced: photo.isSynced,
+    };
+    dataToSend.push(obj);
+  }
+  console.log('data To Send', dataToSend);
+};
+
+[
+  {
+    title: 'IMG_20220425_104946.jpg',
+    people: ['Sir amir'],
+    events: ['Angular Seminar'],
+    label: 'Others',
+    lat: 33.5749482,
+    lng: 73.0464026,
+    date_taken: '5/25/2022, 10:49:46 AM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+  {
+    title: 'IMG_20230127_172314.jpg',
+    people: ['Hassan', 'Sir Nouman '],
+    events: ['BIIT Ceremony'],
+    label: 'Others',
+    lat: 'null',
+    lng: 'null',
+    date_taken: '2/27/2023, 5:23:14 PM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+  {
+    title: 'IMG_20230127_172740.jpg',
+    people: ['Hamza', 'Hassan'],
+    events: ['BIIT Ceremony'],
+    label: 'Others',
+    lat: 33.5749505,
+    lng: 73.0464136,
+    date_taken: '2/27/2023, 5:27:40 PM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+  {
+    title: 'IMG_3758.jpg',
+    people: ['Irfan', 'Hassan'],
+    events: ['Pitching'],
+    label: 'Others',
+    lat: 33.5749503,
+    lng: 73.04642,
+    date_taken: '3/17/2023, 11:37:13 AM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+  {
+    title: 'rn_image_picker_lib_temp_382f7312-c0d5-421d-9789-836964453587.jpg',
+    people: ['Sir Umar'],
+    events: ['App Testing'],
+    label: 'Others',
+    lat: 33.574952,
+    lng: 73.0464251,
+    date_taken: '6/26/2023, 5:09:09 PM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+  {
+    title: 'Screenshot_2023-05-26-17-10-43-884-edit_com.whatsapp.jpg',
+    people: ['Sir Nouman'],
+    events: ['Gala 2023'],
+    label: 'Others',
+    lat: 33.5749519,
+    lng: 73.0464161,
+    date_taken: '05/29/2023, 10:06:20 PM',
+    last_modified_date: '05/29/2023, 10:06:20 PM',
+    isSynced: 0,
+  },
+];

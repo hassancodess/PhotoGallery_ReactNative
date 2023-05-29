@@ -9,6 +9,7 @@ import {
   clearDatabase,
   clearPersons,
   clearEvents,
+  handleSyncPhotos,
 } from '../../database/helpers';
 import {LogBox} from 'react-native';
 
@@ -83,9 +84,16 @@ const Settings = () => {
     init();
   }, []);
 
+  const handleSync = async () => {
+    const res = await handleSyncPhotos();
+  };
+
   return (
     <ScrollView style={styles.container}>
       <ScrollView horizontal style={{flexDirection: 'row'}}>
+        <Button mode="contained" onPress={handleSync} style={{marginRight: 5}}>
+          Sync Now
+        </Button>
         <Button
           mode="contained"
           onPress={clearPersons}
