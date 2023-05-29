@@ -1,4 +1,9 @@
-import React, {useState, createContext, useEffect} from 'react';
+import React, {
+  useState,
+  createContext,
+  useEffect,
+  useLayoutEffect,
+} from 'react';
 import {getAllEventsOfPhoto, getPeopleInPhoto} from '../database/helpers';
 
 export const PhotoContext = createContext(null);
@@ -30,8 +35,8 @@ export const PhotoContextProvider = ({children}) => {
     const eventsList = await getAllEventsOfPhoto(photo.id);
     const personsList = await getPeopleInPhoto(photo.id);
 
-    console.log('People', personsList);
-    console.log('Events', eventsList);
+    console.log('People List', personsList);
+    console.log('Events List', eventsList);
 
     setPeople(personsList);
     setEvents(eventsList);
