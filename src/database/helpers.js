@@ -1,11 +1,19 @@
 import {BASE_URI} from '../utils/api';
-import {convertExifDate, getCurrentDate, getFormattedDate} from '../utils/date';
+import {
+  convertExifDate,
+  getCurrentDate,
+  getFormattedDate,
+  getNewDate,
+} from '../utils/date';
 import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
 import {captureImage} from '../utils/imagePicker';
 import {getCurrentLocation} from '../utils/location';
 import {getExifData, getLatLngExif} from '../utils/metadata';
 import {
+  askForCameraPermission,
+  askForExternalStoragePermission,
+  askForImagePermission,
   checkAndroidPermission,
   checkAndroidPermissionCameraRoll,
   getStoragePermissions,
@@ -95,9 +103,12 @@ export const fetchData = async () => {
 // INITIAL SETUP
 export const initialSetup = async () => {
   // gets Storage Permissions
-  await getStoragePermissions();
-  await checkAndroidPermission();
-  await checkAndroidPermissionCameraRoll();
+  // await getStoragePermissions();
+  // await checkAndroidPermission();
+  // await checkAndroidPermissionCameraRoll();
+  await askForCameraPermission();
+  // await askForExternalStoragePermission();
+  await askForImagePermission();
   //   Opens Database Connection
   await openDBConnection();
   // creates all the necessary tables
@@ -127,14 +138,20 @@ export const addPhotosToDatabase = async photos => {
     // Gets Exif Data of Image
     const exif = await getExifData(photo.path);
     const {latitude, longitude} = await getLatLngExif(photo.path);
-    console.log('erer', latitude, longitude);
+    // console.log('erer', latitude, longitude);
+
+    let date = convertExifDate(exif.DateTime);
+    if (!date) {
+      date = getCurrentDate();
+    }
+
     // Creating photo details object
     const photoDetails = {
       title: photoName,
       path: photo.path,
       lat: latitude === 0 ? null : latitude,
       lng: longitude === 0 ? null : longitude,
-      date_taken: convertExifDate(exif.DateTime),
+      date_taken: date,
       last_modified_date: getCurrentDate(),
       isSynced: 0,
       label: 'Others',
@@ -412,6 +429,43 @@ export const handleCaptureImage = async () => {
   await insertPhoto(photoDetails);
 };
 
+export const handleCaptureImageVisionCamera = async photo => {
+  // Gets Exif Data of Image
+  const exif = await getExifData(photo.path);
+  console.log('exif', exif);
+  // Gets Current Location
+  const {latitude, longitude} = await getCurrentLocation();
+  console.log('lat', latitude, 'lng', longitude);
+  // Removes file:// from image path
+  const cleanedPhotoPath = photo.path.substring(7);
+  console.log('cleanedPhotoPath', cleanedPhotoPath);
+
+  // Gets FileName
+  const filename = photo.path.substring(photo.path.lastIndexOf('/') + 1);
+
+  // Creating photo details object
+  const photoToStore = {
+    uri: photo.path,
+    // type: photo.type,
+    name: filename,
+  };
+  console.log('photo to store', photoToStore);
+  const destinationPath = await storeImage(photoToStore);
+  console.log('destinationPath', destinationPath);
+  const photoDetails = {
+    title: filename,
+    path: destinationPath,
+    lat: latitude,
+    lng: longitude,
+    date_taken: convertExifDate(exif.DateTime),
+    last_modified_date: getCurrentDate(),
+    isSynced: 0,
+    label: 'Others',
+  };
+  console.log('photo details', photoDetails);
+  await insertPhoto(photoDetails);
+};
+
 // Nested Events
 
 export const initialEventsSetup = async album => {
@@ -500,6 +554,7 @@ const callAPI = async photo => {
 
     const response = await fetch(`${BASE_URI}/saveImage`, requestOptions);
     showToast('API Called');
+    // console.log('API Called');
     if (response.ok) {
       const data = await response.json();
       const dataPeople = [];

@@ -1,4 +1,4 @@
-import React, {useContext, useLayoutEffect, useState} from 'react';
+import React, {useContext, useLayoutEffect, useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,16 +11,25 @@ import FastImage from 'react-native-fast-image';
 import {BASE_URI} from '../../utils/api';
 import {addPeopleToDatabase, handlePersons} from '../../database/helpers';
 import PhotoContext from '../../context/PhotoContext';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 
-const Photo = ({navigation, route}) => {
+const Photo = ({}) => {
   const {photo, photoName, resetPersonStates, fetchPeopleAndEvents} =
     useContext(PhotoContext);
-  useLayoutEffect(() => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    // if (isFocused) {
+    console.log('name', photoName);
     navigation.setOptions({
       title: photoName,
+      // title: photoName,
     });
     // callAPI();
     init();
+    // }
   }, []);
 
   const init = async () => {
