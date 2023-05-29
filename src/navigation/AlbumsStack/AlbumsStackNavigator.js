@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 // Navigation
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // Screens
@@ -7,10 +7,12 @@ import AlbumsTabsNavigator from '../AlbumsTabs/AlbumsTabsNavigator';
 import PhotoStackNavigator from '../PhotoStack/PhotoStackNavigator';
 import GlobalStyles from '../../utils/GlobalStyles';
 import AlbumTabsNavigator from '../AlbumTabs/AlbumTabsNavigator';
+import PhotoContext from '../../context/PhotoContext';
 // Navigator
 const {Navigator, Screen} = createNativeStackNavigator();
 
 const AlbumsStackNavigator = () => {
+  const {albumName} = useContext(PhotoContext);
   return (
     <Navigator
       initialRouteName="AlbumsTabs"
@@ -41,6 +43,7 @@ const AlbumsStackNavigator = () => {
         options={{
           navigationBarHidden: true,
           tabBarVisible: false,
+          title: albumName,
         }}
       />
       <Screen

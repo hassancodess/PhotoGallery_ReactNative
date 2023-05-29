@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View} from 'react-native';
 // Navigation
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -13,12 +13,16 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import GlobalStyles from '../../utils/GlobalStyles';
 // Navigator
 const {Navigator, Screen} = createNativeStackNavigator();
+// Context
+import PhotoContext from '../../context/PhotoContext';
 
 const PhotoStackNavigator = ({navigation, route}) => {
   const {photo} = route.params;
   const [visible, setVisible] = React.useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+
+  const {photoName} = useContext(PhotoContext);
 
   const renderHeaderRight = () => (
     <View
@@ -88,6 +92,7 @@ const PhotoStackNavigator = ({navigation, route}) => {
           initialParams={{photo}}
           options={{
             headerRight: renderHeaderRight,
+            title: photoName,
           }}
         />
         <Screen

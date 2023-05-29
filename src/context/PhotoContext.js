@@ -9,6 +9,7 @@ import {getAllEventsOfPhoto, getPeopleInPhoto} from '../database/helpers';
 export const PhotoContext = createContext(null);
 
 export const PhotoContextProvider = ({children}) => {
+  const [albumName, setAlbumName] = useState();
   const [photo, setPhoto] = useState();
   const [photoType, setPhotoType] = useState();
   const [photoName, setPhotoName] = useState();
@@ -54,6 +55,7 @@ export const PhotoContextProvider = ({children}) => {
 
   const values = {
     photo,
+    albumName,
     person,
     isPersonTextDisabled,
     photoName,
@@ -61,6 +63,7 @@ export const PhotoContextProvider = ({children}) => {
     people,
     events,
     setPhoto,
+    setAlbumName,
     setPerson,
     setIsPersonTextDisabled,
     setPeople,

@@ -6,7 +6,7 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import Animated, {
@@ -18,9 +18,10 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-
+import PhotoContext from '../../context/PhotoContext';
 const numColumns = 3;
 const AlbumsContainer = ({albums}) => {
+  const {setAlbumName} = useContext(PhotoContext);
   const navigation = useNavigation();
   const deviceWidth = Dimensions.get('window').width;
   const [cols, setCols] = useState(2);
@@ -76,6 +77,7 @@ const AlbumsContainer = ({albums}) => {
       navigation.push('AlbumTabs', {
         album: item,
       });
+      setAlbumName(itemTitle);
     };
 
     return (
