@@ -1,15 +1,7 @@
 import React, {useContext, useLayoutEffect, useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Pressable,
-  Dimensions,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {BASE_URI} from '../../utils/api';
-import {addPeopleToDatabase, handlePersons} from '../../database/helpers';
+import {handlePersons} from '../../database/helpers';
 import PhotoContext from '../../context/PhotoContext';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 
@@ -21,15 +13,7 @@ const Photo = ({}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    // if (isFocused) {
-    console.log('name', photoName);
-    navigation.setOptions({
-      title: photoName,
-      // title: photoName,
-    });
-    // callAPI();
     init();
-    // }
   }, []);
 
   const init = async () => {

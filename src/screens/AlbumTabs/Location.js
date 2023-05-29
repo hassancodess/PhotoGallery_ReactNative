@@ -12,7 +12,6 @@ const Location = () => {
   const isFocused = useIsFocused();
   const route = useRoute();
   const {album} = route.params;
-  console.log('album', album);
 
   // States
   const [albums, setAlbums] = useState([]);
@@ -20,11 +19,10 @@ const Location = () => {
   // Utilities
   const init = async () => {
     const albumsByLocation = await initialLocationSetup(album);
-    // const albumsByEvents = await initialEventsSetup(album);
+    console.log('Length of Location Albums', albumsByLocation.length);
     setAlbums(albumsByLocation);
   };
   const initialLocationSetup = async album => {
-    // console.log('asd');
     const locationAlbums = [];
     const filteredPhotos = album.photos.filter(p => p.lat != 'null');
     // console.log('filtered Photos', filteredPhotos);
@@ -46,6 +44,7 @@ const Location = () => {
         locationAlbums.push(album);
       }
     }
+    return locationAlbums;
   };
   useLayoutEffect(() => {
     init();
