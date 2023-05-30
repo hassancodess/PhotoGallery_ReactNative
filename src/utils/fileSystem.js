@@ -1,7 +1,7 @@
 import RNFS from 'react-native-fs';
 import {showToast} from './toast';
 
-const folderPath = RNFS.PicturesDirectoryPath + '/PhotoGallery/';
+const folderPath = RNFS.PicturesDirectoryPath + '/samples/';
 
 export const getAllImages = async () => {
   const response = await RNFS.readDir(folderPath);

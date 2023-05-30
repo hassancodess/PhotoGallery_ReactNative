@@ -624,21 +624,24 @@ export const handleSyncPhotos = async () => {
       eventsArray.push(event.name);
     }
     // console.log('events', eventsArray);
-
+    const lat = photo?.lat === 'null' ? null : photo.lat;
+    const lng = photo?.lng === 'null' ? null : photo.lng;
     const obj = {
       title: photo.title,
       people: personsArray,
       events: eventsArray,
       label: photo.label,
-      lat: photo.lat,
-      lng: photo.lng,
+      lat: lat,
+      lng: lng,
       date_taken: photo.date_taken,
       last_modified_date: photo.last_modified_date,
       isSynced: photo.isSynced,
     };
     dataToSend.push(obj);
+    console.log(photo.lat, typeof photo.lat, photo.lat ? photo.lat : null);
   }
   console.log('data To Send', dataToSend);
+  return dataToSend;
 };
 
 [

@@ -30,8 +30,8 @@ const Events = () => {
 
   return (
     <View style={styles.container}>
-      {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />}
-      {albums.length > 1 && <AlbumsContainer albums={albums} />}
+      {/* {albums.length === 1 && <PhotoContainer photos={albums[0].photos} />} */}
+      {albums.length > 0 && <AlbumsContainer albums={albums} />}
       {albums?.length === 0 && (
         <Text style={styles.text}>No events found in this album</Text>
       )}
