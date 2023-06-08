@@ -68,3 +68,8 @@ export const askForCameraPermission = async () => {
   const result = await request(PERMISSIONS.ANDROID.CAMERA);
   console.log('camera', result);
 };
+
+export const askForContactsPermission = async () => {
+  const result = await request(PERMISSIONS.ANDROID.READ_CONTACTS);
+  console.log('contacts', result);
+};

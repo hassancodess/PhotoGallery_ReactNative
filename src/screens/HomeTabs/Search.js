@@ -16,6 +16,7 @@ import {
   Button,
 } from 'react-native-paper';
 import GlobalStyles from '../../utils/GlobalStyles';
+import ContactsTextInput from '../../components/Photo/ContactsTextInput';
 
 const Search = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -64,6 +65,7 @@ const Search = () => {
           style={styles.iconButton}
         />
       </View>
+      <ContactsTextInput />
       {/* <Text>
         {isModalVisible.toString()} - {searchQuery}
       </Text> */}

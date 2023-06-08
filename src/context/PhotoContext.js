@@ -17,6 +17,7 @@ export const PhotoContextProvider = ({children}) => {
   const [events, setEvents] = useState([]);
   const [person, setPerson] = useState({});
   const [isPersonTextDisabled, setIsPersonTextDisabled] = useState(true);
+  const [contacts, setContacts] = useState();
 
   useEffect(() => {
     if (photo) {
@@ -37,8 +38,8 @@ export const PhotoContextProvider = ({children}) => {
     const eventsList = await getAllEventsOfPhoto(photo.id);
     const personsList = await getPeopleInPhoto(photo.id);
 
-    console.log('People List', personsList);
-    console.log('Events List', eventsList);
+    console.log('People List from Context', personsList);
+    console.log('Events List from Context', eventsList);
 
     setPeople(personsList);
     setEvents(eventsList);

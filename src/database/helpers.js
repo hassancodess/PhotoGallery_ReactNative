@@ -4,6 +4,7 @@ import {
   getCurrentDate,
   getFormattedDate,
   getNewDate,
+  new_getCurrentDate,
 } from '../utils/date';
 import {getAllImages, storeImage} from '../utils/fileSystem';
 import {getCity} from '../utils/geocoder';
@@ -66,6 +67,7 @@ import {
   updatePerson,
   fetchPhotosOfPerson,
   fetchPeopleWithPhotoRelation,
+  updatePhotoLastModifiedDate,
 } from './newPhotoDB';
 
 export const createTables = async () => {
@@ -642,6 +644,24 @@ export const handleSyncPhotos = async () => {
   }
   console.log('data To Send', dataToSend);
   return dataToSend;
+};
+
+export const handleUpdateLastModifiedDate = async photo => {
+  try {
+    const newDate = getCurrentDate();
+    await updatePhotoLastModifiedDate(photo.id, newDate);
+  } catch (error) {
+    console.log('error: handleUpdateLastModifiedDate', error);
+  }
+};
+
+export const handleSyncResults = async results => {
+  try {
+    // const newDate = getCurrentDate();
+    // await updatePhotoLastModifiedDate(photo.id, newDate);
+  } catch (error) {
+    // console.log('error: handleUpdateLastModifiedDate', error);
+  }
 };
 
 [

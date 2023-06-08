@@ -91,6 +91,20 @@ export const getCurrentDate = () => {
   return formatted_date;
 };
 
+export const new_getCurrentDate = () => {
+  var currentDate = new Date();
+
+  var formattedDate = currentDate.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+  return formattedDate;
+};
 export const extractDate = date => {
   // Expected Input 05/24/2023, 11:02:18 PM
   // Expected Output 05/24/2023

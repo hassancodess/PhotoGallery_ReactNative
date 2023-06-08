@@ -608,3 +608,16 @@ export const getPhotoPersonCountByID = async photo_id => {
     console.log('ERROR: getPersonID DB', error);
   }
 };
+
+export const updatePhotoLastModifiedDate = async (photo_id, new_date) => {
+  try {
+    let query = `UPDATE Photo
+    SET last_modified_date = '${new_date}'
+    WHERE id = ${photo_id}`;
+    await db.executeSql(query);
+    showToast('Last Modified Date Updated');
+    console.log('Last Modified Date Updated');
+  } catch (error) {
+    console.log('ERROR: updatePhotoLastModifiedDate DB', error);
+  }
+};

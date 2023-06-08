@@ -486,6 +486,7 @@ import {
   updateLabelOfPhoto,
   updateLocationOfPhoto,
   handleUpdatePerson,
+  handleUpdateLastModifiedDate,
 } from '../../database/helpers';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import MapView, {Marker} from 'react-native-maps';
@@ -494,6 +495,8 @@ import AvatarList from '../../components/Photo/AvatarList';
 import Modal from 'react-native-modal';
 import PhotoContext from '../../context/PhotoContext';
 import {showToast} from '../../utils/toast';
+import ContactsTextInput from '../../components/Photo/ContactsTextInput';
+import {updatePhotoLastModifiedDate} from '../../database/newPhotoDB';
 
 const EditDetails = () => {
   const navigation = useNavigation();
@@ -539,6 +542,7 @@ const EditDetails = () => {
   const [isLocationAdded, setIsLocationAdded] = useState(false);
   // Modal States
   const [visible, setVisible] = useState(false);
+  const [showContactsModal, setShowContactsModal] = useState(false);
 
   // Events Functions
   const handleAddEvent = async () => {
@@ -565,6 +569,7 @@ const EditDetails = () => {
       // add to Datbase
       await editEventToDatabase(editedEvent);
     }
+    await handleUpdateLastModifiedDate(photo);
     // await init();
   };
 
@@ -572,6 +577,7 @@ const EditDetails = () => {
   const handleAddLabel = async () => {
     setLabel(labelText);
     await updateLabelOfPhoto(photo.id, labelText);
+    await handleUpdateLastModifiedDate(photo);
     setLabelText('');
   };
 
@@ -619,6 +625,7 @@ const EditDetails = () => {
     setIsLocationAdded(true);
     showModal();
     await updatePhotoLocation();
+    await handleUpdateLastModifiedDate(photo);
   };
 
   const handleAddLocationFromModal = async () => {
@@ -630,12 +637,18 @@ const EditDetails = () => {
   const init = async () => {
     console.log('init');
   };
+  const handleChangePersonTextInput = async text => {
+    setPerson({...person, name: text});
+  };
   const handleChangePerson = async () => {
+    console.log('here');
     const old_person = people.find(p => p.id == person.id);
     if (old_person.name === person.name) {
       showToast('No Update API Called');
     } else {
+      showToast('API Called');
       await handleUpdatePerson(person, old_person);
+      await handleUpdateLastModifiedDate(photo);
       await fetchPeopleAndEvents();
     }
     resetPersonStates();
@@ -650,9 +663,33 @@ const EditDetails = () => {
             disabled={isPersonTextDisabled}
             value={person.name}
             placeholder="Type something"
-            onChangeText={text => setPerson({...person, name: text})}
+            onChangeText={handleChangePersonTextInput}
             onSubmitEditing={handleChangePerson}
+            right={
+              <TextInput.Icon
+                // disabled
+                icon={() => (
+                  <ContactsTextInput
+                    handleChange={handleChangePersonTextInput}
+                  />
+                  // <Icon
+                  //   name="home"
+                  //   size={24}
+                  //   color={customIcon}
+                  //   onPress={() => {
+                  //     changeIconColor('customIcon');
+                  //   }}
+                  // />
+                )}
+              />
+              // <TextInput.Icon
+              //   disabled={isPersonTextDisabled}
+              //   icon="eye"
+              //   onPress={() => setShowContactsModal(!showContactsModal)}
+              // />
+            }
           />
+          {/* {showContactsModal} */}
           <AvatarList
             photoName={photoName}
             photoType={photoType}
